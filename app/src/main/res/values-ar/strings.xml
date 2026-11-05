@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">أدوات بيسيتي</string>
+    <string name="tagline">كل ما تحتاجه. صندوق أدوات ذكي واحد.</string>
+    <string name="search_hint">ابحث عن الأدوات…</string>
+    <string name="sponsored_offers">عروض برعاية</string>
+</resources>
