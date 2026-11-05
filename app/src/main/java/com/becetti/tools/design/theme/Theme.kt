@@ -15,7 +15,7 @@ private val LightScheme = lightColorScheme(
     onPrimary = androidx.compose.ui.graphics.Color.White,
     primaryContainer = LightOrange,
     secondary = SecondaryNavy,
-    background = LightGray,
+    background = BackgroundLight,
     surface = androidx.compose.ui.graphics.Color.White,
     error = Error
 )

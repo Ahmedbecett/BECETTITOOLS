@@ -1,16 +1,17 @@
 package com.becetti.tools.features.settings
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalContext
-import android.content.Intent
-import android.net.Uri
+import androidx.compose.ui.unit.dp
 
 @Composable
 fun SettingsScreen(vm: SettingsViewModel){
+    val ctx = LocalContext.current
     val lang by vm.language.collectAsState()
     val theme by vm.theme.collectAsState()
     Column(Modifier.fillMaxSize().padding(16.dp), verticalArrangement=Arrangement.spacedBy(12.dp)){
@@ -36,11 +37,16 @@ fun SettingsScreen(vm: SettingsViewModel){
         Text("Feedback: contact@becetti.tools")
         Row(horizontalArrangement=Arrangement.spacedBy(8.dp)){
             OutlinedButton(onClick={
-                val c = LocalContext.current
-                // placeholder - cannot access LocalContext here easily, navigate via intent in real app
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Ahmedbecett/BECETTITOOLS/blob/main/docs/PRIVACY_POLICY.md"))
+                ctx.startActivity(intent)
             }){ Text("Privacy Policy") }
+            OutlinedButton(onClick={
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Ahmedbecett/BECETTITOOLS"))
+                ctx.startActivity(intent)
+            }){ Text("GitHub") }
         }
         Text("Privacy policy available in docs/PRIVACY_POLICY.md and in-app.", style=MaterialTheme.typography.bodySmall)
-        Text("Open source libs: Room, DataStore, CameraX, ML Kit, ZXing, PDFBox-Android, Retrofit, Coil.", style=MaterialTheme.typography.bodySmall)
+        Text("Open source: Room, DataStore, CameraX, ML Kit, ZXing, PDFBox-Android, Retrofit, Coil.", style=MaterialTheme.typography.bodySmall)
+        Text("App version 1.0.0 (1) • com.becetti.tools", style=MaterialTheme.typography.labelSmall)
     }
 }

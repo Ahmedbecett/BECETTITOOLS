@@ -15,8 +15,6 @@ import com.google.zxing.qrcode.QRCodeWriter
 import android.content.ContentValues
 import android.os.Environment
 import android.provider.MediaStore
-import kotlinx.coroutines.launch
-import java.io.OutputStream
 
 fun generateQrBitmap(content: String, size:Int=512): Bitmap {
     val writer = QRCodeWriter()

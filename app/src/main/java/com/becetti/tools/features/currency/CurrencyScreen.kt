@@ -7,13 +7,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.becetti.tools.BecettiToolsApp
+import com.becetti.tools.core.utils.becettiDataStore
 import com.becetti.tools.data.remote.FrankfurterApi
 import kotlinx.coroutines.launch
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
-import com.becetti.tools.dataStore
 import kotlinx.coroutines.flow.map
 
 @Composable
@@ -41,8 +41,10 @@ fun CurrencyScreen(app: BecettiToolsApp) {
             result = "%.4f".format(v)
             lastUpdated = resp.date
             offline = false
-            // cache
-            ctx.dataStore.edit { it[stringPreferencesKey("cached_rates_${'$'}base")] = resp.rates.toString(); it[stringPreferencesKey("cached_date")] = resp.date }
+            ctx.becettiDataStore.edit { 
+                it[stringPreferencesKey("cached_rates_${'$'}base")] = resp.rates.toString()
+                it[stringPreferencesKey("cached_date")] = resp.date 
+            }
         } catch(e: Exception){
             offline = true
             result = "Offline — cached rates unavailable. Connect to update."
