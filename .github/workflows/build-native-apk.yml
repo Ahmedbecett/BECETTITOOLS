@@ -54,12 +54,11 @@ jobs:
           test ${PIPESTATUS[0]} -eq 0
           ls -lh app/build/outputs/apk/debug/
           stat -c%s app/build/outputs/apk/debug/app-debug.apk
-          sha256sum app/build/outputs/apk/debug/app-debug.apk
       - name: Verify native no WebView
         run: |
           if grep -R "WebView" app/src --include="*.kt" --include="*.xml"; then echo "WebView found"; exit 1; fi
-          echo "Native 100% Kotlin+Compose verified"
-      - name: Prepare commit
+          echo "Native verified"
+      - name: Prepare APK
         if: success()
         run: |
           cp app/build/outputs/apk/debug/app-debug.apk ./BECETTI-TOOLS-v1.0.0-NATIVE-debug.apk
@@ -72,18 +71,22 @@ jobs:
           commit_message: "ci: native APK v1.0.0 built (real SDK, no WebView) [skip ci]"
           file_pattern: "BECETTI-TOOLS*.apk*"
           branch: arena/354c3e44-becettitools
-      - name: Upload APK artifact
+      - name: On failure - commit log
+        if: failure()
+        run: |
+          echo "Build failed, committing log to repo for analysis"
+          mkdir -p /tmp/logs
+          cp /tmp/gradle.log ./gradle-failure.log || echo "no log" > ./gradle-failure.log
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add gradle-failure.log
+          git commit -m "ci: gradle failure log [skip ci]" || true
+          git push origin HEAD:arena/354c3e44-becettitools || true
+      - name: Upload APK
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: BECETTI-TOOLS-v1.0.0-debug-native
           path: app/build/outputs/apk/debug/app-debug.apk
-          retention-days: 30
-      - name: Upload log on failure
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: gradle-log
-          path: /tmp/gradle.log
-          retention-days: 7
+          if-no-files-found: ignore
 
