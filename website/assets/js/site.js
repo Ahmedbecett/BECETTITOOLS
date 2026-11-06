@@ -132,15 +132,23 @@
         localStorage.removeItem(KEY);
       } catch (e) {}
     }
+    /* One <script> per configured tag, each guarded by its own id, so a second call to
+       loadTag() can never duplicate a network request. */
     function loadTag() {
-      if (document.getElementById("monetag-tag")) return;
-      var s = document.createElement("script");
-      s.id = "monetag-tag";
-      s.src = cfg.src;
-      s.async = true;
-      s.setAttribute("data-zone", cfg.zone);
-      s.setAttribute("data-cfasync", "false");
-      document.head.appendChild(s);
+      var tags = cfg.tags || (cfg.src ? [{ src: cfg.src, zone: cfg.zone }] : []);
+      var root = document.body || document.documentElement;
+      tags.forEach(function (tag) {
+        if (!tag || !tag.src) return;
+        var id = tag.zone ? "monetag-tag-" + tag.zone : "monetag-tag";
+        if (document.getElementById(id)) return;
+        var s = document.createElement("script");
+        s.id = id;
+        s.src = tag.src;
+        s.async = true;
+        if (tag.zone) s.setAttribute("data-zone", tag.zone);
+        s.setAttribute("data-cfasync", "false");
+        root.appendChild(s);
+      });
       document.documentElement.setAttribute("data-ads", "loaded");
     }
     function show() {

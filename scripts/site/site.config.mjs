@@ -65,20 +65,39 @@ export const apk = {
   releaseUrl: "https://github.com/Ahmedbecett/BECETTITOOLS/releases/latest",
 };
 
-// ── Monetag site tag (in-page sponsored messages) ──────────────────────────────────
-// Zone 306773 is the *site* tag from the publisher dashboard. It is never hard-coded into the
-// HTML: the page ships this config as JSON and site.js injects the real <script> only after the
-// visitor presses "Accept" in the consent bar. Default is declined, and the choice is stored
+// ── Monetag site tags (in-page sponsored messages) ────────────────────────────────
+// Every tag the publisher dashboard hands out is listed here. None of them is hard-coded into
+// the HTML: the page ships this config as JSON and site.js injects the real <script> only after
+// the visitor presses "Accept" in the consent bar. Default is declined, and the choice is stored
 // locally under `becetti-ads-consent`.
+//
+// Only entries with `enabled: true` reach a page. Two live site tags on the same page compete for
+// the same ad slots and double-count impressions, so exactly one is on; the others stay here,
+// documented and one word away from being switched back on.
 export const ads = {
   enabled: true,
   provider: "Monetag",
-  tagSrc: "https://quge5.com/88/tag.min.js",
-  zone: "306773",
   consentKey: "becetti-ads-consent",
   // Landing pages only. The privacy policy pages stay ad-free.
   onPolicyPages: false,
+  tags: [
+    {
+      provider: "Monetag",
+      src: "https://nap5k.com/tag.min.js",
+      zone: "12206566",
+      enabled: true,
+    },
+    {
+      provider: "Monetag",
+      src: "https://quge5.com/88/tag.min.js",
+      zone: "306773",
+      enabled: false,
+    },
+  ],
 };
+
+/** Tags that are allowed to reach a page, in load order. */
+export const activeAdTags = ads.tags.filter((t) => t.enabled);
 
 export const contact = {
   // Already published by the project owner in the v1.0.0 release notes and earlier docs.

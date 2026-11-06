@@ -4,7 +4,7 @@
  * which is what search engines and link previews actually read.
  */
 
-import { repository, app, apk, contact, ads } from "./site.config.mjs";
+import { repository, app, apk, contact, ads, activeAdTags } from "./site.config.mjs";
 import { categories, tools } from "./i18n/tools.mjs";
 import { pages, locales } from "./i18n/pages.mjs";
 import { privacy } from "./i18n/privacy.mjs";
@@ -759,7 +759,10 @@ export function renderLanding({ urls, loc }) {
     jsonLd: landingJsonLd({ t, urls, loc, pagePath }),
     adsConfig:
       ads.enabled && !ads.onPolicyPages
-        ? { src: ads.tagSrc, zone: ads.zone, consentKey: ads.consentKey }
+        ? {
+            tags: activeAdTags.map((t) => ({ src: t.src, zone: t.zone })),
+            consentKey: ads.consentKey,
+          }
         : null,
   });
 
@@ -879,7 +882,12 @@ ${footer({ t, urls, loc, pagePath })}`;
 export function renderAdsVerify({ urls }) {
   const pagePath = "/ads-verify/";
   const prefix = prefixFor(pagePath);
-  const cfg = { src: ads.tagSrc, zone: ads.zone, consentKey: ads.consentKey, unconditional: true };
+  const cfg = {
+    tags: activeAdTags.map((t) => ({ src: t.src, zone: t.zone })),
+    consentKey: ads.consentKey,
+    unconditional: true,
+  };
+  const zones = activeAdTags.map((t) => t.zone).join(", ");
   return `<!doctype html>
 <html lang="en" dir="ltr">
 <head>
@@ -899,7 +907,7 @@ export function renderAdsVerify({ urls }) {
   <main id="main" class="wrap" style="padding:48px 24px;max-width:720px">
     <h1>Ad tag verification</h1>
     <p>This page exists so an advertising network's verification crawler can find the
-      Monetag site tag for zone ${esc(ads.zone)} without pressing a button. It is not linked
+      Monetag site tag for zone ${esc(zones)} without pressing a button. It is not linked
       from the site, is excluded from the sitemap and is marked <code>noindex</code>.</p>
     <p>On the real pages the tag is injected only after the visitor accepts it, so a first
       visit downloads no third-party code at all.</p>

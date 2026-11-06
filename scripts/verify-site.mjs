@@ -282,14 +282,20 @@ async function main() {
     docs.get(path.join(siteRoot, `privacy/${l === "en" ? "" : l + "/"}index.html`))
   );
 
+  const liveZones = landingDocs[0]?.match(/"zone":"(\d+)"/g) || [];
   check(
     "ads config published on all three landing pages",
-    landingDocs.every((h) => h.includes('id="becetti-ads"') && h.includes('"zone":"306773"'))
+    landingDocs.every((h) => h.includes('id="becetti-ads"') && h.includes('"zone":"12206566"'))
+  );
+  check(
+    "exactly one ad tag is live, with no duplicate zone",
+    landingDocs.every((h) => new Set(h.match(/"zone":"(\d+)"/g) || []).size === 1 && !h.includes("306773")),
+    liveZones.join(",")
   );
   const allHtml = files.filter((f) => f.endsWith(".html")).map((f) => docs.get(f));
   check(
     "Monetag tag is never hard-coded into HTML (consent-gated only)",
-    allHtml.every((h) => !/<script[^>]+src="https:\/\/quge5\.com/.test(h))
+    allHtml.every((h) => !/<script[^>]+src="https:\/\/(?:quge5|nap5k)\.com/.test(h))
   );
   check(
     "privacy pages carry neither the ad config nor the consent banner",
@@ -315,7 +321,7 @@ async function main() {
     Boolean(verifyDocs) &&
       verifyDocs.includes('content="noindex, nofollow, noarchive"') &&
       verifyDocs.includes('"unconditional":true') &&
-      !/<script[^>]+src="https:\/\/quge5\.com/.test(verifyDocs)
+      !/<script[^>]+src="https:\/\/(?:quge5|nap5k)\.com/.test(verifyDocs)
   );
   check("verification page carries the relaxed CSP it needs", verifyCsp.includes("script-src") && verifyCsp.includes("https:"));
   const sitemapXml = docs.get(path.join(siteRoot, "sitemap.xml")) || "";
@@ -332,7 +338,11 @@ async function main() {
     "site.js injects the tag only after an explicit accept",
     siteJs.includes('if (choice === "accept") loadTag();') &&
       siteJs.includes('document.createElement("script")') &&
-      siteJs.includes('getElementById("monetag-tag")')
+      siteJs.includes('"monetag-tag"')
+  );
+  check(
+    "the policy names the live zone and host",
+    policyDocs.every((h) => h.includes("12206566") && h.includes("nap5k.com") && !h.includes("306773"))
   );
 
   /* ---------------------- 5b2. Sitemap / robots MIME types ---------------------- */

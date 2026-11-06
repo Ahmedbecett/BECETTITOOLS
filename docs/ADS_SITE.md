@@ -4,7 +4,8 @@ Status: **active on the three landing pages, consent-gated.** Two publisher arte
 
 | Artefact | Zone | Host | State |
 |---|---|---|---|
-| Site tag (in-page sponsored messages) | `306773` | `quge5.com` | loaded **only after** the visitor presses "Accept ads" |
+| Site tag (in-page sponsored messages) | `12206566` | `nap5k.com` | loaded **only after** the visitor presses "Accept ads" |
+| Site tag, earlier zone | `306773` | `quge5.com` | kept in the config, `enabled: false` |
 | Service worker (`/sw.js`) | `12206346` | `5gvci.com` | published at the root, **not registered** by any page |
 
 A first visit fetches nothing third-party: the tag is stored as a JSON config block and `site.js`
@@ -17,13 +18,18 @@ byte-for-byte as it was before ads existed.
 
 | Item | Value |
 |---|---|
-| Site tag | `https://quge5.com/88/tag.min.js` · `data-zone="306773"` · `async` · `data-cfasync="false"` |
+| Site tag | `https://nap5k.com/tag.min.js` · `data-zone="12206566"` · `async` · `data-cfasync="false"` |
 | Config | `scripts/site/site.config.mjs` → `ads` |
 | Service worker file | `website/sw.js` (source: `scripts/site/static/sw.js`) |
 | SW SHA-256 | `5e7510cb4f3a9cab8dd72ea855b513784f7a2bd1b4f0e8e432b92cf23559c421` (156 bytes) |
 | SW content | `self.options = {domain:"5gvci.com", zoneId:12206346}` + `importScripts('https://5gvci.com/act/files/service-worker.min.js?r=sw')` |
 
 `build-site.mjs` copies the worker to the output root on every build, so a rebuild never loses it.
+
+**Zones are a list, not a constant.** `ads.tags` accepts every tag the dashboard hands out; only
+entries with `enabled: true` reach the page. Zone `306773` (`quge5.com`) is retained but switched
+off: two live site tags on one page compete for the same slots and double-count impressions. Flip
+`enabled` on that entry — and only that entry — if the older zone should come back.
 
 ---
 
@@ -32,13 +38,13 @@ byte-for-byte as it was before ads existed.
 Each landing page ships the config, never the live script:
 
 ```html
-<script type="application/json" id="becetti-ads">{"src":"https://quge5.com/88/tag.min.js","zone":"306773","consentKey":"becetti-ads-consent"}</script>
+<script type="application/json" id="becetti-ads">{"tags":[{"src":"https://nap5k.com/tag.min.js","zone":"12206566"}],"consentKey":"becetti-ads-consent"}</script>
 ```
 
 `assets/js/site.js` (deferred, ~1 KB) then:
 
 1. no stored choice → reveals the consent bar (`hidden` removed), makes **no** request;
-2. `accept` → stores `becetti-ads-consent=accept`, appends one `<script data-zone="306773" async data-cfasync="false">` to `<head>` (guarded by `#monetag-tag`, so never twice);
+2. `accept` → stores `becetti-ads-consent=accept`, appends one `<script data-zone="12206566" async data-cfasync="false">` per enabled entry in `ads.tags` (each guarded by `#monetag-tag-<zone>`, so never twice);
 3. `decline` → stores `becetti-ads-consent=decline`, injects nothing;
 4. footer **Ad settings** → clears the key and shows the bar again.
 
@@ -56,7 +62,7 @@ Privacy policy pages receive neither the config nor the bar, so they stay third-
 
 `img-src https:`, `frame-src https:` **and** `script-src https:` are scoped to the ad-bearing pages
 only: the tag pulls its runtime and creatives from hosts that cannot be enumerated in advance, and
-pinning `quge5.com` alone silently blocked part of the ad chain. Everything else on those pages
+pinning one host alone silently blocked part of the ad chain. Everything else on those pages
 stays locked (`object-src 'none'`, `form-action 'none'`, `base-uri 'self'`, `frame-ancestors 'self'`),
 and `/`, `/privacy/`, `/404.html` and `/sw.js` keep the original strict policy — asserted by
 `scripts/verify-site.mjs`.
@@ -77,7 +83,7 @@ consents; the `/sw.js` file simply has to exist at the root when it does.
 ## 5. Disclosure shipped with the change
 
 - [x] **Privacy policy** — new §14 "Advertising on this website" in EN/FR/AR: names Monetag, zone
-      `306773` and `quge5.com`, states the tag is consent-gated, records the local key
+      `12206566` and `nap5k.com`, states the tag is consent-gated, records the local key
       `becetti-ads-consent`, and says the network's own policy covers its processing.
 - [x] **Landing copy** — the FAQ answer "Will I see ads?" now separates the app (no SDK in v1.0.0)
       from the site (Monetag, consent-gated). The app-side trust block stays accurate because it
@@ -92,7 +98,7 @@ consents; the `/sw.js` file simply has to exist at the root when it does.
       by page code. The app's own `AdPolicy` (90 s / 3 per session) is untouched.
 - [x] **Quality gate** — `verify-site.mjs`: 250 checks, 0 failed (7 new: config on all three
       landing pages, no hard-coded tag, privacy pages clean, one bar per page, landing CSP allows
-      `quge5.com`, strict CSP untouched, injection only after accept).
+      `nap5k.com`, strict CSP elsewhere untouched, injection only after accept).
 
 ---
 
@@ -105,7 +111,7 @@ tag only after consent, so pointing the dashboard at them can report "tag not fo
 
 - unlinked, `noindex, nofollow, noarchive`, excluded from `sitemap.xml`, not in `robots.txt`;
 - loads the tag immediately (no consent step, no localStorage read), so any crawler or browser sees
-  `<script src="https://quge5.com/88/tag.min.js" data-zone="306773">` in the DOM;
+  `<script src="https://nap5k.com/tag.min.js" data-zone="12206566">` in the DOM;
 - shows a one-line status: "injected — the Monetag script is in this page".
 
 Paste that URL into the "add site / verify" field in the Monetag dashboard. If the dashboard accepts
@@ -119,8 +125,8 @@ fix that; wait for approval in the dashboard.
 Console check on a landing page after pressing **Accept ads**:
 
 ```js
-document.getElementById("monetag-tag")   // <script src="https://quge5.com/88/tag.min.js">
-document.documentElement.dataset.ads     // "loaded"
+document.getElementById("monetag-tag-12206566")   // <script src="https://nap5k.com/tag.min.js">
+document.documentElement.dataset.ads              // "loaded"
 ```
 
 ---
