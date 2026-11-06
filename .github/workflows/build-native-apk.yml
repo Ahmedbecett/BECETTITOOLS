@@ -2,7 +2,7 @@ name: Build BECETTI TOOLS Native APK
 
 on:
   push:
-    branches: ["arena/354c3e44-becettitools", "main"]
+    branches: ["main", "arena/**"]
   workflow_dispatch:
 
 permissions:
