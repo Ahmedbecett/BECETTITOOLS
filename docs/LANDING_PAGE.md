@@ -5,8 +5,9 @@ policy at `/privacy`. No framework, no build server needed at request time, no t
 requests: **8 HTML documents, one CSS file, one 3 KB script, vector screenshots** — roughly
 430 KiB total, or about 60 KiB for the first page view.
 
-> **Status: prepared, not deployed.** Publishing is an explicit decision for the project owner.
-> Nothing in this repository deploys itself and no production configuration has been changed.
+> **Status: live at <https://becetti-tools.vercel.app/>** (deployed 6 November 2026 on the owner's
+> explicit instruction). Nothing in this repository deploys itself: git auto-deploy is disabled
+> for the Vercel project, so a push never publishes. See §3 for the configuration in force.
 
 ---
 
@@ -88,32 +89,69 @@ hreflang pair and the sitemap against the configured base.
 
 ## 3. Publishing options
 
-### A. Existing Vercel project `becetti-tools` (recommended — URL already publicised)
+### A. Vercel project `becetti-tools` — **live** (current deployment)
 
-The project already exists with **Root Directory = `website`**, but its framework preset is
-`nextjs`, which would try to run `next build` in a directory that has no Next.js app. Switch it
-to a static site once:
+Deployed 2026-11-06 as production deployment `dpl_DE6ShYcTyt3qyAziLXeZCZ2hXqrJ`
+(state `READY`, promoted to production).
 
-1. Vercel → project **becetti-tools** → *Settings* → *Build & Development Settings*.
-2. **Framework Preset:** `Other`. **Build Command:** empty. **Output Directory:** empty
-   (the `website` root is served as-is).
-3. *Settings → Git*: connect `Ahmedbecett/BECETTITOOLS`, production branch `main`
-   (enable **Production Deployments** — they are currently disabled for this project).
-4. Deploy. Verify:
-   - `https://becetti-tools.vercel.app/` → 308 to `/becetti-tools/`
-   - `https://becetti-tools.vercel.app/becetti-tools/` → English landing page
-   - `/becetti-tools/fr/`, `/becetti-tools/ar/`, `/privacy/`, `/sitemap.xml`, `/robots.txt`
+**Public URL: <https://becetti-tools.vercel.app/>** — `/` 308-redirects to `/becetti-tools/`.
 
-Without the dashboard you can also deploy a directory directly with the Vercel CLI:
+Settings in force (project `becetti-tools`, root directory `website`):
 
-```bash
-npx vercel --cwd website --prod      # after `vercel link` to the becetti-tools project
-```
+| Setting | Value | Meaning |
+|---|---|---|
+| Root Directory | `website` | the built site is committed to the repo |
+| Framework Preset | `hugo` (a *static* preset) | see the note below |
+| Build Command | `true` | no-op: nothing is built, the files are already final |
+| Install Command | `true` | no-op: the site has no dependencies |
+| Output Directory | `.` | serve `website/` exactly as committed |
 
-### B. New, separate Vercel project (leaves the existing one untouched)
+Why a static preset and not "Other": Vercel stores the "Other" preset as `framework: null`, and
+the deployment tooling used here cannot send `null` (an explicit `null`/`""`/`"other"` is
+rejected: *"The provided framework must match one of the supported options"*). A brand-new
+project's *first* deployment also demands a `projectSettings` object that the same tooling
+cannot send. Picking a real static preset and neutralising it with no-op commands sidesteps
+both constraints without changing a single byte of the output. The `nextjs` preset the project
+used to carry is gone — that preset was running `next build` in a directory with no Next.js app,
+which is why both earlier deployments failed.
 
-Create a project whose root directory is `website` and framework `Other`, then deploy. The
-canonical base changes to the new domain — rebuild with `--base-url` first.
+Aliases:
+
+| Host | Public? |
+|---|---|
+| `becetti-tools.vercel.app` | **yes** — registered as a project domain, bypasses the auth gate |
+| `becetti-tools-ahmed-d33b.vercel.app` | no — automatic alias, behind *Vercel Authentication* |
+| `becetti-tools-git-<branch>-ahmed-d33b.vercel.app` | no — same protection |
+
+The protection comes from `ssoProtection.deploymentType = all_except_custom_domains`: every
+deployment is gated **except** on registered/project domains. Only `becetti-tools.vercel.app` is
+linked in the site's canonical, Open Graph and sitemap tags, so the sitemap never points at a
+gated host. To make the auto-generated aliases public too, disable *Settings → Deployment
+Protection → Vercel Authentication* in the dashboard.
+
+Publishing an update:
+
+- Git auto-deploy is **disabled** for the connected repository (`createDeployments: "disabled"`,
+  `disableRepositoryDispatchEvents: true`), so **a push does not publish anything**. This is
+  deliberate: the live site only changes when someone asks for it.
+- Rebuild and commit first (`node scripts/build-site.mjs && node scripts/verify-site.mjs`), then
+  either press *Redeploy* on the dashboard or create a deployment from the git source with
+  target `production` (the method used for this release).
+- The canonical base is the `baseUrl` default in `scripts/site/site.config.mjs`
+  (`https://becetti-tools.vercel.app`), which is the public host — no `--base-url` override
+  needed for a redeploy.
+
+Verified live on 2026-11-06: `/` → 308 → `/becetti-tools/` (EN landing page),
+`/becetti-tools/fr/`, `/becetti-tools/ar/` (Arabic title + RTL markup), `/privacy/`,
+`/sitemap.xml` (6 URLs), `/robots.txt`.
+
+### B. New, separate Vercel project (fallback — *not* used; the existing project is live)
+
+Create a project whose root directory is `website`, framework preset *any static preset* with
+no-op build/install commands and output directory `.` (the "Other" preset cannot be set through
+API tooling, and a new project's first deployment requires a `projectSettings` payload). The
+canonical base changes to the new domain — rebuild with `--base-url` first. The new project's
+`*.vercel.app` aliases are also behind Vercel Authentication until a domain is attached.
 
 ### C. GitHub Pages
 

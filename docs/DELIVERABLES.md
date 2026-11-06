@@ -12,15 +12,18 @@ integration rules and commit history are **unchanged**. Everything here is addit
 |---|---|---|---|
 | 1 | Existing v1.0.0 APK preserved | ✅ Done | `BECETTI-TOOLS-v1.0.0-NATIVE-debug.apk` (88,869,105 bytes, SHA-256 `460235a2…22632`) — untouched |
 | 2 | GitHub Release page | ✅ Notes rewritten (artifacts untouched) | <https://github.com/Ahmedbecett/BECETTITOOLS/releases/tag/v1.0.0> · source: `docs/RELEASE_NOTES_v1.0.0.md` |
-| 3 | Professional download landing page | ✅ Built, deploy-ready (not deployed) | `website/` · guide: `docs/LANDING_PAGE.md` |
+| 3 | Professional download landing page | ✅ **Live** — <https://becetti-tools.vercel.app/> | `website/` · deploy notes: `docs/LANDING_PAGE.md` §3 |
 | 4 | SEO and sitemap configuration | ✅ Built + verified | `website/robots.txt`, `website/sitemap.xml`, JSON-LD in every page · checklist: `docs/SEO_CHECKLIST.md` |
 | 5 | Public privacy policy | ✅ Published-ready in 3 languages | `website/privacy/` (+ `/fr/`, `/ar/`) · mirror: `docs/PUBLIC_PRIVACY_POLICY.md` |
 | 6 | Screenshots and documentation | ✅ 6 illustrative previews + OG image; swap guide included | `website/assets/img/previews/` · `screenshots/README.md` |
 | 7 | Testing report | ✅ Written, scope stated honestly | `docs/TESTING_REPORT_v1.0.0.md` |
 | 8 | Separate future-enhancement list | ✅ Written as proposals only | `docs/FUTURE_ENHANCEMENTS.md` |
 
-Deployment was explicitly left to the project owner (brief §10). Nothing was published, no
-production setting was changed, and no APK was uploaded, rebuilt or replaced.
+Delivered as files first, then published on the owner's explicit instruction ("انشر الموقع") on
+6 November 2026: the landing page is live at <https://becetti-tools.vercel.app/>, served from the
+existing Vercel project `becetti-tools` (root directory `website`, no build step). The APK, the
+GitHub release, the package name and every line of Android source remain untouched — see
+`docs/LANDING_PAGE.md` §3 for the exact configuration and the redeploy procedure.
 
 ---
 

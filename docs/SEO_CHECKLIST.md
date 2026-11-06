@@ -87,7 +87,10 @@ Validate after deploying:
 
 ## 4. Google Search Console (after deployment)
 
-1. Add a **URL-prefix property** for the deployed origin (e.g. `https://becetti-tools.vercel.app/`).
+The site is live at **<https://becetti-tools.vercel.app/>** (deployed 2026-11-06); the steps below
+are owner-side actions and have not been performed.
+
+1. Add a **URL-prefix property** for `https://becetti-tools.vercel.app/`.
 2. Verify ownership — DNS TXT record for a custom domain, or an HTML file / `<meta>` tag for a
    `*.vercel.app` host (add the token to `scripts/site/render.mjs` → `head()` if a meta tag is
    required, then rebuild).
