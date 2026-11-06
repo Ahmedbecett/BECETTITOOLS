@@ -12,3 +12,6 @@ captures/
 *.aab
 keystore.properties
 *.jks
+# Allow native built APK for distribution
+!BECETTI-TOOLS*.apk
+!BECETTI-TOOLS*.apk.sha256
