@@ -30,7 +30,7 @@ fun SplashScreen(onFinished: () -> Unit) {
     )
     val scaleAnim = animateFloatAsState(
         targetValue = if (startAnimation) 1f else 0.6f,
-        animationSpec = tween(durationMillis = 900, easing = EaseOutBackEasing),
+        animationSpec = tween(durationMillis = 900, easing = FastOutSlowInEasing),
         label = "scale"
     )
     val infiniteTransition = rememberInfiniteTransition(label = "glow")
