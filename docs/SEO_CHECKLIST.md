@@ -132,3 +132,23 @@ Re-measure after deploying with PageSpeed Insights; local numbers are not a subs
   appears under `website/`.
 - No keystore, `local.properties` or `.env` is ever published — also checked.
 - The published SHA-256 is recomputed from the repository file on every verification run.
+
+---
+
+## 7. Google Search Console
+
+Verification uses Google's HTML file method, so no DNS or meta-tag change is needed and the
+ownership proof lives with the site source:
+
+- file: `google16fac1570d0d10bd.html` (53 bytes, content `google-site-verification: google16fac1570d0d10bd.html`)
+- source of truth: `scripts/site/static/google16fac1570d0d10bd.html`, copied to the site root by
+  `build-site.mjs`
+- live at: `https://becetti-tools.vercel.app/google16fac1570d0d10bd.html`
+- never edited, reformatted or line-wrapped: Google compares the text it fetches
+
+`verify-site.mjs` asserts the file is byte-exact at the root, that no redirect or rewrite we ship
+captures it, and that it is not listed in `sitemap.xml` or `robots.txt`.
+
+Submit the sitemap after verification: Search Console → *Sitemaps* →
+`https://becetti-tools.vercel.app/sitemap.xml` (6 URLs: 3 landing pages + 3 privacy pages, each with
+`hreflang` alternates). `/ads-verify/` is intentionally excluded (noindex).

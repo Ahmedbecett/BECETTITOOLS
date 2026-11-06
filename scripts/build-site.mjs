@@ -96,6 +96,10 @@ async function main() {
   await copyAsset("logo.svg", "assets/img/logo.svg");
   await copyAsset("favicon.svg", "assets/img/favicon.svg");
 
+  // Google Search Console site-verification file. Byte-identical to what Google issues —
+  // never edited, never renamed, never wrapped: Google fetches it and compares the text.
+  await copyAsset("google16fac1570d0d10bd.html", "google16fac1570d0d10bd.html");
+
   // Monetag service worker, served from the site root so its scope covers the whole origin.
   // The file is byte-identical to what the network dashboard hands out — do not edit it here;
   // see docs/ADS_SITE.md for what it does and what must be disclosed before it is registered.

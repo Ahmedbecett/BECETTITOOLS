@@ -335,6 +335,28 @@ async function main() {
       siteJs.includes('getElementById("monetag-tag")')
   );
 
+  /* --------------------- 5d. Google site verification file --------------------- */
+  const gvName = "google16fac1570d0d10bd.html";
+  const gvFile = path.join(siteRoot, gvName);
+  const gvText = existsSync(gvFile) ? await readFile(gvFile, "utf8") : "";
+  check(
+    "Google verification file sits at the site root, byte for byte",
+    gvText === `google-site-verification: ${gvName}`,
+    `${Buffer.byteLength(gvText)} bytes`
+  );
+  // Vercel's own clean-URL rules only fire on extension-less paths and on files requested
+  // with a trailing slash, so a dotted file at the root is served untouched. What could
+  // still break it is a redirect/rewrite we ship ourselves.
+  const gvTouched =
+    (vercel.redirects || []).some((r) => r.source === `/${gvName}` || r.source === `/${gvName}/`) ||
+    (vercel.rewrites || []).length > 0;
+  check("verification file is reachable: no redirect or rewrite captures it", !gvTouched);
+  check(
+    "verification file is not advertised as content",
+    !(docs.get(path.join(siteRoot, "sitemap.xml")) || "").includes(gvName) &&
+      !(docs.get(path.join(siteRoot, "robots.txt")) || "").includes(gvName)
+  );
+
   /* --------------------------- 6. Artifact integrity --------------------------- */
   const apkPath = path.join(repoRoot, apk.fileName);
   if (existsSync(apkPath)) {
