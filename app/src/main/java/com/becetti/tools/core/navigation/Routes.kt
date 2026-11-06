@@ -1,6 +1,7 @@
 package com.becetti.tools.core.navigation
 
 sealed class Route(val route: String) {
+    object Splash : Route("splash")
     object Home : Route("home")
     object Categories : Route("categories")
     object Favorites : Route("favorites")
@@ -23,5 +24,6 @@ sealed class Route(val route: String) {
     object Ocr : Route("ocr")
     object TextToolkit : Route("text_toolkit")
     object Notes : Route("notes")
+    object FileManager : Route("file_manager")
     object NoteDetail : Route("note_detail/{id}") { fun create(id: Long) = "note_detail/$id" }
 }

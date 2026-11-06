@@ -11,8 +11,8 @@ android {
         applicationId = "com.becetti.tools"
         minSdk = 24
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = 2
+        versionName = "1.1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables { useSupportLibrary = true }
     }
@@ -49,6 +49,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.datastore:datastore-preferences:1.0.0")
+    implementation("androidx.appcompat:appcompat:1.6.1")
 
     // Room
     implementation("androidx.room:room-runtime:2.6.1")
@@ -66,24 +67,26 @@ dependencies {
     implementation("androidx.camera:camera-lifecycle:1.3.1")
     implementation("androidx.camera:camera-view:1.3.1")
 
-    // MLKit barcode + text recognition
+    // MLKit
     implementation("com.google.mlkit:barcode-scanning:17.2.0")
     implementation("com.google.mlkit:text-recognition:16.0.0")
-    // Latin + Arabic support handled via MLKit v2 optional:
-    // implementation("com.google.mlkit:text-recognition-chinese:16.0.1")
 
-    // ZXing for QR generation (pure java, no extra permission)
+    // ZXing
     implementation("com.google.zxing:core:3.5.3")
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
 
-    // PDFBox Android for PDF merge (Apache 2.0)
+    // PDFBox
     implementation("com.tom-roush:pdfbox-android:2.0.27.0")
 
-    // Networking for currency (OkHttp + Retrofit)
+    // Networking
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+
+    // ZArchiver-like: Commons Compress + Zip4j
+    implementation("org.apache.commons:commons-compress:1.26.1")
+    implementation("net.lingala.zip4j:zip4j:2.11.5")
 
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")

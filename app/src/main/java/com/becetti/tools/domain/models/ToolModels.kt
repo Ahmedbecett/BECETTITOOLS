@@ -1,7 +1,7 @@
 package com.becetti.tools.domain.models
 
 data class ToolItem(val id: String, val name: String, val description: String, val category: ToolCategory, val icon: String, val route: String)
-enum class ToolCategory { CALCULATOR_CONVERTERS, QR_SECURITY, DOCUMENTS_FILES, TEXT_UTILITIES, IMAGE_UTILITIES, DATE_TIME }
+enum class ToolCategory { CALCULATOR_CONVERTERS, QR_SECURITY, DOCUMENTS_FILES, TEXT_UTILITIES, IMAGE_UTILITIES, DATE_TIME, FILE_MANAGER }
 
 object ToolCatalog {
     val all = listOf(
@@ -20,6 +20,7 @@ object ToolCatalog {
         ToolItem("ocr","OCR Text Extractor","Arabic/FR/EN", ToolCategory.DOCUMENTS_FILES,"text_fields","ocr"),
         ToolItem("text_toolkit","Text Toolkit","Word count & transforms", ToolCategory.TEXT_UTILITIES,"text_format","text_toolkit"),
         ToolItem("notes","Notes Manager","Local notes with search", ToolCategory.TEXT_UTILITIES,"note","notes"),
+        ToolItem("file_manager","File Manager (ZArchiver)","Browse, Zip/Unzip, Share, Full access", ToolCategory.FILE_MANAGER,"folder","file_manager"),
     )
     fun byCategory(c: ToolCategory) = all.filter { it.category == c }
 }

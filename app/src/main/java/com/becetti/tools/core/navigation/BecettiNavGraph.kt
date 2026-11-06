@@ -16,6 +16,7 @@ import com.becetti.tools.features.calculator.CalculatorScreen
 import com.becetti.tools.features.converter.UnitConverterScreen
 import com.becetti.tools.features.currency.CurrencyScreen
 import com.becetti.tools.features.favorites.FavoritesScreen
+import com.becetti.tools.features.files.FileManagerScreen
 import com.becetti.tools.features.history.HistoryScreen
 import com.becetti.tools.features.home.CategoriesScreen
 import com.becetti.tools.features.home.HomeScreen
@@ -31,6 +32,7 @@ import com.becetti.tools.features.qr.QrGeneratorScreen
 import com.becetti.tools.features.qr.QrScannerScreen
 import com.becetti.tools.features.settings.SettingsScreen
 import com.becetti.tools.features.settings.SettingsViewModel
+import com.becetti.tools.features.splash.SplashScreen
 import com.becetti.tools.features.text.TextToolkitScreen
 
 data class BottomItem(val route: String, val label: String, val icon: ImageVector)
@@ -45,22 +47,33 @@ fun BecettiNavGraph(app: BecettiToolsApp, settingsViewModel: SettingsViewModel) 
         BottomItem(Route.History.route, "History", Icons.Filled.History),
         BottomItem(Route.Settings.route, "Settings", Icons.Filled.Settings)
     )
+    // Show bottom bar only after splash
+    var showBottomBar by remember { mutableStateOf(false) }
     Scaffold(bottomBar = {
-        NavigationBar {
-            val current = nav.currentBackStackEntryFlow.collectAsState(initial = nav.currentBackStackEntry).value?.destination?.route
-            bottomItems.forEach { item ->
-                NavigationBarItem(selected = current == item.route, onClick = {
-                    nav.navigate(item.route) { launchSingleTop = true; popUpTo(Route.Home.route) }
-                }, icon = { Icon(item.icon, contentDescription = item.label) }, label = { Text(item.label) })
+        if (showBottomBar) {
+            NavigationBar {
+                val current = nav.currentBackStackEntryFlow.collectAsState(initial = nav.currentBackStackEntry).value?.destination?.route
+                bottomItems.forEach { item ->
+                    NavigationBarItem(selected = current == item.route, onClick = {
+                        nav.navigate(item.route) { launchSingleTop = true; popUpTo(Route.Home.route) }
+                    }, icon = { Icon(item.icon, contentDescription = item.label) }, label = { Text(item.label) })
+                }
             }
         }
     }) { pad ->
-        NavHost(navController = nav, startDestination = Route.Home.route, modifier = Modifier.padding(pad)) {
-            composable(Route.Home.route) { HomeScreen(app, nav) }
-            composable(Route.Categories.route) { CategoriesScreen(nav) }
-            composable(Route.Favorites.route) { FavoritesScreen(app, nav) }
-            composable(Route.History.route) { HistoryScreen(app) }
-            composable(Route.Settings.route) { SettingsScreen(settingsViewModel) }
+        NavHost(navController = nav, startDestination = Route.Splash.route, modifier = Modifier.padding(pad)) {
+            composable(Route.Splash.route) {
+                showBottomBar = false
+                SplashScreen(onFinished = {
+                    showBottomBar = true
+                    nav.navigate(Route.Home.route) { popUpTo(Route.Splash.route) { inclusive = true } }
+                })
+            }
+            composable(Route.Home.route) { showBottomBar = true; HomeScreen(app, nav) }
+            composable(Route.Categories.route) { showBottomBar = true; CategoriesScreen(nav) }
+            composable(Route.Favorites.route) { showBottomBar = true; FavoritesScreen(app, nav) }
+            composable(Route.History.route) { showBottomBar = true; HistoryScreen(app) }
+            composable(Route.Settings.route) { showBottomBar = true; SettingsScreen(settingsViewModel) }
             composable(Route.ScientificCalculator.route) { CalculatorScreen(app) }
             composable(Route.UnitConverter.route) { UnitConverterScreen() }
             composable(Route.CurrencyConverter.route) { CurrencyScreen(app) }
@@ -76,6 +89,7 @@ fun BecettiNavGraph(app: BecettiToolsApp, settingsViewModel: SettingsViewModel) 
             composable(Route.Ocr.route) { OcrScreen() }
             composable(Route.TextToolkit.route) { TextToolkitScreen() }
             composable(Route.Notes.route) { NotesScreen(app, nav) }
+            composable(Route.FileManager.route) { FileManagerScreen() }
         }
     }
 }

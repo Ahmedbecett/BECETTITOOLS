@@ -1,5 +1,6 @@
 package com.becetti.tools.features.settings
 
+import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
 import com.becetti.tools.BecettiToolsApp
@@ -15,7 +16,13 @@ class SettingsViewModel(private val app: BecettiToolsApp, private val ds: DataSt
     val language: StateFlow<String> = ds.data.map{ it[LANG] ?: "en" }.stateIn(viewModelScope, SharingStarted.Eagerly, "en")
     val theme: StateFlow<String> = ds.data.map{ it[THEME] ?: "system" }.stateIn(viewModelScope, SharingStarted.Eagerly, "system")
 
-    fun setLanguage(l: String){ viewModelScope.launch{ ds.edit{ it[LANG]=l } } }
+    fun setLanguage(l: String){
+        viewModelScope.launch{
+            ds.edit{ it[LANG]=l }
+            // backup to sharedPrefs for attachBaseContext (which runs before DataStore)
+            app.getSharedPreferences("becetti_prefs_backup", Context.MODE_PRIVATE).edit().putString("language_backup", l).apply()
+        }
+    }
     fun setTheme(t: String){ viewModelScope.launch{ ds.edit{ it[THEME]=t } } }
     fun clearHistory(){ viewModelScope.launch{ app.database.historyDao().clear() } }
 

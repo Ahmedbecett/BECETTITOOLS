@@ -5,4 +5,59 @@
     <string name="sponsored_offers">Sponsored Offers</string>
     <string name="camera_perm_rationale">Camera access is needed for QR scanning and is requested only when you open the scanner.</string>
     <string name="file_perm_rationale">File access is needed to select images/PDFs for processing. Files are processed locally.</string>
+    <!-- Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_categories">Categories</string>
+    <string name="nav_favorites">Favorites</string>
+    <string name="nav_history">History</string>
+    <string name="nav_settings">Settings</string>
+    <!-- Categories -->
+    <string name="cat_calc_converters">Calculator &amp; Converters</string>
+    <string name="cat_qr_security">QR &amp; Security</string>
+    <string name="cat_docs_files">Documents &amp; Files</string>
+    <string name="cat_text_utils">Text Utilities</string>
+    <string name="cat_image_utils">Image Utilities</string>
+    <string name="cat_date_time">Date &amp; Time</string>
+    <string name="cat_file_manager">File Manager</string>
+    <!-- Tools -->
+    <string name="tool_scientific">Scientific Calculator</string>
+    <string name="tool_unit">Unit Converter</string>
+    <string name="tool_currency">Currency Converter</string>
+    <string name="tool_percentage">Percentage Calculator</string>
+    <string name="tool_age">Age Calculator</string>
+    <string name="tool_qr_gen">QR Generator</string>
+    <string name="tool_qr_scan">QR Scanner</string>
+    <string name="tool_pass_gen">Password Generator</string>
+    <string name="tool_pass_strength">Password Strength</string>
+    <string name="tool_img2pdf">Image to PDF</string>
+    <string name="tool_pdf_merge">PDF Merger</string>
+    <string name="tool_img_compress">Image Compressor</string>
+    <string name="tool_ocr">OCR Text Extractor</string>
+    <string name="tool_text_toolkit">Text Toolkit</string>
+    <string name="tool_notes">Notes Manager</string>
+    <string name="tool_file_manager">File Manager (ZArchiver)</string>
+    <string name="tool_archive">Archive Manager</string>
+    <!-- File Manager -->
+    <string name="fm_title">File Manager</string>
+    <string name="fm_internal">Internal Storage</string>
+    <string name="fm_create_folder">Create Folder</string>
+    <string name="fm_compress">Compress to ZIP</string>
+    <string name="fm_extract">Extract Here</string>
+    <string name="fm_share">Share</string>
+    <string name="fm_delete">Delete</string>
+    <string name="fm_rename">Rename</string>
+    <string name="fm_copy">Copy</string>
+    <string name="fm_move">Move</string>
+    <string name="fm_properties">Properties</string>
+    <string name="fm_select_all">Select All</string>
+    <string name="fm_storage_permission">Full file access required to browse all files. Grant permission in settings.</string>
+    <!-- Common -->
+    <string name="action_cancel">Cancel</string>
+    <string name="action_ok">OK</string>
+    <string name="action_save">Save</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_share">Share</string>
+    <string name="language">Language</string>
+    <string name="theme">Theme</string>
+    <string name="settings">Settings</string>
 </resources>
