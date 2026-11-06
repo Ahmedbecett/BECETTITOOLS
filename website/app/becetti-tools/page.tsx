@@ -104,7 +104,7 @@ const STRINGS: any = {
 };
 
 export default function BecettiToolsPage() {
-  const [lang, setLang] = useState<keyof typeof STRINGS>("en");
+  const [lang, setLang] = useState<"en"|"fr"|"ar">("en");
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const t: any = STRINGS[lang];
   const isRTL = lang === "ar";
