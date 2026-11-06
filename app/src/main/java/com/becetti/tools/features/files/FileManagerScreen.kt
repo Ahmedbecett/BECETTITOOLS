@@ -327,7 +327,7 @@ fun FileManagerScreen() {
                                 Icon(
                                     when {
                                         file.isDirectory -> Icons.Filled.Archive
-                                        file.name.lowercase().endsWith(".zip") -> Icons.Filled.Unarchive
+                                        file.name.lowercase().endsWith(".zip") -> Icons.Filled.Archive
                                         else -> Icons.Filled.MoreVert
                                     },
                                     null, modifier = Modifier.size(18.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant
@@ -347,7 +347,7 @@ fun FileManagerScreen() {
                     if (selected.isEmpty()) status = "Select files to compress"
                     else showCompressDialog = true
                 }
-                BottomAction(Icons.Filled.Unarchive, "Extract") {
+                BottomAction(Icons.Filled.Archive, "Extract") {
                     val zip = selected.firstOrNull { it.name.lowercase().endsWith(".zip") }
                     if (zip != null) {
                         try {
