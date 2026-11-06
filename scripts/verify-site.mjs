@@ -243,6 +243,37 @@ async function main() {
   check("vercel.json redirects / to the landing page", vercel.redirects?.[0]?.destination === "/becetti-tools/");
   check("vercel.json sets security headers", vercel.headers?.some((h) => h.headers.some((x) => x.key === "Content-Security-Policy")));
 
+  /* ----------------- 5b. Ad-network service worker (Monetag) ----------------- */
+  const swOut = path.join(siteRoot, "sw.js");
+  check("sw.js is published at the site root", existsSync(swOut), rel(swOut));
+  if (existsSync(swOut)) {
+    const swText = await readFile(swOut, "utf8");
+    const vendorText = await readFile(path.join(here, "site", "static", "sw.js"), "utf8");
+    check("sw.js is byte-identical to the vendored copy", swText === vendorText);
+    check(
+      "sw.js points at the configured Monetag zone",
+      /"?zoneId"?\s*:\s*12206346/.test(swText) && swText.includes("5gvci.com")
+    );
+    const swRule = vercel.headers?.find((h) => h.source === "/sw.js");
+    const swCsp = swRule?.headers.find((x) => x.key === "Content-Security-Policy")?.value ?? "";
+    check(
+      "vercel.json relaxes CSP for /sw.js only",
+      swCsp.includes("5gvci.com") && swCsp.includes("script-src 'self' https://5gvci.com")
+    );
+    check(
+      "sw.js is served uncached with an origin-wide scope",
+      !!swRule &&
+        swRule.headers.some((x) => x.key === "Cache-Control" && x.value.includes("max-age=0")) &&
+        swRule.headers.some((x) => x.key === "Service-Worker-Allowed" && x.value === "/")
+    );
+    const pageCsp =
+      vercel.headers?.[0]?.headers.find((x) => x.key === "Content-Security-Policy")?.value ?? "";
+    check(
+      "page CSP still forbids third-party scripts",
+      /script-src 'self'/.test(pageCsp) && !/https?:/.test(pageCsp)
+    );
+  }
+
   /* --------------------------- 6. Artifact integrity --------------------------- */
   const apkPath = path.join(repoRoot, apk.fileName);
   if (existsSync(apkPath)) {

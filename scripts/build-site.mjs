@@ -94,6 +94,11 @@ async function main() {
   await copyAsset("logo.svg", "assets/img/logo.svg");
   await copyAsset("favicon.svg", "assets/img/favicon.svg");
 
+  // Monetag service worker, served from the site root so its scope covers the whole origin.
+  // The file is byte-identical to what the network dashboard hands out — do not edit it here;
+  // see docs/ADS_SITE.md for what it does and what must be disclosed before it is registered.
+  await copyAsset("sw.js", "sw.js");
+
   // Illustrative UI previews
   for (const id of Object.keys(previews)) {
     await emit(`assets/img/previews/${id}.svg`, renderPreview(id));

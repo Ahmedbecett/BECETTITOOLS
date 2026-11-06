@@ -995,6 +995,21 @@ export function renderVercelConfig() {
           source: "/assets/(.*)",
           headers: [{ key: "Cache-Control", value: "public, max-age=3600, must-revalidate" }],
         },
+        {
+          // The ad network's service worker imports its own runtime from 5gvci.com, which the
+          // page-level CSP (default-src 'self') would block. This relaxes CSP for /sw.js only —
+          // no HTML page is allowed to load a third-party script.
+          source: "/sw.js",
+          headers: [
+            {
+              key: "Content-Security-Policy",
+              value:
+                "default-src 'self' https://5gvci.com; script-src 'self' https://5gvci.com; connect-src 'self' https://5gvci.com; img-src 'self' data: https://5gvci.com",
+            },
+            { key: "Cache-Control", value: "public, max-age=0, must-revalidate" },
+            { key: "Service-Worker-Allowed", value: "/" },
+          ],
+        },
       ],
     },
     null,
