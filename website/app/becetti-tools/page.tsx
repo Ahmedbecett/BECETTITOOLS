@@ -121,7 +121,7 @@ export default function BecettiToolsPage() {
     document.documentElement.setAttribute("dir", isRTL ? "rtl" : "ltr");
     document.documentElement.lang = lang as string;
     localStorage.setItem("becetti-theme", theme);
-    localStorage.setItem("becetti-lang", lang);
+    localStorage.setItem("becetti-lang", lang as string);
   }, [theme, lang, isRTL]);
 
   const APK_URL = "https://raw.githubusercontent.com/Ahmedbecett/BECETTITOOLS/main/BECETTI-TOOLS-v1.0.0-NATIVE-debug.apk";
