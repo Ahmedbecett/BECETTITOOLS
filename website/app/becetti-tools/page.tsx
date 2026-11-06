@@ -119,7 +119,7 @@ export default function BecettiToolsPage() {
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
     document.documentElement.setAttribute("dir", isRTL ? "rtl" : "ltr");
-    document.documentElement.lang = lang;
+    document.documentElement.lang = lang as string;
     localStorage.setItem("becetti-theme", theme);
     localStorage.setItem("becetti-lang", lang);
   }, [theme, lang, isRTL]);
