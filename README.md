@@ -3,7 +3,7 @@
 Native Android Utility App (Kotlin + Jetpack Compose + Material 3, MVVM + Clean Architecture).
 
 ## Package
-- `com.becetti.tools` — Version 1.0.0 — minSdk 24, targetSdk 34, Android 13+ supported.
+- `com.becetti.tools` — Version 1.1.0 Huge Edition — minSdk 24, targetSdk 34, Android 13+ supported.
 
 ## Features (15 tools, all functional)
 **Calculator & Converters**
