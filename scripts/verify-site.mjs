@@ -335,6 +335,18 @@ async function main() {
       siteJs.includes('getElementById("monetag-tag")')
   );
 
+  /* ---------------------- 5b2. Sitemap / robots MIME types ---------------------- */
+  const xmlRule = vercel.headers?.find((h) => h.source === "/sitemap.xml");
+  const txtRule = vercel.headers?.find((h) => h.source === "/robots.txt");
+  check(
+    "sitemap.xml declares an XML content type",
+    (xmlRule?.headers.find((x) => x.key === "Content-Type")?.value || "").startsWith("application/xml")
+  );
+  check(
+    "robots.txt declares a text content type",
+    (txtRule?.headers.find((x) => x.key === "Content-Type")?.value || "").startsWith("text/plain")
+  );
+
   /* --------------------- 5d. Google site verification file --------------------- */
   const gvName = "google16fac1570d0d10bd.html";
   const gvFile = path.join(siteRoot, gvName);

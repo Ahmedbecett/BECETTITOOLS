@@ -1087,6 +1087,22 @@ export function renderVercelConfig() {
           headers: [{ key: "Cache-Control", value: "public, max-age=3600, must-revalidate" }],
         },
         {
+          // Search Console is picky about MIME types; state them explicitly instead of
+          // relying on the edge's guess.
+          source: "/sitemap.xml",
+          headers: [
+            { key: "Content-Type", value: "application/xml; charset=utf-8" },
+            { key: "Cache-Control", value: "public, max-age=3600, must-revalidate" },
+          ],
+        },
+        {
+          source: "/robots.txt",
+          headers: [
+            { key: "Content-Type", value: "text/plain; charset=utf-8" },
+            { key: "Cache-Control", value: "public, max-age=3600, must-revalidate" },
+          ],
+        },
+        {
           // Landing pages carry the consent-gated Monetag tag, so their CSP has to allow it.
           // Privacy pages, 404 and the root redirect keep the strict policy below.
           source: "/becetti-tools/",
