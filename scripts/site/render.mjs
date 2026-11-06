@@ -761,7 +761,7 @@ export function renderLanding({ urls, loc }) {
       ads.enabled && !ads.onPolicyPages
         ? {
             tags: activeAdTags.map((t) => ({ src: t.src, zone: t.zone })),
-            consentKey: ads.consentKey,
+            ...(ads.requireConsent ? { consentKey: ads.consentKey } : { auto: true }),
           }
         : null,
   });
@@ -781,7 +781,7 @@ ${faqSection(t)}
 ${roadmapSection(t)}
 ${contactSection(t)}
   </main>
-${footer({ t, urls, loc, pagePath, consent: ads.enabled })}`;
+${footer({ t, urls, loc, pagePath, consent: ads.enabled && ads.requireConsent })}`;
 }
 
 export function renderPrivacy({ urls, loc }) {

@@ -245,7 +245,7 @@ const en = {
       },
       {
         q: "Will I see ads?",
-        a: "Inside the app, v1.0.0 initialises no advertising SDK: a labelled “Sponsored Offers” row can appear on the home screen and opens only when you tap it. On this website, sponsored messages from Monetag load only if you accept them in the consent bar — decline and the page behaves exactly as it did before ads existed. Ads never appear on the privacy policy page and never replace the download button.",
+        a: "Inside the app, v1.0.0 initialises no advertising SDK: a labelled “Sponsored Offers” row can appear on the home screen and opens only when you tap it. On this website, Monetag serves sponsored messages on every page load — the privacy policy states this in section 14, and blocking third-party scripts leaves the page fully usable. Ads never appear on the privacy policy page and never replace the download button.",
       },
       {
         q: "Is there an iOS or web version?",
@@ -557,7 +557,7 @@ const fr = {
       },
       {
         q: "Y aura-t-il de la publicité ?",
-        a: "Dans l’application, la v1.0.0 n’initialise aucun SDK publicitaire : une ligne « Offres sponsorisées » peut apparaître sur l’accueil et ne s’ouvre qu’au toucher. Sur ce site, les messages sponsorisés de Monetag ne se chargent que si vous les acceptez dans la barre de consentement — en refusant, la page reste exactement comme avant. Aucune publicité sur la politique de confidentialité, et le bouton de téléchargement n’est jamais remplacé.",
+        a: "Dans l’application, la v1.0.0 n’initialise aucun SDK publicitaire : une ligne « Offres sponsorisées » peut apparaître sur l’accueil et ne s’ouvre qu’au toucher. Sur ce site, Monetag affiche des messages sponsorisés à chaque chargement de page — la section 14 de la politique de confidentialité l’indique, et bloquer les scripts tiers laisse la page entièrement utilisable. Aucune publicité sur la politique de confidentialité, et le bouton de téléchargement n’est jamais remplacé.",
       },
       {
         q: "Existe-t-il une version iOS ou web ?",
@@ -866,7 +866,7 @@ const ar = {
       },
       {
         q: "هل ستظهر إعلانات؟",
-        a: "داخل التطبيق لا تُهيَّأ أي حزمة إعلانية في الإصدار 1.0.0: قد يظهر سطر موسوم «عروض برعاية» ولا يُفتح إلا بلمسك. أما على هذا الموقع فلا تُحمَّل رسائل Monetag المدعومة إلا بموافقتك في شريط الموافقة — ورفضك يُبقي الصفحة كما كانت قبل وجود الإعلانات. لا إعلانات في صفحة سياسة الخصوصية، وزر التحميل لا يُستبدل أبدًا.",
+        a: "داخل التطبيق لا تُهيَّأ أي حزمة إعلانية في الإصدار 1.0.0: قد يظهر سطر موسوم «عروض برعاية» ولا يُفتح إلا بلمسك. أما على هذا الموقع فتعرض Monetag رسائل مدعومة عند كل فتح للصفحة — وهذا منصوص عليه في القسم 14 من سياسة الخصوصية، وحجب سكربتات الطرف الثالث يُبقي الصفحة قابلة للاستخدام بالكامل. لا إعلانات في صفحة سياسة الخصوصية، وزر التحميل لا يُستبدل أبدًا.",
       },
       {
         q: "هل توجد نسخة iOS أو ويب؟",

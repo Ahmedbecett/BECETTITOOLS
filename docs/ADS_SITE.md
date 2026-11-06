@@ -1,16 +1,18 @@
 # Ads on the site — Monetag tag + service worker
 
-Status: **active on the three landing pages, consent-gated.** Two publisher artefacts are in play:
+Status: **active on the three landing pages, loaded on every page view (`ads.requireConsent = false`).**
+Two publisher artefacts are in play:
 
 | Artefact | Zone | Host | State |
 |---|---|---|---|
-| Site tag (in-page sponsored messages) | `12206566` | `nap5k.com` | loaded **only after** the visitor presses "Accept ads" |
+| Site tag (in-page sponsored messages) | `12206566` | `nap5k.com` | loaded on every page view, no gate |
 | Site tag, earlier zone | `306773` | `quge5.com` | kept in the config, `enabled: false` |
 | Service worker (`/sw.js`) | `12206346` | `5gvci.com` | published at the root, **not registered** by any page |
 
-A first visit fetches nothing third-party: the tag is stored as a JSON config block and `site.js`
-injects the real `<script>` only after consent. Declining is remembered and leaves the page
-byte-for-byte as it was before ads existed.
+The tag is still not pasted into the HTML: each page ships a JSON config block and `site.js`
+injects the real `<script>` from it. That indirection is what makes the whole thing switchable —
+`ads.requireConsent = true` restores the consent bar, the stored choice and the footer control
+without touching a template, and `ads.enabled = false` removes the tag entirely.
 
 ---
 
@@ -38,15 +40,16 @@ off: two live site tags on one page compete for the same slots and double-count 
 Each landing page ships the config, never the live script:
 
 ```html
-<script type="application/json" id="becetti-ads">{"tags":[{"src":"https://nap5k.com/tag.min.js","zone":"12206566"}],"consentKey":"becetti-ads-consent"}</script>
+<script type="application/json" id="becetti-ads">{"tags":[{"src":"https://nap5k.com/tag.min.js","zone":"12206566"}],"auto":true}</script>
 ```
 
 `assets/js/site.js` (deferred, ~1 KB) then:
 
-1. no stored choice → reveals the consent bar (`hidden` removed), makes **no** request;
-2. `accept` → stores `becetti-ads-consent=accept`, appends one `<script data-zone="12206566" async data-cfasync="false">` per enabled entry in `ads.tags` (each guarded by `#monetag-tag-<zone>`, so never twice);
-3. `decline` → stores `becetti-ads-consent=decline`, injects nothing;
-4. footer **Ad settings** → clears the key and shows the bar again.
+1. reads the config; with `auto: true` there is no bar and no stored choice to consult;
+2. `auto: true` in the config → appends one `<script data-zone="12206566" async data-cfasync="false">`
+   per enabled entry in `ads.tags` immediately (each guarded by `#monetag-tag-<zone>`, so never twice);
+3. if the config carries a `consentKey` instead, the older consent path is used unchanged: bar first,
+   tag only on **Accept**, choice stored under that key, footer **Ad settings** to change it.
 
 Privacy policy pages receive neither the config nor the bar, so they stay third-party free.
 
@@ -83,13 +86,13 @@ consents; the `/sw.js` file simply has to exist at the root when it does.
 ## 5. Disclosure shipped with the change
 
 - [x] **Privacy policy** — new §14 "Advertising on this website" in EN/FR/AR: names Monetag, zone
-      `12206566` and `nap5k.com`, states the tag is consent-gated, records the local key
-      `becetti-ads-consent`, and says the network's own policy covers its processing.
+      `12206566` and `nap5k.com`, states plainly that the tag loads on every page view, explains
+      what Monetag may store, and tells the visitor to block third-party scripts to opt out.
 - [x] **Landing copy** — the FAQ answer "Will I see ads?" now separates the app (no SDK in v1.0.0)
-      from the site (Monetag, consent-gated). The app-side trust block stays accurate because it
-      describes the APK, not the page.
-- [x] **Consent** — default is *declined*; the bar is server-rendered but hidden; accepting is the
-      only path that loads anything; refusal never blocks or delays the download.
+      from the site (Monetag, on every page load). The app-side trust block stays accurate because
+      it describes the APK, not the page.
+- [x] **Opt-out** — ad blockers and `nap5k.com` domain blocking are stated as the way out; the page
+      and the APK download stay fully usable without the tag, and no wall ever covers the download.
 - [~] **Per-unit labels** — the in-page format renders its own overlay, so no "Sponsored" chip can
       be attached to an individual unit. The bar and FAQ disclose the source, and the ad never
       mimics the download button. For explicit per-unit labelling, use the network's
@@ -104,8 +107,9 @@ consents; the `/sw.js` file simply has to exist at the root when it does.
 
 ## 6. Verifying it with Monetag
 
-Monetag's checker loads a page and looks for its tag in the DOM. The public landing pages inject the
-tag only after consent, so pointing the dashboard at them can report "tag not found" forever.
+Monetag's checker loads a page and looks for its tag in the DOM. The landing pages inject it from
+`site.js` on every visit, which a JavaScript-capable checker sees but a plain HTML fetch does not — so
+the dedicated page below remains the reliable target.
 
 **Use the verification page:** `https://becetti-tools.vercel.app/ads-verify/`
 

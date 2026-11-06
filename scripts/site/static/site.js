@@ -183,9 +183,11 @@
       }
     });
 
-    /* Verification page only: no banner, no stored choice, tag straight away — and a plain
-       language log, so "no ads" can be told apart from "tag never ran". */
-    if (cfg.unconditional === true) {
+    /* Ads are always-on by default (cfg.auto): the tag loads on every page view, exactly like a
+       snippet pasted into the template, and no banner exists. /ads-verify/ (cfg.unconditional)
+       uses the same path plus a plain-language log, so "no ads" can be told apart from "tag never
+       ran". Removing auto/requireConsent brings the consent gate back with no code change here. */
+    if (cfg.auto === true || cfg.unconditional === true) {
       hide();
       var log = document.getElementById("ads-log");
       var t0 = Date.now();
@@ -213,6 +215,7 @@
         if (event && event.message) line("page error: " + event.message);
       }, true);
       setTimeout(function () {
+        if (!log) return;
         if (observer) observer.disconnect();
         if (addedByTag > 0) {
           line("the tag added " + addedByTag + " element(s) to this page");

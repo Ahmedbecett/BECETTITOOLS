@@ -40,7 +40,7 @@
   <link rel="manifest" href="../site.webmanifest">
   <link rel="stylesheet" href="../assets/css/site.css">
   <script>(function(){try{var s=localStorage.getItem("becetti-theme")||"system";var d=window.matchMedia("(prefers-color-scheme: dark)").matches;document.documentElement.dataset.theme=s==="system"?(d?"dark":"light"):s;document.documentElement.dataset.themePref=s;}catch(e){}})();</script>
-  <script type="application/json" id="becetti-ads">{"tags":[{"src":"https://nap5k.com/tag.min.js","zone":"12206566"}],"consentKey":"becetti-ads-consent"}</script>
+  <script type="application/json" id="becetti-ads">{"tags":[{"src":"https://nap5k.com/tag.min.js","zone":"12206566"}],"auto":true}</script>
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -203,7 +203,7 @@
           "name": "Will I see ads?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Inside the app, v1.0.0 initialises no advertising SDK: a labelled “Sponsored Offers” row can appear on the home screen and opens only when you tap it. On this website, sponsored messages from Monetag load only if you accept them in the consent bar — decline and the page behaves exactly as it did before ads existed. Ads never appear on the privacy policy page and never replace the download button."
+            "text": "Inside the app, v1.0.0 initialises no advertising SDK: a labelled “Sponsored Offers” row can appear on the home screen and opens only when you tap it. On this website, Monetag serves sponsored messages on every page load — the privacy policy states this in section 14, and blocking third-party scripts leaves the page fully usable. Ads never appear on the privacy policy page and never replace the download button."
           }
         },
         {
@@ -657,7 +657,7 @@
             </details>
             <details class="faq-item">
               <summary><span>Will I see ads?</span></summary>
-              <p>Inside the app, v1.0.0 initialises no advertising SDK: a labelled “Sponsored Offers” row can appear on the home screen and opens only when you tap it. On this website, sponsored messages from Monetag load only if you accept them in the consent bar — decline and the page behaves exactly as it did before ads existed. Ads never appear on the privacy policy page and never replace the download button.</p>
+              <p>Inside the app, v1.0.0 initialises no advertising SDK: a labelled “Sponsored Offers” row can appear on the home screen and opens only when you tap it. On this website, Monetag serves sponsored messages on every page load — the privacy policy states this in section 14, and blocking third-party scripts leaves the page fully usable. Ads never appear on the privacy policy page and never replace the download button.</p>
             </details>
             <details class="faq-item">
               <summary><span>Is there an iOS or web version?</span></summary>
@@ -716,7 +716,6 @@
         <p class="footer-note">Built by Ahmed Becetti · Source released under the MIT licence</p>
         <p class="footer-note">Version 1.0.0 (versionCode 1) · debug build</p>
         <p class="footer-note subtle">Page updated: <time datetime="2026-11-06">2026-11-06</time></p>
-      <p class="footer-note"><button type="button" class="linkish" data-consent="reset">Ad settings</button></p>
 
       </div>
       <div>
@@ -750,17 +749,6 @@
       <p>© 2026 Ahmed Becetti · com.becetti.tools · v1.0.0</p>
     </div>
   </footer>
-  <aside class="consent" id="ads-consent" hidden aria-labelledby="ads-consent-title">
-    <div class="consent-inner">
-      <h2 id="ads-consent-title" class="consent-title">Sponsored messages on this page</h2>
-      <p class="consent-body">This page can show ads from Monetag to keep the project going. They load only if you accept — decline and nothing third-party is fetched. The download and the app are identical either way.</p>
-      <div class="consent-actions">
-        <button type="button" class="btn btn-primary btn-sm" data-consent="accept">Accept ads</button>
-        <button type="button" class="btn btn-ghost btn-sm" data-consent="decline">Decline</button>
-        <a class="consent-link" href="../privacy/">Read the privacy policy</a>
-      </div>
-    </div>
-  </aside>
   <script src="../assets/js/site.js" defer></script>
 </body>
 </html>

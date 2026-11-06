@@ -78,6 +78,10 @@ export const ads = {
   enabled: true,
   provider: "Monetag",
   consentKey: "becetti-ads-consent",
+  // false → the tag loads on every page view, like any ordinary ad script, and no consent bar is
+  // rendered. Set it back to true to restore the gate: the banner, the stored choice and the
+  // footer "Ad settings" control all come back without further edits.
+  requireConsent: false,
   // Landing pages only. The privacy policy pages stay ad-free.
   onPolicyPages: false,
   tags: [

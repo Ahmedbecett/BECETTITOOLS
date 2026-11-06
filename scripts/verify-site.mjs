@@ -302,13 +302,20 @@ async function main() {
     policyDocs.every((h) => !h.includes('id="becetti-ads"') && !h.includes('id="ads-consent"'))
   );
   check(
-    "consent banner rendered once per landing page",
-    landingDocs.every((h) => (h.match(/id="ads-consent"/g) || []).length === 1)
+    "ads are always-on: the landing config asks for an immediate load",
+    landingDocs.every((h) => h.includes('"auto":true') && !h.includes('consentKey'))
   );
   check(
-    "ad disclosure names the consent key in plain text, not markdown",
-    policyDocs.every((h) => h.includes("becetti-ads-consent") && !h.includes("`"))
+    "no consent banner is rendered while ads are always-on",
+    landingDocs.every((h) => !h.includes('id="ads-consent"') && !h.includes('data-consent='))
   );
+  check(
+    "ad disclosure tells the visitor how to opt out",
+    policyDocs.every((h) =>
+      /block third-party scripts|bloquez les scripts tiers|احجب سكربتات الطرف الثالث/.test(h)
+    )
+  );
+  check("policy HTML carries no stray markdown", policyDocs.every((h) => !h.includes("`")));
   const landingRule = vercel.headers?.find((h) => h.source === "/becetti-tools/(.*)");
   const landingCsp = landingRule?.headers.find((x) => x.key === "Content-Security-Policy")?.value ?? "";
   check("landing CSP allows remote ad scripts", /script-src 'self' 'unsafe-inline' https:/.test(landingCsp));
@@ -332,7 +339,7 @@ async function main() {
   const sitemapXml = docs.get(path.join(siteRoot, "sitemap.xml")) || "";
   check("verification page stays out of the sitemap", !sitemapXml.includes("ads-verify"));
   check(
-    "consent still gates the tag on the landing pages",
+    "only the verification page opts into the diagnostic path",
     landingDocs.every((h) => !/unconditional/.test(h))
   );
   const strictCsp =
@@ -340,14 +347,20 @@ async function main() {
   check("policy/root CSP stays third-party free", !/https?:/.test(strictCsp));
   const siteJs = await readFile(path.join(siteRoot, "assets", "js", "site.js"), "utf8");
   check(
-    "site.js injects the tag only after an explicit accept",
-    siteJs.includes('if (choice === "accept") loadTag();') &&
+    "site.js loads the configured tag(s) and stays consent-capable",
+    siteJs.includes("cfg.auto === true") &&
+      siteJs.includes("cfg.unconditional === true") &&
+      siteJs.includes('if (choice === "accept") loadTag();') &&
       siteJs.includes('document.createElement("script")') &&
       siteJs.includes('"monetag-tag"')
   );
   check(
     "the policy names the live zone and host",
     policyDocs.every((h) => h.includes("12206566") && h.includes("nap5k.com") && !h.includes("306773"))
+  );
+  check(
+    "the policy matches the always-on reality",
+    policyDocs.every((h) => !/consent bar|barre de consentement|شريط الموافقة/.test(h))
   );
 
   /* ---------------------- 5b2. Sitemap / robots MIME types ---------------------- */
