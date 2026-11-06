@@ -87,7 +87,28 @@ hreflang pair and the sitemap against the configured base.
 
 ---
 
-## 3. Publishing options
+## 3. Download-link policy
+
+The site publishes exactly **one** download target:
+
+```
+https://github.com/Ahmedbecett/BECETTITOOLS/releases/latest
+```
+
+- GitHub resolves `/releases/latest` to whichever release is marked **Latest**, so the link keeps
+  pointing at the current version without rebuilding the site after each release.
+- No other copy of the APK is linked from the site: no `raw.githubusercontent.com` URL, no
+  `blob/main` page, no separate `.sha256` file button. The SHA-256 is shown as copyable text, with
+  per-OS verification commands.
+- v1.0.0 has **no uploaded release asset** (`uploads.github.com` is unreachable from the publish
+  environment), so the release notes on that page contain the file link. Once the APK is attached
+  to the release, set `apk.downloadUrl` in `scripts/site/site.config.mjs` to
+  `https://github.com/Ahmedbecett/BECETTITOOLS/releases/latest/download/BECETTI-TOOLS-v1.0.0-NATIVE-debug.apk`
+  and rebuild for a one-click download that still tracks the newest release.
+
+---
+
+## 4. Publishing options
 
 ### A. Vercel project `becetti-tools` — **live** (current deployment)
 
@@ -172,7 +193,7 @@ Publish directory `website`, no build command. Redirect `/` → `/becetti-tools/
 
 ---
 
-## 4. Facts on the page are verified, not assumed
+## 5. Facts on the page are verified, not assumed
 
 Everything numeric or technical comes from the preserved artifact and is asserted by
 `scripts/verify-site.mjs`:
@@ -197,7 +218,7 @@ appear in the structured data.
 
 ---
 
-## 5. Privacy policy pages
+## 6. Privacy policy pages
 
 The public policy is `website/privacy/` (EN), `/privacy/fr/`, `/privacy/ar/`. Its text lives in
 `scripts/site/i18n/privacy.mjs` so the three languages cannot drift apart:
@@ -219,7 +240,7 @@ node scripts/export-privacy-md.mjs     # writes docs/PUBLIC_PRIVACY_POLICY.md
 
 ---
 
-## 6. Replacing the previews with real screenshots
+## 7. Replacing the previews with real screenshots
 
 `assets/img/previews/*.svg` are **illustrative UI previews rebuilt from the Compose layout**, not
 device captures, and each one is captioned that way on the page. To swap in real screenshots:
@@ -240,7 +261,7 @@ what a future release should do once a signed build exists.
 
 ---
 
-## 7. Accessibility and performance notes
+## 8. Accessibility and performance notes
 
 - Semantic landmarks (`header`, `nav`, `main`, `footer`), one `h1` per page, no skipped levels.
 - Skip link, visible focus rings, `prefers-reduced-motion` and `prefers-color-scheme` support.
@@ -255,7 +276,7 @@ what a future release should do once a signed build exists.
 
 ---
 
-## 8. What still needs a human before publishing
+## 9. What still needs a human before publishing
 
 1. Decide the host and the canonical base URL (§2, §3).
 2. Confirm the contact address printed on the page (`contact.email` in `site.config.mjs`).

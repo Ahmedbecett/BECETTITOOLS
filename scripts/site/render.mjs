@@ -298,7 +298,6 @@ function appNode(urls) {
     releaseNotes: apk.releaseUrl,
     featureList: tools.map((tool) => tool.name.en).join(", "),
     softwareHelp: repository.url,
-    supportingData: apk.checksumUrl,
     identifier: app.packageName,
     // Deliberately no aggregateRating / downloadCount / interactionStatistic:
     // no verified rating or install figure exists, so none is published.
@@ -413,7 +412,7 @@ function heroSection(t, prefix = "") {
             <p class="tagline">${esc(t.hero.tagline)}</p>
             <p class="lead">${esc(t.hero.lead)}</p>
             <div class="cta-row">
-              <a class="btn btn-primary btn-lg" href="${apk.downloadUrl}" rel="noopener" download>
+              <a class="btn btn-primary btn-lg" href="${apk.downloadUrl}" rel="noopener">
                 ${icon("download")}<span>${esc(t.hero.ctaPrimary)}</span>
                 <span class="btn-meta">${esc(t.hero.sizeMeta)} · v${esc(app.versionName)}</span>
               </a>
@@ -582,16 +581,12 @@ function downloadSection(t) {
                 </dd>
               </dl>
               <div class="cta-row">
-                <a class="btn btn-primary" href="${apk.downloadUrl}" rel="noopener" download>${icon(
+                <a class="btn btn-primary" href="${apk.downloadUrl}" rel="noopener">${icon(
     "download"
   )}<span>${esc(t.hero.ctaPrimary)}</span></a>
-                <a class="btn btn-ghost" href="${apk.checksumUrl}" rel="noopener">${esc(
-    t.download.checksumFile
-  )}</a>
                 <a class="btn btn-ghost" href="${apk.releaseUrl}" rel="noopener">${icon("github")}<span>${esc(
     t.download.releaseLink
   )}</span></a>
-                <a class="btn btn-ghost" href="${apk.blobUrl}" rel="noopener">${esc(apk.fileName)}</a>
               </div>
               <p class="copy-status" role="status" aria-live="polite"></p>
             </div>

@@ -43,7 +43,9 @@ checksum and OS-specific verification commands, give installation steps and trou
 list the 15 tools accurately, describe privacy behaviour as implemented, include a changelog and
 the proposals for later versions, and **remove the link to a landing page that does not exist**.
 Release assets were not touched (the release has none; `uploads.github.com` is unreachable from
-this environment, so the preserved file on `main` remains the download of record).
+this environment, so the preserved file on `main` is still where the bytes live — but the site
+no longer links to that raw URL: every download link on the page points at
+`https://github.com/Ahmedbecett/BECETTITOOLS/releases/latest`, i.e. the newest published release).
 
 ## 3. Landing page
 
@@ -103,7 +105,9 @@ the OCR "Arabic/FR/EN" description vs Latin-only model, and a signed release bui
 4. After the site is live, add its URL to the release notes and submit the sitemap in Search
    Console.
 5. Decide whether `uploads.github.com` access can be arranged to attach the APK as a release
-   asset (today the raw `main` URL is the download of record).
+   asset. Once it is attached, switch `apk.downloadUrl` to
+   `.../releases/latest/download/BECETTI-TOOLS-v1.0.0-NATIVE-debug.apk` for a one-click download;
+   until then the site's single link opens the latest release, whose notes carry the file link.
 
 ---
 

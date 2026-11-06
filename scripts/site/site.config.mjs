@@ -51,15 +51,18 @@ export const apk = {
   mib: "84.8 MiB",
   sizeBoth: "88.9 MB (84.8 MiB)",
   sha256: "460235a24055c4c808ad16b80e3f1cbe38fe81410b57cfb8779d552020a22632",
-  // GitHub has no release *asset* on v1.0.0 (uploads.github.com is unreachable from the
-  // publish environment), so the preserved blob on `main` is the download of record.
-  downloadUrl:
-    "https://raw.githubusercontent.com/Ahmedbecett/BECETTITOOLS/main/BECETTI-TOOLS-v1.0.0-NATIVE-debug.apk",
-  checksumUrl:
-    "https://raw.githubusercontent.com/Ahmedbecett/BECETTITOOLS/main/BECETTI-TOOLS-v1.0.0-NATIVE-debug.apk.sha256",
-  blobUrl:
-    "https://github.com/Ahmedbecett/BECETTITOOLS/blob/main/BECETTI-TOOLS-v1.0.0-NATIVE-debug.apk",
-  releaseUrl: "https://github.com/Ahmedbecett/BECETTITOOLS/releases/tag/v1.0.0",
+  // ── One download target: the newest *published* release on GitHub ────────────
+  // GitHub resolves /releases/latest to whichever release is marked "Latest", so this single
+  // link keeps pointing at the current version without rebuilding the site. No other copy of
+  // the APK is linked from the site (no raw-branch link, no blob page, no separate .sha256
+  // file) — the SHA-256 below is displayed and copyable as text instead.
+  //
+  // v1.0.0 carries no uploaded *asset* (uploads.github.com is unreachable from the publish
+  // environment), so the release notes on that page hold the file link. Once the APK is
+  // attached to the release, switch this to the one-click asset URL:
+  //   https://github.com/Ahmedbecett/BECETTITOOLS/releases/latest/download/BECETTI-TOOLS-v1.0.0-NATIVE-debug.apk
+  downloadUrl: "https://github.com/Ahmedbecett/BECETTITOOLS/releases/latest",
+  releaseUrl: "https://github.com/Ahmedbecett/BECETTITOOLS/releases/latest",
 };
 
 export const contact = {

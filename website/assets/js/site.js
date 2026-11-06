@@ -99,8 +99,12 @@
     });
   });
 
-  /* ------------------------- mark external downloads ----------------------- */
-  document.querySelectorAll('a[href^="https://raw.githubusercontent.com"]').forEach(function (a) {
-    a.setAttribute("rel", "noopener nofollow");
+  /* --------------------------- harden external links ----------------------- */
+  /* Every download/download-page link now points at the newest published GitHub release,
+     so harden anything that leaves the site instead of one hard-coded host. */
+  document.querySelectorAll('a[href^="http"]').forEach(function (a) {
+    if (a.hostname && a.hostname !== location.hostname) {
+      a.setAttribute("rel", "noopener noreferrer nofollow");
+    }
   });
 })();
