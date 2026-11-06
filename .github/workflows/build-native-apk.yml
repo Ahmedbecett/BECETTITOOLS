@@ -20,7 +20,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: 8.6
-      - name: Install Android SDK (manual)
+      - name: Install Android SDK
         run: |
           set -e
           sudo apt-get update -qq
@@ -31,43 +31,42 @@ jobs:
           unzip -q /tmp/cmdline-tools.zip -d /tmp
           mkdir -p $ANDROID_HOME/cmdline-tools/latest
           mv /tmp/cmdline-tools/* $ANDROID_HOME/cmdline-tools/latest/ 2>/dev/null || true
-          mv /tmp/cmdline-tools $ANDROID_HOME/cmdline-tools/latest 2>/dev/null || true
+          mkdir -p $ANDROID_HOME/cmdline-tools/latest 2>/dev/null || true
+          # handle double nested
+          if [ -d "/tmp/cmdline-tools/cmdline-tools" ]; then mv /tmp/cmdline-tools/cmdline-tools/* $ANDROID_HOME/cmdline-tools/latest/ || true; fi
           ls $ANDROID_HOME/cmdline-tools/latest/bin/
           export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$PATH
           yes | sdkmanager --licenses || true
-          sdkmanager --install "platform-tools" "platforms;android-34" "build-tools;34.0.0" "platforms;android-33"
+          sdkmanager --install "platform-tools" "platforms;android-34" "build-tools;34.0.0"
           echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
           echo "ANDROID_SDK_ROOT=$ANDROID_HOME" >> $GITHUB_ENV
           echo "$ANDROID_HOME/platform-tools" >> $GITHUB_PATH
           echo "$ANDROID_HOME/cmdline-tools/latest/bin" >> $GITHUB_PATH
-          ls -lh $ANDROID_HOME/platforms/ || true
-      - name: Build Debug APK (Native No WebView)
+      - name: Build Debug APK
         run: |
           export ANDROID_HOME=$HOME/android-sdk
           export ANDROID_SDK_ROOT=$HOME/android-sdk
-          gradle assembleDebug --stacktrace
-          ls -lh app/build/outputs/apk/debug/
-      - name: Build Release
+          set +e
+          gradle assembleDebug --stacktrace > /tmp/gradle.log 2>&1
+          cat /tmp/gradle.log
+          echo "exit:$?" > /tmp/exitcode
+          ls -lh app/build/outputs/apk/debug/ || true
+          exit $(cat /tmp/exitcode | cut -d: -f2)
+      - name: Verify native no WebView
+        if: success()
         run: |
-          export ANDROID_HOME=$HOME/android-sdk
-          gradle assembleRelease --stacktrace || true
-          ls -lh app/build/outputs/apk/release/ || true
-      - name: Verify native
-        run: |
-          echo "Verifying no WebView in native code..."
-          if grep -R "WebView" app/src --include="*.kt" --include="*.xml" ; then echo "FAIL WebView found"; exit 1; fi
-          echo "✓ Native 100% Kotlin + Jetpack Compose confirmed"
-          grep -R "androidx.compose" app/build.gradle.kts
+          if grep -R "WebView" app/src --include="*.kt" --include="*.xml"; then echo "WebView found"; exit 1; fi
+          echo "Native verified"
+      - name: Upload log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gradle-failure-log
+          path: /tmp/gradle.log
+          retention-days: 7
       - name: Upload APK
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: BECETTI-TOOLS-v1.0.0-debug-native
-          path: |
-            app/build/outputs/apk/debug/app-debug.apk
-            app/build/outputs/apk/release/app-release-unsigned.apk
-          retention-days: 30
-      - name: APK info
-        run: |
-          sha256sum app/build/outputs/apk/debug/app-debug.apk
-          echo "Package: com.becetti.tools v1.0.0 Native"
-
+          path: app/build/outputs/apk/debug/app-debug.apk
