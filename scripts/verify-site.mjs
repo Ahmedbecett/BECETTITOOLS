@@ -299,6 +299,10 @@ async function main() {
     "consent banner rendered once per landing page",
     landingDocs.every((h) => (h.match(/id="ads-consent"/g) || []).length === 1)
   );
+  check(
+    "ad disclosure names the consent key in plain text, not markdown",
+    policyDocs.every((h) => h.includes("becetti-ads-consent") && !h.includes("`"))
+  );
   const landingRule = vercel.headers?.find((h) => h.source === "/becetti-tools/(.*)");
   const landingCsp = landingRule?.headers.find((x) => x.key === "Content-Security-Policy")?.value ?? "";
   check(
