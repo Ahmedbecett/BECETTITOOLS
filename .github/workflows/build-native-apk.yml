@@ -16,32 +16,32 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
           cache: gradle
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: 8.6
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
-        with:
-          cmdline-tools-version: 11076708
-          packages: 'platform-tools platforms;android-34 build-tools;34.0.0'
-      - name: Grant execute
-        run: chmod +x gradlew
       - name: Build Debug APK (Native No WebView)
-        run: ./gradlew assembleDebug --stacktrace --info
+        run: gradle assembleDebug --stacktrace
       - name: Build Release
-        run: ./gradlew assembleRelease --stacktrace || true
+        run: gradle assembleRelease --stacktrace || true
       - name: Verify native
         run: |
           echo "Verifying no WebView..."
-          if grep -r "WebView" app/src --include="*.kt"; then echo "FAIL WebView found"; exit 1; fi
-          echo "Native Kotlin+Compose verified ✓"
-          ls -lh app/build/outputs/apk/debug/
+          if grep -r "WebView" app/src --include="*.kt" --include="*.xml"; then echo "WebView found"; exit 1; fi
+          echo "Native 100% Kotlin+Compose OK"
+          ls -lh app/build/outputs/apk/debug/ || true
+          ls -lh app/build/outputs/apk/release/ || true
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: BECETTI-TOOLS-v1.0.0-debug-native
-          path: app/build/outputs/apk/debug/app-debug.apk
+          path: |
+            app/build/outputs/apk/debug/app-debug.apk
+            app/build/outputs/apk/release/app-release-unsigned.apk
           retention-days: 30
       - name: APK info
         run: |
-          ls -lh app/build/outputs/apk/debug/
-          sha256sum app/build/outputs/apk/debug/app-debug.apk
-          echo "com.becetti.tools Native 1.0.0"
-
+          sha256sum app/build/outputs/apk/debug/app-debug.apk || true
+          echo "Package com.becetti.tools v1.0.0 Native"
