@@ -14,7 +14,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -26,10 +25,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: 8.6
-      - name: Clean previous placeholder
-        run: |
-          rm -f BECETTI-TOOLS*.apk* || true
-          rm -rf app/build || true
+          cache-disabled: false
       - name: Install Android SDK
         run: |
           set -e
@@ -42,7 +38,6 @@ jobs:
           mkdir -p $ANDROID_HOME/cmdline-tools/latest
           mv /tmp/cmdline-tools/* $ANDROID_HOME/cmdline-tools/latest/ 2>/dev/null || true
           if [ -d "/tmp/cmdline-tools/cmdline-tools" ]; then mv /tmp/cmdline-tools/cmdline-tools/* $ANDROID_HOME/cmdline-tools/latest/ || true; fi
-          ls $ANDROID_HOME/cmdline-tools/latest/bin/
           export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$PATH
           yes | sdkmanager --licenses || true
           sdkmanager --install "platform-tools" "platforms;android-34" "build-tools;34.0.0"
@@ -54,15 +49,19 @@ jobs:
         run: |
           export ANDROID_HOME=$HOME/android-sdk
           export ANDROID_SDK_ROOT=$HOME/android-sdk
-          gradle assembleDebug --stacktrace
+          gradle assembleDebug --stacktrace || gradle assembleDebug --stacktrace --rerun-tasks
           ls -lh app/build/outputs/apk/debug/
           stat -c%s app/build/outputs/apk/debug/app-debug.apk
           sha256sum app/build/outputs/apk/debug/app-debug.apk
-      - name: Verify native no WebView
+          echo "APK_SIZE=$(stat -c%s app/build/outputs/apk/debug/app-debug.apk)" >> $GITHUB_ENV
+      - name: Verify native
         run: |
-          if grep -R "WebView" app/src --include="*.kt" --include="*.xml"; then echo "WebView found"; exit 1; fi
-          echo "Native 100% Kotlin+Compose verified ✓"
-      - name: Prepare APK for commit
+          if grep -R "WebView" app/src --include="*.kt" --include="*.xml"; then echo "WebView found!"; exit 1; fi
+          echo "✓ Native Kotlin+Compose"
+          grep "androidx.compose" app/build.gradle.kts
+          echo "Size: $APK_SIZE bytes"
+          if [ "$APK_SIZE" -lt 1000000 ]; then echo "APK too small, likely placeholder - failing"; exit 1; fi
+      - name: Prepare commit
         run: |
           cp app/build/outputs/apk/debug/app-debug.apk ./BECETTI-TOOLS-v1.0.0-NATIVE-debug.apk
           sha256sum ./BECETTI-TOOLS-v1.0.0-NATIVE-debug.apk > ./BECETTI-TOOLS-v1.0.0-NATIVE-debug.apk.sha256
@@ -73,7 +72,7 @@ jobs:
           commit_message: "ci: native APK v1.0.0 built (real SDK, no WebView) [skip ci]"
           file_pattern: "BECETTI-TOOLS*.apk*"
           branch: arena/354c3e44-becettitools
-      - name: Upload APK artifact
+      - name: Upload artifact always
         if: always()
         uses: actions/upload-artifact@v4
         with:
