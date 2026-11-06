@@ -42,7 +42,7 @@ fun CurrencyScreen(app: BecettiToolsApp) {
             lastUpdated = resp.date
             offline = false
             ctx.becettiDataStore.edit { 
-                it[stringPreferencesKey("cached_rates_${'$'}base")] = resp.rates.toString()
+                it[stringPreferencesKey("cached_rates_$base")] = resp.rates.toString()
                 it[stringPreferencesKey("cached_date")] = resp.date 
             }
         } catch(e: Exception){

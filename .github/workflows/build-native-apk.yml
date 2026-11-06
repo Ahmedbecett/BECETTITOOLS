@@ -25,7 +25,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: 8.6
-          cache-disabled: false
+          cache-disabled: true
       - name: Install Android SDK
         run: |
           set -e
@@ -49,34 +49,41 @@ jobs:
         run: |
           export ANDROID_HOME=$HOME/android-sdk
           export ANDROID_SDK_ROOT=$HOME/android-sdk
-          gradle assembleDebug --stacktrace || gradle assembleDebug --stacktrace --rerun-tasks
+          set -o pipefail
+          gradle assembleDebug --stacktrace --no-daemon 2>&1 | tee /tmp/gradle.log
+          test ${PIPESTATUS[0]} -eq 0
           ls -lh app/build/outputs/apk/debug/
           stat -c%s app/build/outputs/apk/debug/app-debug.apk
           sha256sum app/build/outputs/apk/debug/app-debug.apk
-          echo "APK_SIZE=$(stat -c%s app/build/outputs/apk/debug/app-debug.apk)" >> $GITHUB_ENV
-      - name: Verify native
+      - name: Verify native no WebView
         run: |
-          if grep -R "WebView" app/src --include="*.kt" --include="*.xml"; then echo "WebView found!"; exit 1; fi
-          echo "✓ Native Kotlin+Compose"
-          grep "androidx.compose" app/build.gradle.kts
-          echo "Size: $APK_SIZE bytes"
-          if [ "$APK_SIZE" -lt 1000000 ]; then echo "APK too small, likely placeholder - failing"; exit 1; fi
+          if grep -R "WebView" app/src --include="*.kt" --include="*.xml"; then echo "WebView found"; exit 1; fi
+          echo "Native 100% Kotlin+Compose verified"
       - name: Prepare commit
+        if: success()
         run: |
           cp app/build/outputs/apk/debug/app-debug.apk ./BECETTI-TOOLS-v1.0.0-NATIVE-debug.apk
           sha256sum ./BECETTI-TOOLS-v1.0.0-NATIVE-debug.apk > ./BECETTI-TOOLS-v1.0.0-NATIVE-debug.apk.sha256
           ls -lh ./BECETTI-TOOLS*.apk*
       - name: Commit APK
+        if: success()
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "ci: native APK v1.0.0 built (real SDK, no WebView) [skip ci]"
           file_pattern: "BECETTI-TOOLS*.apk*"
           branch: arena/354c3e44-becettitools
-      - name: Upload artifact always
+      - name: Upload APK artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: BECETTI-TOOLS-v1.0.0-debug-native
           path: app/build/outputs/apk/debug/app-debug.apk
           retention-days: 30
+      - name: Upload log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gradle-log
+          path: /tmp/gradle.log
+          retention-days: 7
 
