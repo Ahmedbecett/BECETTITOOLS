@@ -134,7 +134,7 @@
     }
     /* One <script> per configured tag, each guarded by its own id, so a second call to
        loadTag() can never duplicate a network request. */
-    function loadTag() {
+    function loadTag(report) {
       var tags = cfg.tags || (cfg.src ? [{ src: cfg.src, zone: cfg.zone }] : []);
       var root = document.body || document.documentElement;
       tags.forEach(function (tag) {
@@ -147,6 +147,14 @@
         s.async = true;
         if (tag.zone) s.setAttribute("data-zone", tag.zone);
         s.setAttribute("data-cfasync", "false");
+        if (report) {
+          s.addEventListener("load", function () {
+            report("tag executed: " + tag.src);
+          });
+          s.addEventListener("error", function () {
+            report("tag could NOT be fetched: " + tag.src + " (blocked, offline, or DNS failure)");
+          });
+        }
         root.appendChild(s);
       });
       document.documentElement.setAttribute("data-ads", "loaded");
@@ -175,10 +183,45 @@
       }
     });
 
-    /* Verification page only: no banner, no stored choice, tag straight away. */
+    /* Verification page only: no banner, no stored choice, tag straight away — and a plain
+       language log, so "no ads" can be told apart from "tag never ran". */
     if (cfg.unconditional === true) {
       hide();
-      loadTag();
+      var log = document.getElementById("ads-log");
+      var t0 = Date.now();
+      function line(text) {
+        if (!log) return;
+        var li = document.createElement("li");
+        li.textContent = ((Date.now() - t0) / 1000).toFixed(1) + "s — " + text;
+        log.appendChild(li);
+      }
+      var addedByTag = 0;
+      if (window.MutationObserver) {
+        var observer = new MutationObserver(function (records) {
+          records.forEach(function (r) {
+            addedByTag += r.addedNodes ? r.addedNodes.length : 0;
+          });
+        });
+        observer.observe(document.documentElement, { childList: true, subtree: true });
+      }
+      line("configuration read: zone(s) " + (cfg.tags || [{ zone: cfg.zone }]).map(function (t) {
+        return t.zone;
+      }).join(", "));
+      loadTag(line);
+      line("script element inserted, waiting for the network");
+      window.addEventListener("error", function (event) {
+        if (event && event.message) line("page error: " + event.message);
+      }, true);
+      setTimeout(function () {
+        if (observer) observer.disconnect();
+        if (addedByTag > 0) {
+          line("the tag added " + addedByTag + " element(s) to this page");
+        } else {
+          line("20s later the tag added nothing: it loaded, but this zone returned no ad");
+        }
+        line("scripts on this page: " + document.querySelectorAll("script[src]").length +
+          ", iframes: " + document.querySelectorAll("iframe").length);
+      }, 20000);
       return;
     }
 

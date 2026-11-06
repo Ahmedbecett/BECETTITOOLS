@@ -912,6 +912,10 @@ export function renderAdsVerify({ urls }) {
     <p>On the real pages the tag is injected only after the visitor accepts it, so a first
       visit downloads no third-party code at all.</p>
     <p id="ads-verify-status">Tag status: <strong id="ads-state-pending">not injected yet</strong><strong id="ads-state-ok" hidden>injected — the Monetag script is in this page</strong></p>
+    <ul id="ads-log" class="ads-log" style="list-style:none;padding:0;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;line-height:1.7"></ul>
+    <p class="subtle">If the log stops at "the tag added nothing", the script ran but the zone returned
+      no ad: that is decided by the advertising network (moderation, no demand for this country, or
+      a different site registered for the zone), not by this website.</p>
     <p><a href="${prefix}becetti-tools/">Go to the download page</a></p>
   </main>
   <script src="${prefix}assets/js/site.js" defer></script>

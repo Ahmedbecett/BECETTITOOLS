@@ -324,6 +324,11 @@ async function main() {
       !/<script[^>]+src="https:\/\/(?:quge5|nap5k)\.com/.test(verifyDocs)
   );
   check("verification page carries the relaxed CSP it needs", verifyCsp.includes("script-src") && verifyCsp.includes("https:"));
+  check(
+    "verification page reports what the tag did, in plain language",
+    verifyDocs.includes('id="ads-log"') &&
+      (await readFile(path.join(siteRoot, "assets", "js", "site.js"), "utf8")).includes('"ads-log"')
+  );
   const sitemapXml = docs.get(path.join(siteRoot, "sitemap.xml")) || "";
   check("verification page stays out of the sitemap", !sitemapXml.includes("ads-verify"));
   check(
