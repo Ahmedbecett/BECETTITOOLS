@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: write
+  issues: write
 
 jobs:
   build:
@@ -49,11 +50,9 @@ jobs:
         run: |
           export ANDROID_HOME=$HOME/android-sdk
           export ANDROID_SDK_ROOT=$HOME/android-sdk
-          set -o pipefail
           gradle assembleDebug --stacktrace --no-daemon 2>&1 | tee /tmp/gradle.log
           test ${PIPESTATUS[0]} -eq 0
           ls -lh app/build/outputs/apk/debug/
-          stat -c%s app/build/outputs/apk/debug/app-debug.apk
       - name: Verify native no WebView
         run: |
           if grep -R "WebView" app/src --include="*.kt" --include="*.xml"; then echo "WebView found"; exit 1; fi
@@ -61,32 +60,39 @@ jobs:
       - name: Prepare APK
         if: success()
         run: |
-          cp app/build/outputs/apk/debug/app-debug.apk ./BECETTI-TOOLS-v1.0.0-NATIVE-debug.apk
-          sha256sum ./BECETTI-TOOLS-v1.0.0-NATIVE-debug.apk > ./BECETTI-TOOLS-v1.0.0-NATIVE-debug.apk.sha256
+          cp app/build/outputs/apk/debug/app-debug.apk ./BECETTI-TOOLS-v1.1.0-NATIVE-debug.apk
+          sha256sum ./BECETTI-TOOLS-v1.1.0-NATIVE-debug.apk > ./BECETTI-TOOLS-v1.1.0-NATIVE-debug.apk.sha256
           ls -lh ./BECETTI-TOOLS*.apk*
       - name: Commit APK
         if: success()
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "ci: native APK v1.0.0 built (real SDK, no WebView) [skip ci]"
+          commit_message: "ci: native APK v1.1.0 huge edition (splash+files) [skip ci]"
           file_pattern: "BECETTI-TOOLS*.apk*"
-          branch: arena/354c3e44-becettitools
-      - name: On failure - commit log
-        if: failure()
-        run: |
-          echo "Build failed, committing log to repo for analysis"
-          mkdir -p /tmp/logs
-          cp /tmp/gradle.log ./gradle-failure.log || echo "no log" > ./gradle-failure.log
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add gradle-failure.log
-          git commit -m "ci: gradle failure log [skip ci]" || true
-          git push origin HEAD:arena/354c3e44-becettitools || true
+          branch: arena/e1ff9b3a-becettitools
       - name: Upload APK
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: BECETTI-TOOLS-v1.0.0-debug-native
+          name: BECETTI-TOOLS-v1.1.0-debug-native
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: ignore
+      - name: Report failure to issue
+        if: failure()
+        run: |
+          echo "Build failed, posting log to issue"
+          LOG=$(tail -c 65000 /tmp/gradle.log | head -c 60000)
+          TITLE="Build failure $(date -u +%Y-%m-%dT%H:%M:%SZ) run ${{ github.run_id }}"
+          BODY="**Branch:** ${{ github.ref_name }}
+          **Commit:** ${{ github.sha }}
+          **Log tail:**
+          \`\`\`
+          $LOG
+          \`\`\`
+          "
+          # Use gh to create issue
+          echo "$BODY" > /tmp/issue_body.md
+          gh issue create --title "$TITLE" --body-file /tmp/issue_body.md --repo ${{ github.repository }} || true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
