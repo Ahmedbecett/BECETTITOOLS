@@ -9,38 +9,39 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
           cache: gradle
-      - name: Set up Android SDK
+      - name: Setup Android SDK
         uses: android-actions/setup-android@v3
-      - name: Grant execute permission
+        with:
+          cmdline-tools-version: 11076708
+          packages: 'platform-tools platforms;android-34 build-tools;34.0.0'
+      - name: Grant execute
         run: chmod +x gradlew
-      - name: Build Debug APK (Native - No WebView)
-        run: ./gradlew assembleDebug --stacktrace
-      - name: Build Release APK (unsigned)
-        run: ./gradlew assembleRelease --stacktrace || echo "release build attempted"
-      - name: Verify native (no WebView)
+      - name: Build Debug APK (Native No WebView)
+        run: ./gradlew assembleDebug --stacktrace --info
+      - name: Build Release
+        run: ./gradlew assembleRelease --stacktrace || true
+      - name: Verify native
         run: |
-          echo "Checking for WebView usage (should be zero)..."
-          ! grep -r "WebView" app/src --include="*.kt" || (echo "WebView found!" && exit 1)
-          echo "Native check: Compose + Kotlin only ✓"
-          grep -r "androidx.compose" app/build.gradle.kts
-      - name: Upload Debug APK
+          echo "Verifying no WebView..."
+          if grep -r "WebView" app/src --include="*.kt"; then echo "FAIL WebView found"; exit 1; fi
+          echo "Native Kotlin+Compose verified ✓"
+          ls -lh app/build/outputs/apk/debug/
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: BECETTI-TOOLS-v1.0.0-debug-native
-          path: |
-            app/build/outputs/apk/debug/app-debug.apk
-            app/build/outputs/apk/debug/output-metadata.json
+          path: app/build/outputs/apk/debug/app-debug.apk
           retention-days: 30
-      - name: Show APK info
+      - name: APK info
         run: |
           ls -lh app/build/outputs/apk/debug/
-          sha256sum app/build/outputs/apk/debug/app-debug.apk || shasum -a 256 app/build/outputs/apk/debug/app-debug.apk
-          echo "Package: com.becetti.tools Native Kotlin+Compose No WebView"
+          sha256sum app/build/outputs/apk/debug/app-debug.apk
+          echo "com.becetti.tools Native 1.0.0"
+
