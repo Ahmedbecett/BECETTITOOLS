@@ -1,0 +1,35 @@
+{
+  "name": "BECETTI TOOLS — Everything you need. One smart toolbox.",
+  "short_name": "BECETTI TOOLS",
+  "description": "BECETTI TOOLS v1.0.0: 15 free Android tools — calculator, unit and currency converters, QR scanner, image to PDF, PDF merger, OCR and notes. Offline-first, no account.",
+  "start_url": "becetti-tools/",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#172235",
+  "theme_color": "#172235",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": [
+    "utilities",
+    "productivity"
+  ],
+  "icons": [
+    {
+      "src": "assets/img/logo-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/img/logo-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/img/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
