@@ -43,7 +43,13 @@ export const app = {
 export const apk = {
   fileName: "BECETTI-TOOLS-v1.0.0-NATIVE-debug.apk",
   bytes: 88869105,
+  // Decimal MB is what Android's file manager and folder listings show; MiB is the
+  // binary figure used by `ls -h`, GitHub and this repo's own tooling. Both are the
+  // same file: 88,869,105 bytes = 88.9 MB = 84.8 MiB. Show both, never one that
+  // contradicts what the user sees on their phone.
+  mb: "88.9 MB",
   mib: "84.8 MiB",
+  sizeBoth: "88.9 MB (84.8 MiB)",
   sha256: "460235a24055c4c808ad16b80e3f1cbe38fe81410b57cfb8779d552020a22632",
   // GitHub has no release *asset* on v1.0.0 (uploads.github.com is unreachable from the
   // publish environment), so the preserved blob on `main` is the download of record.

@@ -17,7 +17,7 @@ quality gate for the site (`node scripts/verify-site.mjs`).
 | Check | Result | Evidence |
 |---|---|---|
 | v1.0.0 APK unchanged | **PASS** | `git status` clean for `BECETTI-TOOLS-v1.0.0-NATIVE-debug.apk`; file never written by this work |
-| Byte size | **PASS** | 88,869,105 bytes (84.8 MiB) |
+| Byte size | **PASS** | 88,869,105 bytes (88.9 MB / 84.8 MiB) |
 | SHA-256 matches the committed `.sha256` file | **PASS** | `460235a24055c4c808ad16b80e3f1cbe38fe81410b57cfb8779d552020a22632` |
 | SHA-256 on the website matches the file | **PASS** | `verify-site.mjs` recomputes it every run |
 | Package name unchanged | **PASS** | APK manifest still `com.becetti.tools` / `com.becetti.tools.debug` |

@@ -286,7 +286,7 @@ function appNode(urls) {
     softwareVersion: app.versionName,
     version: app.versionName,
     fileFormat: "application/vnd.android.package-archive",
-    fileSize: `${apk.mib} (${apk.bytes} bytes)`,
+    fileSize: `${apk.sizeBoth}; ${apk.bytes} bytes`,
     downloadUrl: apk.downloadUrl,
     installUrl: apk.releaseUrl,
     license: repository.licenseUrl,
@@ -415,7 +415,7 @@ function heroSection(t, prefix = "") {
             <div class="cta-row">
               <a class="btn btn-primary btn-lg" href="${apk.downloadUrl}" rel="noopener" download>
                 ${icon("download")}<span>${esc(t.hero.ctaPrimary)}</span>
-                <span class="btn-meta">${esc(apk.mib)} · v${esc(app.versionName)}</span>
+                <span class="btn-meta">${esc(t.hero.sizeMeta)} · v${esc(app.versionName)}</span>
               </a>
               <a class="btn btn-ghost btn-lg" href="#install">${icon("info")}<span>${esc(t.hero.ctaSecondary)}</span></a>
               <a class="btn btn-ghost btn-lg" href="${repository.url}" rel="noopener">${icon("github")}<span>${esc(t.hero.ctaTertiary)}</span></a>
@@ -568,9 +568,9 @@ function downloadSection(t) {
               <h3>${icon("download")}<span>${esc(app.name)} v${esc(app.versionName)}</span></h3>
               <dl class="kv">
                 <dt>${esc(t.download.fileLabel)}</dt><dd><code>${esc(apk.fileName)}</code></dd>
-                <dt>${esc(t.download.sizeLabel)}</dt><dd>${esc(apk.mib)} <span class="subtle">(${apk.bytes.toLocaleString(
-    "en-US"
-  )} bytes)</span></dd>
+                <dt>${esc(t.download.sizeLabel)}</dt><dd>${esc(apk.mb)} <span class="subtle">(${esc(
+    apk.mib
+  )} · ${apk.bytes.toLocaleString("en-US")} bytes)</span></dd>
                 <dt>${esc(t.download.shaLabel)}</dt>
                 <dd class="sha">
                   <code id="sha256">${esc(apk.sha256)}</code>

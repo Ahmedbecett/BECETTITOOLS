@@ -185,7 +185,7 @@ Everything numeric or technical comes from the preserved artifact and is asserte
 | `debuggable=true`, `supportsRtl=true`, `allowBackup=true` | Same manifest parse |
 | Declared permissions list | Same manifest parse |
 | "APK Signature Scheme v2, debug key" | APK Signing Block (`APK Sig Block 42`) present, no v1 `META-INF/*.RSA` |
-| 84.8 MiB / 88,869,105 bytes | File size, re-checked at build/verify time |
+| 88.9 MB (84.8 MiB) / 88,869,105 bytes | File size, re-checked at build/verify time; both units are rendered so the page matches what the phone shows |
 | SHA-256 `460235a2…22632` | Recomputed by `verify-site.mjs` on every run |
 | ABIs `arm64-v8a, armeabi-v7a, x86, x86_64` | `lib/` entries in the APK |
 | Tool behaviour | Read from the v1.0.0 Kotlin sources, one by one |

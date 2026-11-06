@@ -29,7 +29,7 @@ GitHub release, the package name and every line of Android source remain untouch
 
 ## 1. Preserved artifact
 
-- File: `BECETTI-TOOLS-v1.0.0-NATIVE-debug.apk` — 88,869,105 bytes (84.8 MiB)
+- File: `BECETTI-TOOLS-v1.0.0-NATIVE-debug.apk` — 88,869,105 bytes (**88.9 MB** decimal, as Android's file manager shows it; 84.8 MiB binary)
 - SHA-256: `460235a24055c4c808ad16b80e3f1cbe38fe81410b57cfb8779d552020a22632`
   (matches `BECETTI-TOOLS-v1.0.0-NATIVE-debug.apk.sha256`, recomputed on every verification run)
 - Manifest inside the APK: `com.becetti.tools.debug`, versionName `1.0.0`, versionCode `1`,

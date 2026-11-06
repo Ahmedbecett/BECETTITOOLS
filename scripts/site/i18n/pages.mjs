@@ -54,9 +54,10 @@ const en = {
     ctaPrimary: "Download APK",
     ctaSecondary: "Installation guide",
     ctaTertiary: "View source on GitHub",
+    sizeMeta: "88.9 MB",
     facts: [
       { value: "15", label: "tools in v1.0.0" },
-      { value: "84.8 MiB", label: "debug APK size" },
+      { value: "88.9 MB", label: "debug APK size (84.8 MiB)" },
       { value: "Android 7.0+", label: "minSdk 24" },
       { value: "AR · FR · EN", label: "interface languages" },
     ],
@@ -223,8 +224,8 @@ const en = {
         a: "Android 7.0 (API 24) and newer. It is compiled against API 34 (Android 14) and uses the Android 13+ media permissions. Newer Android versions are expected to work but are not part of the tested baseline.",
       },
       {
-        q: "Why is the file 84.8 MiB?",
-        a: "Most of the size comes from bundled on-device machine-learning libraries for barcode scanning and text recognition, plus four CPU architectures. That is the price of working offline without sending your camera images to a server.",
+        q: "Why is the app about 89 MB?",
+        a: "The file is 88,869,105 bytes — 88.9 MB in decimal, which is what your phone's file manager shows, or 84.8 MiB in binary. Most of it is the bundled on-device machine-learning libraries for barcode scanning and text recognition, plus four CPU architectures. That is the price of working offline without sending your camera images to a server.",
       },
       {
         q: "Are my passwords or notes uploaded anywhere?",
@@ -356,9 +357,10 @@ const fr = {
     ctaPrimary: "Télécharger l’APK",
     ctaSecondary: "Guide d’installation",
     ctaTertiary: "Voir le code sur GitHub",
+    sizeMeta: "88,9 Mo",
     facts: [
       { value: "15", label: "outils dans la v1.0.0" },
-      { value: "84,8 Mio", label: "taille de l’APK debug" },
+      { value: "88,9 Mo", label: "taille de l’APK debug (84,8 Mio)" },
       { value: "Android 7.0+", label: "minSdk 24" },
       { value: "AR · FR · EN", label: "langues de l’interface" },
     ],
@@ -525,8 +527,8 @@ const fr = {
         a: "Android 7.0 (API 24) et plus récent. La compilation cible l’API 34 (Android 14) et utilise les autorisations média d’Android 13+. Les versions plus récentes devraient fonctionner, sans faire partie de la base testée.",
       },
       {
-        q: "Pourquoi 84,8 Mio ?",
-        a: "L’essentiel du poids vient des bibliothèques d’apprentissage automatique embarquées pour les codes-barres et l’OCR, et de quatre architectures processeur. C’est le prix du fonctionnement hors ligne sans envoyer vos images à un serveur.",
+        q: "Pourquoi l’application fait-elle environ 89 Mo ?",
+        a: "Le fichier fait 88 869 105 octets, soit 88,9 Mo en décimal (ce qu’affiche le gestionnaire de fichiers du téléphone) ou 84,8 Mio en binaire. L’essentiel du poids vient des bibliothèques d’apprentissage automatique embarquées pour les codes-barres et l’OCR, et de quatre architectures processeur. C’est le prix du fonctionnement hors ligne sans envoyer vos images à un serveur.",
       },
       {
         q: "Mes mots de passe ou mes notes sont-ils envoyés quelque part ?",
@@ -658,9 +660,10 @@ const ar = {
     ctaPrimary: "تحميل ملف APK",
     ctaSecondary: "دليل التثبيت",
     ctaTertiary: "الشيفرة على GitHub",
+    sizeMeta: "88.9 م.ب",
     facts: [
       { value: "15", label: "أداة في الإصدار 1.0.0" },
-      { value: "84.8 مبيبايت", label: "حجم ملف APK التجريبي" },
+      { value: "88.9 م.ب", label: "حجم ملف APK التجريبي (84.8 مبيبايت)" },
       { value: "أندرويد 7.0+", label: "minSdk 24" },
       { value: "عربي · فرنسي · إنجليزي", label: "لغات الواجهة" },
     ],
@@ -824,8 +827,8 @@ const ar = {
         a: "أندرويد 7.0 (API 24) وأحدث. البناء يستهدف API 34 (أندرويد 14) ويستخدم أذونات الوسائط في أندرويد 13+. الإصدارات الأحدث يُتوقع أن تعمل لكنها ليست ضمن خط الأساس المُختبَر.",
       },
       {
-        q: "لماذا حجم الملف 84.8 مبيبايت؟",
-        a: "معظم الحجم من مكتبات التعلّم الآلي المضمّنة لقراءة الرموز واستخراج النص، ومن أربع معماريات معالجات. هذا ثمن العمل دون اتصال ودون إرسال صور الكاميرا إلى خادم.",
+        q: "لماذا حجم التطبيق نحو 89 ميجابايت؟",
+        a: "حجم الملف 88,869,105 بايت — أي 88.9 ميجابايت بالحساب العشري (وهو ما يعرضه مدير الملفات في هاتفك)، أو 84.8 مبيبايت بالحساب الثنائي. معظم الحجم من مكتبات التعلّم الآلي المضمّنة لقراءة الرموز واستخراج النص، ومن أربع معماريات معالجات؛ وهذا ثمن العمل دون اتصال ودون إرسال صور الكاميرا إلى خادم.",
       },
       {
         q: "هل تُرسل كلمات المرور أو الملاحظات إلى أي مكان؟",

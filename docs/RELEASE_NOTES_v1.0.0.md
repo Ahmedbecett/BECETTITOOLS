@@ -25,7 +25,7 @@ The APK is preserved byte-for-byte in the repository:
 | | |
 |---|---|
 | **File** | `BECETTI-TOOLS-v1.0.0-NATIVE-debug.apk` |
-| **Size** | 88,869,105 bytes (84.8 MiB) |
+| **Size** | 88,869,105 bytes (88.9 MB decimal / 84.8 MiB binary) |
 | **Download** | https://raw.githubusercontent.com/Ahmedbecett/BECETTITOOLS/main/BECETTI-TOOLS-v1.0.0-NATIVE-debug.apk |
 | **Checksum file** | https://raw.githubusercontent.com/Ahmedbecett/BECETTITOOLS/main/BECETTI-TOOLS-v1.0.0-NATIVE-debug.apk.sha256 |
 | **Browse on GitHub** | https://github.com/Ahmedbecett/BECETTITOOLS/blob/main/BECETTI-TOOLS-v1.0.0-NATIVE-debug.apk |
