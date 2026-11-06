@@ -50,13 +50,16 @@ Privacy policy pages receive neither the config nor the bar, so they stay third-
 
 | Path | Policy |
 |---|---|
-| `/becetti-tools/`, `/becetti-tools/(.*)` | `default-src 'self'; script-src 'self' 'unsafe-inline' https://quge5.com https://*.quge5.com; connect-src 'self' https://quge5.com https://*.quge5.com; img-src 'self' data: blob: https:; frame-src https:; media-src 'self' https:; worker-src 'self' blob:; object-src 'none'; form-action 'none'; base-uri 'self'; frame-ancestors 'self'` |
+| `/becetti-tools/`, `/becetti-tools/(.*)`, `/ads-verify/` | `default-src 'self'; script-src 'self' 'unsafe-inline' https:; connect-src 'self' https:; img-src 'self' data: blob: https:; frame-src https:; media-src 'self' https:; worker-src 'self' blob:; object-src 'none'; form-action 'none'; base-uri 'self'; frame-ancestors 'self'` |
 | everything else (`/privacy/`, `/`, `/404.html`) | unchanged strict `default-src 'self'; script-src 'self' 'unsafe-inline'` |
 | `/sw.js` | `default-src 'self' https://5gvci.com; script-src 'self' https://5gvci.com; connect-src 'self' https://5gvci.com; img-src 'self' data: https://5gvci.com` + `Cache-Control: max-age=0` + `Service-Worker-Allowed: /` |
 
-`img-src https:` and `frame-src https:` are scoped to the landing pages only: ad creatives are
-served from rotating CDN hosts that cannot be enumerated in advance. Scripts stay limited to
-`quge5.com`.
+`img-src https:`, `frame-src https:` **and** `script-src https:` are scoped to the ad-bearing pages
+only: the tag pulls its runtime and creatives from hosts that cannot be enumerated in advance, and
+pinning `quge5.com` alone silently blocked part of the ad chain. Everything else on those pages
+stays locked (`object-src 'none'`, `form-action 'none'`, `base-uri 'self'`, `frame-ancestors 'self'`),
+and `/`, `/privacy/`, `/404.html` and `/sw.js` keep the original strict policy — asserted by
+`scripts/verify-site.mjs`.
 
 ---
 
@@ -95,13 +98,30 @@ consents; the `/sw.js` file simply has to exist at the root when it does.
 
 ## 6. Verifying it with Monetag
 
-Monetag's checker loads a page and looks for its tag in the DOM. Because the tag is injected only
-after consent, an automated check may report "tag not found". Options, best first:
+Monetag's checker loads a page and looks for its tag in the DOM. The public landing pages inject the
+tag only after consent, so pointing the dashboard at them can report "tag not found" forever.
 
-1. Verify manually: open the page, press **Accept ads**, confirm the network starts serving.
-2. Temporarily load the tag unconditionally for one deployment, let the dashboard verify, then
-   restore the gate. Do **not** leave it open — the privacy policy states nothing loads before
-   consent.
+**Use the verification page:** `https://becetti-tools.vercel.app/ads-verify/`
+
+- unlinked, `noindex, nofollow, noarchive`, excluded from `sitemap.xml`, not in `robots.txt`;
+- loads the tag immediately (no consent step, no localStorage read), so any crawler or browser sees
+  `<script src="https://quge5.com/88/tag.min.js" data-zone="306773">` in the DOM;
+- shows a one-line status: "injected — the Monetag script is in this page".
+
+Paste that URL into the "add site / verify" field in the Monetag dashboard. If the dashboard accepts
+it, the zone is verified and the gated pages keep working exactly as designed.
+
+Same page as a support tool: if ads appear on `/ads-verify/` but not on `/becetti-tools/`, the tag is
+fine and the visitor simply has not pressed **Accept ads** (or has an ad blocker). If ads appear
+nowhere, the zone is still in moderation or has no demand for that traffic — nothing on the site can
+fix that; wait for approval in the dashboard.
+
+Console check on a landing page after pressing **Accept ads**:
+
+```js
+document.getElementById("monetag-tag")   // <script src="https://quge5.com/88/tag.min.js">
+document.documentElement.dataset.ads     // "loaded"
+```
 
 ---
 

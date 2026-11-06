@@ -142,7 +142,7 @@ export const privacy = {
         paragraphs: [
           "This page is not the app. The website shows sponsored messages served by Monetag (zone 306773, script loaded from quge5.com). The script is never part of the HTML: it is fetched only after you press \u201cAccept ads\u201d in the consent bar, and choosing Decline leaves the page loading nothing from that host.",
           "Your choice is stored in your browser under the local key becetti-ads-consent and is never transmitted to us \u2014 there is no server that receives it. Once the tag is allowed to load, Monetag may set its own cookies or identifiers and may display in-page sponsored messages; that processing is covered by Monetag's own privacy policy, not by this one.",
-          "You can change your choice at any time with the \u201cAd settings\u201d link in the footer. Advertisements are never disguised as download buttons, never open without a click, never appear on this privacy page, and never replace or delay the APK download.",
+          "You can change your choice at any time with the \u201cAd settings\u201d link in the footer. Advertisements are never disguised as download buttons, never open without a click, never appear on this privacy page, and never replace or delay the APK download. One unlinked page, /ads-verify/, exists only so the advertising network can confirm the tag; it is excluded from the sitemap and from search results.",
         ],
       },
     ],
@@ -294,7 +294,7 @@ export const privacy = {
         paragraphs: [
           "Cette page n’est pas l’application. Le site affiche des messages sponsorisés servis par Monetag (zone 306773, script chargé depuis quge5.com). Le script ne fait jamais partie du HTML : il n’est récupéré qu’après un clic sur « Accepter » dans la barre de consentement, et un refus laisse la page sans aucune requête vers cet hôte.",
           "Votre choix est stocké dans votre navigateur sous la clé locale becetti-ads-consent et ne nous est jamais transmis — aucun serveur ne le reçoit. Une fois le tag autorisé, Monetag peut déposer ses propres cookies ou identifiants et afficher des messages sponsorisés dans la page ; ce traitement relève de la politique de confidentialité de Monetag, pas de celle-ci.",
-          "Vous pouvez changer d’avis à tout moment via le lien « Réglages des annonces » en pied de page. Une publicité n’est jamais déguisée en bouton de téléchargement, ne s’ouvre jamais sans clic, n’apparaît jamais sur cette page et ne remplace ni ne retarde le téléchargement de l’APK.",
+          "Vous pouvez changer d’avis à tout moment via le lien « Réglages des annonces » en pied de page. Une publicité n’est jamais déguisée en bouton de téléchargement, ne s’ouvre jamais sans clic, n’apparaît jamais sur cette page et ne remplace ni ne retarde le téléchargement de l’APK. Une page non liée, /ads-verify/, existe uniquement pour que la régie publicitaire puisse confirmer le tag ; elle est exclue du sitemap et des résultats de recherche.",
         ],
       },
     ],
@@ -446,7 +446,7 @@ export const privacy = {
         paragraphs: [
           "هذه الصفحة ليست التطبيق. يعرض الموقع رسائل مدعومة من Monetag (المنطقة 306773، والسكربت يُحمَّل من quge5.com). السكربت ليس جزءًا من ملف HTML أبدًا: لا يُجلب إلا بعد ضغطك على «أوافق» في شريط الموافقة، ورفضك يُبقي الصفحة دون أي طلب إلى ذلك النطاق.",
           "يُخزَّن اختيارك في متصفحك تحت المفتاح المحلي becetti-ads-consent ولا يُرسل إلينا إطلاقًا — لا يوجد خادم يستقبله. وبعد السماح بتحميل الوسم، قد تضع Monetag ملفات تعريف أو معرّفات خاصة بها وتعرض رسائل مدعومة داخل الصفحة، وهذا المعالجة تخضع لسياسة خصوصية Monetag لا لهذه الصفحة.",
-          "يمكنك تغيير اختيارك في أي وقت عبر رابط «إعدادات الإعلانات» في تذييل الصفحة. لا يُقنَّع أي إعلان كزر تحميل، ولا يُفتح دون نقر، ولا يظهر في صفحة الخصوصية هذه، ولا يستبدل تحميل ملف APK أو يؤخّره.",
+          "يمكنك تغيير اختيارك في أي وقت عبر رابط «إعدادات الإعلانات» في تذييل الصفحة. لا يُقنَّع أي إعلان كزر تحميل، ولا يُفتح دون نقر، ولا يظهر في صفحة الخصوصية هذه، ولا يستبدل تحميل ملف APK أو يؤخّره. وتوجد صفحة غير مرتبطة بالموقع هي ‎/ads-verify/‎ هدفها الوحيد أن تتحقق شبكة الإعلانات من الوسم، وهي مستبعدة من خريطة الموقع ومن نتائج البحث.",
         ],
       },
     ],

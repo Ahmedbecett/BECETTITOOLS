@@ -305,9 +305,24 @@ async function main() {
   );
   const landingRule = vercel.headers?.find((h) => h.source === "/becetti-tools/(.*)");
   const landingCsp = landingRule?.headers.find((x) => x.key === "Content-Security-Policy")?.value ?? "";
+  check("landing CSP allows remote ad scripts", /script-src 'self' 'unsafe-inline' https:/.test(landingCsp));
+  check("landing CSP still forbids objects", /object-src 'none'/.test(landingCsp));
+  const verifyDocs = docs.get(path.join(siteRoot, "ads-verify", "index.html"));
+  const verifyRule = vercel.headers?.find((h) => h.source === "/ads-verify/");
+  const verifyCsp = verifyRule?.headers.find((x) => x.key === "Content-Security-Policy")?.value ?? "";
   check(
-    "landing CSP allows the Monetag tag",
-    /script-src[^;]*https:\/\/quge5\.com/.test(landingCsp)
+    "verification page exists, is noindex and loads the tag without a click",
+    Boolean(verifyDocs) &&
+      verifyDocs.includes('content="noindex, nofollow, noarchive"') &&
+      verifyDocs.includes('"unconditional":true') &&
+      !/<script[^>]+src="https:\/\/quge5\.com/.test(verifyDocs)
+  );
+  check("verification page carries the relaxed CSP it needs", verifyCsp.includes("script-src") && verifyCsp.includes("https:"));
+  const sitemapXml = docs.get(path.join(siteRoot, "sitemap.xml")) || "";
+  check("verification page stays out of the sitemap", !sitemapXml.includes("ads-verify"));
+  check(
+    "consent still gates the tag on the landing pages",
+    landingDocs.every((h) => !/unconditional/.test(h))
   );
   const strictCsp =
     vercel.headers?.[0]?.headers.find((x) => x.key === "Content-Security-Policy")?.value ?? "";

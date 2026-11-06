@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ad tag verification — BECETTI TOOLS</title>
+  <meta name="description" content="Internal page used to verify the advertising tag for becetti-tools.vercel.app.">
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <meta name="googlebot" content="noindex, nofollow, noarchive">
+  <link rel="canonical" href="https://becetti-tools.vercel.app/ads-verify/">
+  <meta name="theme-color" content="#172235">
+  <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../assets/css/site.css">
+  <script type="application/json" id="becetti-ads">{"src":"https://quge5.com/88/tag.min.js","zone":"306773","consentKey":"becetti-ads-consent","unconditional":true}</script>
+</head>
+<body>
+  <main id="main" class="wrap" style="padding:48px 24px;max-width:720px">
+    <h1>Ad tag verification</h1>
+    <p>This page exists so an advertising network's verification crawler can find the
+      Monetag site tag for zone 306773 without pressing a button. It is not linked
+      from the site, is excluded from the sitemap and is marked <code>noindex</code>.</p>
+    <p>On the real pages the tag is injected only after the visitor accepts it, so a first
+      visit downloads no third-party code at all.</p>
+    <p id="ads-verify-status">Tag status: <strong id="ads-state-pending">not injected yet</strong><strong id="ads-state-ok" hidden>injected — the Monetag script is in this page</strong></p>
+    <p><a href="../becetti-tools/">Go to the download page</a></p>
+  </main>
+  <script src="../assets/js/site.js" defer></script>
+  <style>
+    html[data-ads="loaded"] #ads-state-pending { display: none; }
+    html[data-ads="loaded"] #ads-state-ok { display: inline; }
+  </style>
+</body>
+</html>

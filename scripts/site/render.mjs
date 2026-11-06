@@ -871,6 +871,50 @@ ${footer({ t, urls, loc, pagePath })}`;
 }
 
 /** Root document: a real Vercel redirect exists, this is the static fallback. */
+/**
+ * Ad-network verification page. Not linked from the site, excluded from the sitemap and
+ * marked noindex: its only job is to let the publisher's ad-network crawler find the tag
+ * without a click. The real pages stay consent-gated.
+ */
+export function renderAdsVerify({ urls }) {
+  const pagePath = "/ads-verify/";
+  const prefix = prefixFor(pagePath);
+  const cfg = { src: ads.tagSrc, zone: ads.zone, consentKey: ads.consentKey, unconditional: true };
+  return `<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ad tag verification — BECETTI TOOLS</title>
+  <meta name="description" content="Internal page used to verify the advertising tag for becetti-tools.vercel.app.">
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <meta name="googlebot" content="noindex, nofollow, noarchive">
+  <link rel="canonical" href="${esc(urls.abs(pagePath))}">
+  <meta name="theme-color" content="#172235">
+  <link rel="icon" href="${prefix}assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="${prefix}assets/css/site.css">
+  <script type="application/json" id="becetti-ads">${JSON.stringify(cfg)}</script>
+</head>
+<body>
+  <main id="main" class="wrap" style="padding:48px 24px;max-width:720px">
+    <h1>Ad tag verification</h1>
+    <p>This page exists so an advertising network's verification crawler can find the
+      Monetag site tag for zone ${esc(ads.zone)} without pressing a button. It is not linked
+      from the site, is excluded from the sitemap and is marked <code>noindex</code>.</p>
+    <p>On the real pages the tag is injected only after the visitor accepts it, so a first
+      visit downloads no third-party code at all.</p>
+    <p id="ads-verify-status">Tag status: <strong id="ads-state-pending">not injected yet</strong><strong id="ads-state-ok" hidden>injected — the Monetag script is in this page</strong></p>
+    <p><a href="${prefix}becetti-tools/">Go to the download page</a></p>
+  </main>
+  <script src="${prefix}assets/js/site.js" defer></script>
+  <style>
+    html[data-ads="loaded"] #ads-state-pending { display: none; }
+    html[data-ads="loaded"] #ads-state-ok { display: inline; }
+  </style>
+</body>
+</html>`;
+}
+
 export function renderRootRedirect({ urls }) {
   const target = urls.landingPath("en");
   return `<!doctype html>
@@ -1000,11 +1044,14 @@ export function renderManifest({ urls }) {
 
 const LANDING_CSP = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' https://quge5.com https://*.quge5.com",
+  // Ad tags pull their runtime from rotating hosts that the publisher cannot pin, so the
+  // landing pages allow https scripts/connections. Everything else stays locked, and the
+  // strict policy below still covers /, /privacy/, 404 and /sw.js.
+  "script-src 'self' 'unsafe-inline' https:",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",
-  "connect-src 'self' https://quge5.com https://*.quge5.com",
+  "connect-src 'self' https:",
   "frame-src https:",
   "media-src 'self' https:",
   "worker-src 'self' blob:",
@@ -1047,6 +1094,16 @@ export function renderVercelConfig() {
         },
         {
           source: "/becetti-tools/(.*)",
+          headers: [{ key: "Content-Security-Policy", value: LANDING_CSP }],
+        },
+        {
+          // Publisher-verification page: the ad network's crawler has no way to press the
+          // consent button, so this one unlinked page loads the tag immediately.
+          source: "/ads-verify/",
+          headers: [{ key: "Content-Security-Policy", value: LANDING_CSP }],
+        },
+        {
+          source: "/ads-verify/(.*)",
           headers: [{ key: "Content-Security-Policy", value: LANDING_CSP }],
         },
         {

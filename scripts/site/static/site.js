@@ -141,6 +141,7 @@
       s.setAttribute("data-zone", cfg.zone);
       s.setAttribute("data-cfasync", "false");
       document.head.appendChild(s);
+      document.documentElement.setAttribute("data-ads", "loaded");
     }
     function show() {
       if (banner) banner.hidden = false;
@@ -165,6 +166,13 @@
         show();
       }
     });
+
+    /* Verification page only: no banner, no stored choice, tag straight away. */
+    if (cfg.unconditional === true) {
+      hide();
+      loadTag();
+      return;
+    }
 
     var choice = read();
     if (choice === "accept") loadTag();

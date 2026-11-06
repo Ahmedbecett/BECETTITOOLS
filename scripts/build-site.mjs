@@ -24,6 +24,7 @@ import {
   createUrls,
   renderLanding,
   renderPrivacy,
+  renderAdsVerify,
   renderRootRedirect,
   render404,
   renderSitemap,
@@ -79,6 +80,7 @@ async function main() {
   }
 
   // Root + fallbacks
+  await emit("ads-verify/index.html", renderAdsVerify({ urls }));
   await emit("index.html", renderRootRedirect({ urls }));
   await emit("404.html", render404({ urls, t: pages.en }));
 
