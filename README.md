@@ -5,6 +5,25 @@ Native Android Utility App (Kotlin + Jetpack Compose + Material 3, MVVM + Clean 
 ## Package
 - `com.becetti.tools` — Version 1.0.0 — minSdk 24, targetSdk 34, Android 13+ supported.
 
+## Download & landing page
+- **APK (preserved v1.0.0, debug build):** [`BECETTI-TOOLS-v1.0.0-NATIVE-debug.apk`](BECETTI-TOOLS-v1.0.0-NATIVE-debug.apk) — 88,869,105 bytes
+- **SHA-256:** `460235a24055c4c808ad16b80e3f1cbe38fe81410b57cfb8779d552020a22632`
+  ([checksum file](BECETTI-TOOLS-v1.0.0-NATIVE-debug.apk.sha256))
+- **Release notes:** <https://github.com/Ahmedbecett/BECETTITOOLS/releases/tag/v1.0.0>
+- **Landing page (EN / FR / AR, deploy-ready):** [`website/`](website/) — see
+  [`docs/LANDING_PAGE.md`](docs/LANDING_PAGE.md) to build, verify and publish it
+- **Privacy policy (public, 3 languages):** [`docs/PUBLIC_PRIVACY_POLICY.md`](docs/PUBLIC_PRIVACY_POLICY.md)
+- **Publishing deliverables & test report:** [`docs/DELIVERABLES.md`](docs/DELIVERABLES.md),
+  [`docs/TESTING_REPORT_v1.0.0.md`](docs/TESTING_REPORT_v1.0.0.md)
+
+The v1.0.0 APK is frozen: nothing in this repository rebuilds, re-signs or replaces it. The site is
+static, dependency-free and contains no analytics.
+
+```bash
+node scripts/build-site.mjs     # regenerate website/
+node scripts/verify-site.mjs    # 237 checks: links, metadata, structured data, a11y, checksum
+```
+
 ## Features (15 tools, all functional)
 **Calculator & Converters**
 - Scientific Calculator (add/sub/mul/div, %, sqrt, pow, trig sin/cos/tan/log/ln, history via Room)

@@ -1,0 +1,106 @@
+/* BECETTI TOOLS — progressive enhancement only.
+   Without JavaScript the page is fully readable and every link works. */
+(function () {
+  "use strict";
+
+  /* ------------------------------- theme ---------------------------------- */
+  var root = document.documentElement;
+  var KEY = "becetti-theme";
+  var mq = window.matchMedia("(prefers-color-scheme: dark)");
+  var ORDER = ["system", "light", "dark"];
+  var toggle = document.querySelector("[data-theme-toggle]");
+  var state = document.querySelector("[data-theme-state]");
+
+  function labels() {
+    if (!toggle) return { system: "System", light: "Light", dark: "Dark" };
+    return {
+      system: toggle.getAttribute("data-label-system") || "System",
+      light: toggle.getAttribute("data-label-light") || "Light",
+      dark: toggle.getAttribute("data-label-dark") || "Dark",
+    };
+  }
+
+  function apply(pref) {
+    root.dataset.themePref = pref;
+    root.dataset.theme = pref === "system" ? (mq.matches ? "dark" : "light") : pref;
+    var L = labels();
+    var name = L[pref] || L.system;
+    if (state) state.textContent = name;
+    if (toggle) {
+      toggle.setAttribute("title", name);
+      toggle.setAttribute("aria-label", name);
+      toggle.setAttribute("data-pref", pref);
+    }
+  }
+
+  function current() {
+    try {
+      return localStorage.getItem(KEY) || "system";
+    } catch (e) {
+      return "system";
+    }
+  }
+
+  if (toggle) {
+    apply(current());
+    toggle.addEventListener("click", function () {
+      var next = ORDER[(ORDER.indexOf(current()) + 1) % ORDER.length];
+      try {
+        localStorage.setItem(KEY, next);
+      } catch (e) {}
+      apply(next);
+    });
+  }
+
+  if (mq.addEventListener) {
+    mq.addEventListener("change", function () {
+      if (current() === "system") apply("system");
+    });
+  }
+
+  /* ----------------------------- copy checksum ----------------------------- */
+  document.querySelectorAll("[data-copy]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var text = btn.getAttribute("data-copy") || "";
+      var status = document.querySelector(".copy-status");
+      var done = btn.getAttribute("data-copied") || "Copied";
+
+      function announce(ok) {
+        if (!status) return;
+        status.textContent = ok ? done + ": " + text : text;
+      }
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(
+          function () {
+            announce(true);
+          },
+          function () {
+            announce(false);
+          }
+        );
+        return;
+      }
+      // Fallback for browsers without the async clipboard API.
+      var range = document.createRange();
+      var target = document.getElementById("sha256");
+      if (target) {
+        range.selectNodeContents(target);
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+        try {
+          document.execCommand("copy");
+          announce(true);
+        } catch (e) {
+          announce(false);
+        }
+      }
+    });
+  });
+
+  /* ------------------------- mark external downloads ----------------------- */
+  document.querySelectorAll('a[href^="https://raw.githubusercontent.com"]').forEach(function (a) {
+    a.setAttribute("rel", "noopener nofollow");
+  });
+})();

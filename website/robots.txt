@@ -1,0 +1,7 @@
+# robots.txt — BECETTI TOOLS
+User-agent: *
+Allow: /
+
+# No crawl-delay is set: the site is a handful of static pages.
+
+Sitemap: https://becetti-tools.vercel.app/sitemap.xml

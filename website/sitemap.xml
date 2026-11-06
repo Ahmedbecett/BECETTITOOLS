@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://becetti-tools.vercel.app/becetti-tools/</loc>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://becetti-tools.vercel.app/becetti-tools/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://becetti-tools.vercel.app/becetti-tools/fr/"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://becetti-tools.vercel.app/becetti-tools/ar/"/>
+  </url>
+  <url>
+    <loc>https://becetti-tools.vercel.app/becetti-tools/fr/</loc>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://becetti-tools.vercel.app/becetti-tools/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://becetti-tools.vercel.app/becetti-tools/fr/"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://becetti-tools.vercel.app/becetti-tools/ar/"/>
+  </url>
+  <url>
+    <loc>https://becetti-tools.vercel.app/becetti-tools/ar/</loc>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://becetti-tools.vercel.app/becetti-tools/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://becetti-tools.vercel.app/becetti-tools/fr/"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://becetti-tools.vercel.app/becetti-tools/ar/"/>
+  </url>
+  <url>
+    <loc>https://becetti-tools.vercel.app/privacy/</loc>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://becetti-tools.vercel.app/privacy/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://becetti-tools.vercel.app/privacy/fr/"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://becetti-tools.vercel.app/privacy/ar/"/>
+  </url>
+  <url>
+    <loc>https://becetti-tools.vercel.app/privacy/fr/</loc>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://becetti-tools.vercel.app/privacy/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://becetti-tools.vercel.app/privacy/fr/"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://becetti-tools.vercel.app/privacy/ar/"/>
+  </url>
+  <url>
+    <loc>https://becetti-tools.vercel.app/privacy/ar/</loc>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://becetti-tools.vercel.app/privacy/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://becetti-tools.vercel.app/privacy/fr/"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://becetti-tools.vercel.app/privacy/ar/"/>
+  </url>
+</urlset>
