@@ -1,0 +1,17 @@
+.gradle/
+build/
+app/build/
+local.properties
+*.iml
+.DS_Store
+.idea/
+captures/
+.externalNativeBuild/
+.cxx/
+*.apk
+*.aab
+keystore.properties
+*.jks
+# Allow native built APK for distribution
+!BECETTI-TOOLS*.apk
+!BECETTI-TOOLS*.apk.sha256

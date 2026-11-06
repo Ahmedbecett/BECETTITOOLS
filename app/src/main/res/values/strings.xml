@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">BECETTI TOOLS</string>
+    <string name="tagline">Everything you need. One smart toolbox.</string>
+    <string name="search_hint">Search tools…</string>
+    <string name="sponsored_offers">Sponsored Offers</string>
+    <string name="camera_perm_rationale">Camera access is needed for QR scanning and is requested only when you open the scanner.</string>
+    <string name="file_perm_rationale">File access is needed to select images/PDFs for processing. Files are processed locally.</string>
+</resources>
