@@ -33,6 +33,7 @@ jobs:
           unzip -q /tmp/cmdline-tools.zip -d /tmp
           mkdir -p $ANDROID_HOME/cmdline-tools/latest
           mv /tmp/cmdline-tools/* $ANDROID_HOME/cmdline-tools/latest/ 2>/dev/null || true
+          mkdir -p $ANDROID_HOME/cmdline-tools/latest 2>/dev/null || true
           if [ -d "/tmp/cmdline-tools/cmdline-tools" ]; then mv /tmp/cmdline-tools/cmdline-tools/* $ANDROID_HOME/cmdline-tools/latest/ || true; fi
           ls $ANDROID_HOME/cmdline-tools/latest/bin/
           export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$PATH
@@ -42,18 +43,28 @@ jobs:
           echo "ANDROID_SDK_ROOT=$ANDROID_HOME" >> $GITHUB_ENV
           echo "$ANDROID_HOME/platform-tools" >> $GITHUB_PATH
           echo "$ANDROID_HOME/cmdline-tools/latest/bin" >> $GITHUB_PATH
+          ls -lh $ANDROID_HOME/platforms/ || true
       - name: Build Debug APK
         run: |
           export ANDROID_HOME=$HOME/android-sdk
           export ANDROID_SDK_ROOT=$HOME/android-sdk
-          gradle assembleDebug --stacktrace
-          ls -lh app/build/outputs/apk/debug/
-          sha256sum app/build/outputs/apk/debug/app-debug.apk
+          set +e
+          gradle assembleDebug --stacktrace > /tmp/gradle.log 2>&1
+          cat /tmp/gradle.log
+          echo "exit:$?" > /tmp/exitcode
+          ls -lh app/build/outputs/apk/debug/ || true
+          cat /tmp/exitcode
+          exit $(cat /tmp/exitcode | sed 's/exit://')
       - name: Verify native no WebView
+        if: success()
         run: |
           if grep -R "WebView" app/src --include="*.kt" --include="*.xml"; then echo "WebView found"; exit 1; fi
           echo "Native 100% Kotlin+Compose verified ✓"
+          ls -lh app/build/outputs/apk/debug/
+          echo "Size check:"
+          stat -c%s app/build/outputs/apk/debug/app-debug.apk || true
       - name: Commit APK to repo
+        if: success()
         run: |
           cp app/build/outputs/apk/debug/app-debug.apk ./BECETTI-TOOLS-v1.0.0-NATIVE-debug.apk
           sha256sum ./BECETTI-TOOLS-v1.0.0-NATIVE-debug.apk > ./BECETTI-TOOLS-v1.0.0-NATIVE-debug.apk.sha256
@@ -63,7 +74,15 @@ jobs:
           git add BECETTI-TOOLS-v1.0.0-NATIVE-debug.apk BECETTI-TOOLS-v1.0.0-NATIVE-debug.apk.sha256
           git commit -m "ci: native APK v1.0.0 built (real SDK, no WebView, Kotlin/Compose) [skip ci]" || echo "no changes"
           git push origin HEAD:arena/354c3e44-becettitools || true
+      - name: Upload log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gradle-failure-log
+          path: /tmp/gradle.log
+          retention-days: 7
       - name: Upload APK artifact
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: BECETTI-TOOLS-v1.0.0-debug-native
