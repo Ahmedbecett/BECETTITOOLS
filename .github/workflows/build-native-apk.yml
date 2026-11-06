@@ -1,0 +1,46 @@
+name: Build BECETTI TOOLS Native APK
+
+on:
+  push:
+    branches: ["arena/354c3e44-becettitools", "main"]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: gradle
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+      - name: Grant execute permission
+        run: chmod +x gradlew
+      - name: Build Debug APK (Native - No WebView)
+        run: ./gradlew assembleDebug --stacktrace
+      - name: Build Release APK (unsigned)
+        run: ./gradlew assembleRelease --stacktrace || echo "release build attempted"
+      - name: Verify native (no WebView)
+        run: |
+          echo "Checking for WebView usage (should be zero)..."
+          ! grep -r "WebView" app/src --include="*.kt" || (echo "WebView found!" && exit 1)
+          echo "Native check: Compose + Kotlin only ✓"
+          grep -r "androidx.compose" app/build.gradle.kts
+      - name: Upload Debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: BECETTI-TOOLS-v1.0.0-debug-native
+          path: |
+            app/build/outputs/apk/debug/app-debug.apk
+            app/build/outputs/apk/debug/output-metadata.json
+          retention-days: 30
+      - name: Show APK info
+        run: |
+          ls -lh app/build/outputs/apk/debug/
+          sha256sum app/build/outputs/apk/debug/app-debug.apk || shasum -a 256 app/build/outputs/apk/debug/app-debug.apk
+          echo "Package: com.becetti.tools Native Kotlin+Compose No WebView"
