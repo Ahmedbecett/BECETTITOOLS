@@ -28,9 +28,8 @@ jobs:
           gradle-version: 8.6
       - name: Clean previous placeholder
         run: |
-          rm -f BECETTI-TOOLS*.apk*
-          rm -rf app/build
-          ls -la
+          rm -f BECETTI-TOOLS*.apk* || true
+          rm -rf app/build || true
       - name: Install Android SDK
         run: |
           set -e
@@ -51,50 +50,31 @@ jobs:
           echo "ANDROID_SDK_ROOT=$ANDROID_HOME" >> $GITHUB_ENV
           echo "$ANDROID_HOME/platform-tools" >> $GITHUB_PATH
           echo "$ANDROID_HOME/cmdline-tools/latest/bin" >> $GITHUB_PATH
-          ls -lh $ANDROID_HOME/platforms/ || true
       - name: Build Debug APK
         run: |
           export ANDROID_HOME=$HOME/android-sdk
           export ANDROID_SDK_ROOT=$HOME/android-sdk
-          set +e
-          gradle assembleDebug --stacktrace > /tmp/gradle.log 2>&1
-          cat /tmp/gradle.log
-          echo "exit:$?" > /tmp/exitcode
-          ls -lh app/build/outputs/apk/debug/ || true
-          cat /tmp/exitcode
-          APK=$(find app/build -name "*.apk" | head -1)
-          if [ -f "$APK" ]; then ls -lh "$APK"; stat -c%s "$APK" || true; echo "APK_FOUND=yes" >> $GITHUB_ENV; else echo "APK_FOUND=no" >> $GITHUB_ENV; fi
-          exit $(cat /tmp/exitcode | sed 's/exit://')
+          gradle assembleDebug --stacktrace
+          ls -lh app/build/outputs/apk/debug/
+          stat -c%s app/build/outputs/apk/debug/app-debug.apk
+          sha256sum app/build/outputs/apk/debug/app-debug.apk
       - name: Verify native no WebView
-        if: success()
         run: |
           if grep -R "WebView" app/src --include="*.kt" --include="*.xml"; then echo "WebView found"; exit 1; fi
           echo "Native 100% Kotlin+Compose verified ✓"
-      - name: Commit APK to repo
-        if: success()
+      - name: Prepare APK for commit
         run: |
-          set -x
-          APK=$(find app/build -name "app-debug.apk" | head -1)
-          ls -lh "$APK"
-          cp "$APK" ./BECETTI-TOOLS-v1.0.0-NATIVE-debug.apk
+          cp app/build/outputs/apk/debug/app-debug.apk ./BECETTI-TOOLS-v1.0.0-NATIVE-debug.apk
           sha256sum ./BECETTI-TOOLS-v1.0.0-NATIVE-debug.apk > ./BECETTI-TOOLS-v1.0.0-NATIVE-debug.apk.sha256
           ls -lh ./BECETTI-TOOLS*.apk*
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add BECETTI-TOOLS-v1.0.0-NATIVE-debug.apk BECETTI-TOOLS-v1.0.0-NATIVE-debug.apk.sha256
-          git status
-          git commit -m "ci: native APK v1.0.0 built (real SDK, no WebView) [skip ci]" || echo "no changes to commit"
-          git push origin HEAD:arena/354c3e44-becettitools || (echo "push failed, trying with token"; git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} HEAD:arena/354c3e44-becettitools)
-          echo "Pushed via git"
-      - name: Upload log on failure
-        if: failure()
-        uses: actions/upload-artifact@v4
+      - name: Commit APK
+        uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          name: gradle-failure-log
-          path: /tmp/gradle.log
-          retention-days: 7
+          commit_message: "ci: native APK v1.0.0 built (real SDK, no WebView) [skip ci]"
+          file_pattern: "BECETTI-TOOLS*.apk*"
+          branch: arena/354c3e44-becettitools
       - name: Upload APK artifact
-        if: success()
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: BECETTI-TOOLS-v1.0.0-debug-native
