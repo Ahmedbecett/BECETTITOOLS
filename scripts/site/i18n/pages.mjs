@@ -263,6 +263,7 @@ const en = {
           "Improved OCR language support, including Arabic script",
           "Additional image processing options",
           "Improved PDF management",
+          "A smaller download: per-architecture APKs instead of one 89 MB file",
         ],
       },
       {
@@ -565,6 +566,7 @@ const fr = {
           "Meilleure prise en charge OCR, y compris l’arabe",
           "Options de traitement d’image supplémentaires",
           "Gestion des PDF améliorée",
+          "Téléchargement plus léger : un APK par architecture au lieu d’un seul fichier de 89 Mo",
         ],
       },
       {
@@ -864,6 +866,7 @@ const ar = {
           "دعم أفضل للغات في استخراج النص، بما فيها العربية",
           "خيارات إضافية لمعالجة الصور",
           "إدارة أفضل لملفات PDF",
+          "تنزيل أصغر: ملف APK لكل معمارية معالج بدل ملف واحد بحجم 89 ميجابايت",
         ],
       },
       {
