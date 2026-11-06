@@ -4,7 +4,7 @@
  * which is what search engines and link previews actually read.
  */
 
-import { repository, app, apk, contact } from "./site.config.mjs";
+import { repository, app, apk, contact, ads } from "./site.config.mjs";
 import { categories, tools } from "./i18n/tools.mjs";
 import { pages, locales } from "./i18n/pages.mjs";
 import { privacy } from "./i18n/privacy.mjs";
@@ -102,6 +102,7 @@ function head({
   robots = "index, follow, max-image-preview:large, max-snippet:-1",
   alternates = [],
   isPolicy = false,
+  adsConfig = null,
 }) {
   const prefix = prefixFor(pagePath);
   const canonical = urls.abs(canonicalPath);
@@ -152,7 +153,7 @@ ${locales
   <link rel="manifest" href="${prefix}site.webmanifest">
   <link rel="stylesheet" href="${prefix}assets/css/site.css">
   <script>${inlineThemeInit()}</script>
-  <script type="application/ld+json">
+${adsConfig ? `  <script type="application/json" id="becetti-ads">${JSON.stringify(adsConfig)}</script>\n` : ""}  <script type="application/ld+json">
 ${JSON.stringify(jsonLd, null, 2)}
   </script>
 </head>
@@ -217,7 +218,7 @@ function header({ t, urls, loc, pagePath, isPolicy }) {
   </header>`;
 }
 
-function footer({ t, urls, loc, pagePath }) {
+function footer({ t, urls, loc, pagePath, consent = null }) {
   const prefix = prefixFor(pagePath);
   const landing = prefix + urls.landingPath(loc);
   const policy = prefix + urls.privacyPath(loc);
@@ -232,6 +233,7 @@ function footer({ t, urls, loc, pagePath }) {
         <p class="footer-note">${esc(t.footer.madeBy)} · ${esc(t.footer.license)}</p>
         <p class="footer-note">${esc(t.footer.version)}</p>
         <p class="footer-note subtle">${esc(t.footer.updated)}: <time datetime="${BUILD_DATE}">${BUILD_DATE}</time></p>
+${consent ? adSettingsButton({ t }) : ""}
       </div>
       <div>
         <h2 class="footer-heading">${esc(t.footer.links)}</h2>
@@ -264,9 +266,31 @@ function footer({ t, urls, loc, pagePath }) {
       <p>© ${BUILD_DATE.slice(0, 4)} ${esc(app.developer)} · ${esc(app.packageName)} · v${esc(app.versionName)}</p>
     </div>
   </footer>
-  <script src="${prefix}assets/js/site.js" defer></script>
+${consent ? consentBanner({ t, prefix, policyHref: policy }) : ""}  <script src="${prefix}assets/js/site.js" defer></script>
 </body>
 </html>`;
+}
+
+/* ------------------------------ ads / consent ------------------------------ */
+
+function consentBanner({ t, prefix, policyHref }) {
+  // Server-rendered but hidden; site.js reveals it only when no choice is stored yet.
+  return `  <aside class="consent" id="ads-consent" hidden aria-labelledby="ads-consent-title">
+    <div class="consent-inner">
+      <h2 id="ads-consent-title" class="consent-title">${esc(t.consent.title)}</h2>
+      <p class="consent-body">${esc(t.consent.body)}</p>
+      <div class="consent-actions">
+        <button type="button" class="btn btn-primary btn-sm" data-consent="accept">${esc(t.consent.accept)}</button>
+        <button type="button" class="btn btn-ghost btn-sm" data-consent="decline">${esc(t.consent.decline)}</button>
+        <a class="consent-link" href="${policyHref}">${esc(t.consent.policy)}</a>
+      </div>
+    </div>
+  </aside>
+`;
+}
+
+function adSettingsButton({ t }) {
+  return `      <p class="footer-note"><button type="button" class="linkish" data-consent="reset">${esc(t.consent.settings)}</button></p>\n`;
 }
 
 /* ---------------------------------- JSON-LD --------------------------------- */
@@ -733,6 +757,10 @@ export function renderLanding({ urls, loc }) {
     keywords: t.meta.keywords,
     alternates,
     jsonLd: landingJsonLd({ t, urls, loc, pagePath }),
+    adsConfig:
+      ads.enabled && !ads.onPolicyPages
+        ? { src: ads.tagSrc, zone: ads.zone, consentKey: ads.consentKey }
+        : null,
   });
 
   return `${doc}
@@ -750,7 +778,7 @@ ${faqSection(t)}
 ${roadmapSection(t)}
 ${contactSection(t)}
   </main>
-${footer({ t, urls, loc, pagePath })}`;
+${footer({ t, urls, loc, pagePath, consent: ads.enabled })}`;
 }
 
 export function renderPrivacy({ urls, loc }) {
@@ -970,6 +998,22 @@ export function renderManifest({ urls }) {
   )}\n`;
 }
 
+const LANDING_CSP = [
+  "default-src 'self'",
+  "script-src 'self' 'unsafe-inline' https://quge5.com https://*.quge5.com",
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: blob: https:",
+  "font-src 'self' data:",
+  "connect-src 'self' https://quge5.com https://*.quge5.com",
+  "frame-src https:",
+  "media-src 'self' https:",
+  "worker-src 'self' blob:",
+  "object-src 'none'",
+  "form-action 'none'",
+  "base-uri 'self'",
+  "frame-ancestors 'self'",
+].join("; ");
+
 export function renderVercelConfig() {
   return `${JSON.stringify(
     {
@@ -994,6 +1038,16 @@ export function renderVercelConfig() {
         {
           source: "/assets/(.*)",
           headers: [{ key: "Cache-Control", value: "public, max-age=3600, must-revalidate" }],
+        },
+        {
+          // Landing pages carry the consent-gated Monetag tag, so their CSP has to allow it.
+          // Privacy pages, 404 and the root redirect keep the strict policy below.
+          source: "/becetti-tools/",
+          headers: [{ key: "Content-Security-Policy", value: LANDING_CSP }],
+        },
+        {
+          source: "/becetti-tools/(.*)",
+          headers: [{ key: "Content-Security-Policy", value: LANDING_CSP }],
         },
         {
           // The ad network's service worker imports its own runtime from 5gvci.com, which the

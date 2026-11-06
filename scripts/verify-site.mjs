@@ -274,6 +274,48 @@ async function main() {
     );
   }
 
+  /* ------------- 5c. Consent-gated Monetag site tag (landing pages) ------------- */
+  const landingDocs = ["en", "fr", "ar"].map((l) =>
+    docs.get(path.join(siteRoot, `becetti-tools/${l === "en" ? "" : l + "/"}index.html`))
+  );
+  const policyDocs = ["en", "fr", "ar"].map((l) =>
+    docs.get(path.join(siteRoot, `privacy/${l === "en" ? "" : l + "/"}index.html`))
+  );
+
+  check(
+    "ads config published on all three landing pages",
+    landingDocs.every((h) => h.includes('id="becetti-ads"') && h.includes('"zone":"306773"'))
+  );
+  const allHtml = files.filter((f) => f.endsWith(".html")).map((f) => docs.get(f));
+  check(
+    "Monetag tag is never hard-coded into HTML (consent-gated only)",
+    allHtml.every((h) => !/<script[^>]+src="https:\/\/quge5\.com/.test(h))
+  );
+  check(
+    "privacy pages carry neither the ad config nor the consent banner",
+    policyDocs.every((h) => !h.includes('id="becetti-ads"') && !h.includes('id="ads-consent"'))
+  );
+  check(
+    "consent banner rendered once per landing page",
+    landingDocs.every((h) => (h.match(/id="ads-consent"/g) || []).length === 1)
+  );
+  const landingRule = vercel.headers?.find((h) => h.source === "/becetti-tools/(.*)");
+  const landingCsp = landingRule?.headers.find((x) => x.key === "Content-Security-Policy")?.value ?? "";
+  check(
+    "landing CSP allows the Monetag tag",
+    /script-src[^;]*https:\/\/quge5\.com/.test(landingCsp)
+  );
+  const strictCsp =
+    vercel.headers?.[0]?.headers.find((x) => x.key === "Content-Security-Policy")?.value ?? "";
+  check("policy/root CSP stays third-party free", !/https?:/.test(strictCsp));
+  const siteJs = await readFile(path.join(siteRoot, "assets", "js", "site.js"), "utf8");
+  check(
+    "site.js injects the tag only after an explicit accept",
+    siteJs.includes('if (choice === "accept") loadTag();') &&
+      siteJs.includes('document.createElement("script")') &&
+      siteJs.includes('getElementById("monetag-tag")')
+  );
+
   /* --------------------------- 6. Artifact integrity --------------------------- */
   const apkPath = path.join(repoRoot, apk.fileName);
   if (existsSync(apkPath)) {

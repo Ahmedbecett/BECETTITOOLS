@@ -65,6 +65,21 @@ export const apk = {
   releaseUrl: "https://github.com/Ahmedbecett/BECETTITOOLS/releases/latest",
 };
 
+// ── Monetag site tag (in-page sponsored messages) ──────────────────────────────────
+// Zone 306773 is the *site* tag from the publisher dashboard. It is never hard-coded into the
+// HTML: the page ships this config as JSON and site.js injects the real <script> only after the
+// visitor presses "Accept" in the consent bar. Default is declined, and the choice is stored
+// locally under `becetti-ads-consent`.
+export const ads = {
+  enabled: true,
+  provider: "Monetag",
+  tagSrc: "https://quge5.com/88/tag.min.js",
+  zone: "306773",
+  consentKey: "becetti-ads-consent",
+  // Landing pages only. The privacy policy pages stay ad-free.
+  onPolicyPages: false,
+};
+
 export const contact = {
   // Already published by the project owner in the v1.0.0 release notes and earlier docs.
   email: "ahmedbecetti35@gmail.com",

@@ -99,6 +99,78 @@
     });
   });
 
+  /* ------------------- ads: consent-gated third-party tag ------------------ */
+  /* The Monetag tag is never written into the HTML. It is injected only after the visitor
+     presses "Accept", so a fresh visit loads zero third-party code. Declining is sticky;
+     the footer's "Ad settings" control brings the bar back to change the choice. */
+  (function () {
+    var cfgEl = document.getElementById("becetti-ads");
+    if (!cfgEl) return;
+    var cfg;
+    try {
+      cfg = JSON.parse(cfgEl.textContent);
+    } catch (e) {
+      return;
+    }
+    var banner = document.getElementById("ads-consent");
+    var KEY = cfg.consentKey || "becetti-ads-consent";
+
+    function read() {
+      try {
+        return localStorage.getItem(KEY);
+      } catch (e) {
+        return null;
+      }
+    }
+    function write(v) {
+      try {
+        localStorage.setItem(KEY, v);
+      } catch (e) {}
+    }
+    function clear() {
+      try {
+        localStorage.removeItem(KEY);
+      } catch (e) {}
+    }
+    function loadTag() {
+      if (document.getElementById("monetag-tag")) return;
+      var s = document.createElement("script");
+      s.id = "monetag-tag";
+      s.src = cfg.src;
+      s.async = true;
+      s.setAttribute("data-zone", cfg.zone);
+      s.setAttribute("data-cfasync", "false");
+      document.head.appendChild(s);
+    }
+    function show() {
+      if (banner) banner.hidden = false;
+    }
+    function hide() {
+      if (banner) banner.hidden = true;
+    }
+
+    document.addEventListener("click", function (event) {
+      var el = event.target && event.target.closest ? event.target.closest("[data-consent]") : null;
+      if (!el) return;
+      var action = el.getAttribute("data-consent");
+      if (action === "accept") {
+        write("accept");
+        hide();
+        loadTag();
+      } else if (action === "decline") {
+        write("decline");
+        hide();
+      } else if (action === "reset") {
+        clear();
+        show();
+      }
+    });
+
+    var choice = read();
+    if (choice === "accept") loadTag();
+    else if (choice !== "decline") show();
+  }());
+
   /* --------------------------- harden external links ----------------------- */
   /* Every download/download-page link now points at the newest published GitHub release,
      so harden anything that leaves the site instead of one hard-coded host. */

@@ -1,112 +1,134 @@
-# Ads on the landing page — Monetag service worker
+# Ads on the site — Monetag tag + service worker
 
-Status: **hosted, not active.** The file is published at `/sw.js` but nothing registers it and no
-page loads a third-party script, so the site's behaviour and its "no tracking" claims are still
-accurate. This document records what was added, what it implies, and exactly what has to change
-before it is switched on.
+Status: **active on the three landing pages, consent-gated.** Two publisher artefacts are in play:
+
+| Artefact | Zone | Host | State |
+|---|---|---|---|
+| Site tag (in-page sponsored messages) | `306773` | `quge5.com` | loaded **only after** the visitor presses "Accept ads" |
+| Service worker (`/sw.js`) | `12206346` | `5gvci.com` | published at the root, **not registered** by any page |
+
+A first visit fetches nothing third-party: the tag is stored as a JSON config block and `site.js`
+injects the real `<script>` only after consent. Declining is remembered and leaves the page
+byte-for-byte as it was before ads existed.
 
 ---
 
-## 1. What was added
+## 1. Assets
 
 | Item | Value |
 |---|---|
-| File | `website/sw.js` (source of truth: `scripts/site/static/sw.js`) |
-| Origin copy | the file supplied in the publisher dashboard, **byte-identical** |
-| SHA-256 | `5e7510cb4f3a9cab8dd72ea855b513784f7a2bd1b4f0e8e432b92cf23559c421` |
-| Size | 156 bytes |
-| Network / host | Monetag — `5gvci.com` |
-| Zone ID | `12206346` |
-| Content | `self.options = {domain, zoneId}` + `importScripts('https://5gvci.com/act/files/service-worker.min.js?r=sw')` |
+| Site tag | `https://quge5.com/88/tag.min.js` · `data-zone="306773"` · `async` · `data-cfasync="false"` |
+| Config | `scripts/site/site.config.mjs` → `ads` |
+| Service worker file | `website/sw.js` (source: `scripts/site/static/sw.js`) |
+| SW SHA-256 | `5e7510cb4f3a9cab8dd72ea855b513784f7a2bd1b4f0e8e432b92cf23559c421` (156 bytes) |
+| SW content | `self.options = {domain:"5gvci.com", zoneId:12206346}` + `importScripts('https://5gvci.com/act/files/service-worker.min.js?r=sw')` |
 
-Contents (verbatim):
-
-```js
-self.options = {
-    "domain": "5gvci.com",
-    "zoneId": 12206346
-}
-self.lary = ""
-importScripts('https://5gvci.com/act/files/service-worker.min.js?r=sw')
-```
-
-`scripts/build-site.mjs` copies it to the site root on every build, so it is never lost on a
-rebuild. `scripts/verify-site.mjs` checks that it is present, identical to the vendored copy,
-targets the right zone, and that its headers are scoped correctly (5 new checks).
+`build-site.mjs` copies the worker to the output root on every build, so a rebuild never loses it.
 
 ---
 
-## 2. Why it sits at the root
+## 2. How the tag is injected
+
+Each landing page ships the config, never the live script:
+
+```html
+<script type="application/json" id="becetti-ads">{"src":"https://quge5.com/88/tag.min.js","zone":"306773","consentKey":"becetti-ads-consent"}</script>
+```
+
+`assets/js/site.js` (deferred, ~1 KB) then:
+
+1. no stored choice → reveals the consent bar (`hidden` removed), makes **no** request;
+2. `accept` → stores `becetti-ads-consent=accept`, appends one `<script data-zone="306773" async data-cfasync="false">` to `<head>` (guarded by `#monetag-tag`, so never twice);
+3. `decline` → stores `becetti-ads-consent=decline`, injects nothing;
+4. footer **Ad settings** → clears the key and shows the bar again.
+
+Privacy policy pages receive neither the config nor the bar, so they stay third-party free.
+
+---
+
+## 3. CSP (`website/vercel.json`)
+
+| Path | Policy |
+|---|---|
+| `/becetti-tools/`, `/becetti-tools/(.*)` | `default-src 'self'; script-src 'self' 'unsafe-inline' https://quge5.com https://*.quge5.com; connect-src 'self' https://quge5.com https://*.quge5.com; img-src 'self' data: blob: https:; frame-src https:; media-src 'self' https:; worker-src 'self' blob:; object-src 'none'; form-action 'none'; base-uri 'self'; frame-ancestors 'self'` |
+| everything else (`/privacy/`, `/`, `/404.html`) | unchanged strict `default-src 'self'; script-src 'self' 'unsafe-inline'` |
+| `/sw.js` | `default-src 'self' https://5gvci.com; script-src 'self' https://5gvci.com; connect-src 'self' https://5gvci.com; img-src 'self' data: https://5gvci.com` + `Cache-Control: max-age=0` + `Service-Worker-Allowed: /` |
+
+`img-src https:` and `frame-src https:` are scoped to the landing pages only: ad creatives are
+served from rotating CDN hosts that cannot be enumerated in advance. Scripts stay limited to
+`quge5.com`.
+
+---
+
+## 4. Why the worker sits at the root
 
 A service worker can only control pages under its own directory. Served from `/sw.js` its scope is
 `/`, which is what the network requires; served from `/assets/js/sw.js` it would only control
 `/assets/js/` and would be useless.
 
-## 3. Headers (`website/vercel.json`)
-
-A dedicated rule for `/sw.js` overrides the site-wide defaults:
-
-| Header | Value | Reason |
-|---|---|---|
-| `Content-Security-Policy` | `default-src 'self' https://5gvci.com; script-src 'self' https://5gvci.com; connect-src 'self' https://5gvci.com; img-src 'self' data: https://5gvci.com` | the worker's own `importScripts` would otherwise be blocked by the page CSP |
-| `Cache-Control` | `public, max-age=0, must-revalidate` | a cached worker would pin an old ad runtime |
-| `Service-Worker-Allowed` | `/` | explicit origin-wide scope |
-
-**The page CSP is unchanged**: `default-src 'self'; script-src 'self' 'unsafe-inline'; …`. No HTML
-page is allowed to load a third-party script, and `verify-site.mjs` now fails the build if that
-changes.
+It is **not registered** by the site. The site tag is what registers a worker once a visitor
+consents; the `/sw.js` file simply has to exist at the root when it does.
 
 ---
 
-## 4. What it does *not* do yet
+## 5. Disclosure shipped with the change
 
-Hosting the file is only step one of a Monetag push/interstitial zone. Without the following, the
-service worker is dead weight:
+- [x] **Privacy policy** — new §14 "Advertising on this website" in EN/FR/AR: names Monetag, zone
+      `306773` and `quge5.com`, states the tag is consent-gated, records the local key
+      `becetti-ads-consent`, and says the network's own policy covers its processing.
+- [x] **Landing copy** — the FAQ answer "Will I see ads?" now separates the app (no SDK in v1.0.0)
+      from the site (Monetag, consent-gated). The app-side trust block stays accurate because it
+      describes the APK, not the page.
+- [x] **Consent** — default is *declined*; the bar is server-rendered but hidden; accepting is the
+      only path that loads anything; refusal never blocks or delays the download.
+- [~] **Per-unit labels** — the in-page format renders its own overlay, so no "Sponsored" chip can
+      be attached to an individual unit. The bar and FAQ disclose the source, and the ad never
+      mimics the download button. For explicit per-unit labelling, use the network's
+      banner/rectangle format inside a labelled container.
+- [ ] **Rate limiting** — controlled by Monetag's dashboard frequency settings for this format, not
+      by page code. The app's own `AdPolicy` (90 s / 3 per session) is untouched.
+- [x] **Quality gate** — `verify-site.mjs`: 250 checks, 0 failed (7 new: config on all three
+      landing pages, no hard-coded tag, privacy pages clean, one bar per page, landing CSP allows
+      `quge5.com`, strict CSP untouched, injection only after accept).
 
-1. **Nothing registers it.** No page calls `navigator.serviceWorker.register('/sw.js')`, which is
-   what the network's own page snippet (or SDK tag) does.
-2. **No permission flow.** Push-style formats need the visitor to accept notifications; the site
-   has no prompt, no consent screen and no opt-out — deliberately, until the wording is approved.
-3. **No ad slot in the layout.** The pages have no container, no "Sponsored" label and no
-   frequency cap.
+---
 
-## 5. Mandatory before activation
+## 6. Verifying it with Monetag
 
-Shipping ads without these would make the site contradict itself — the privacy policy currently
-states there is no analytics SDK, no third-party request and no advertising identifier.
+Monetag's checker loads a page and looks for its tag in the DOM. Because the tag is injected only
+after consent, an automated check may report "tag not found". Options, best first:
 
-- [ ] **Privacy policy** (`scripts/site/i18n/policy.mjs`, all three languages): add an
-      "Advertising" section naming Monetag and `5gvci.com`, what is stored (push subscription,
-      consent flag, technical identifiers), retention and the opt-out route.
-- [ ] **Landing page copy**: the trust block ("No account, no tracking") and the FAQ answer
-      "Will I see ads?" must describe the real behaviour, per locale.
-- [ ] **Consent**: gate notification requests and personalised ads on an explicit accept;
-      default must stay *declined*; refusal must not block the download.
-- [ ] **Labels**: every ad unit visibly marked (e.g. "Sponsored"), never styled as a download
-      button, never auto-redirecting, no fake counters or fake ratings.
-- [ ] **Rate limiting**: keep it consistent with the app's `AdPolicy` (90 s minimum interval,
-      3 per session, none on the calculator screen).
-- [ ] **Re-run** `node scripts/build-site.mjs && node scripts/verify-site.mjs` and confirm
-      243 checks still pass.
+1. Verify manually: open the page, press **Accept ads**, confirm the network starts serving.
+2. Temporarily load the tag unconditionally for one deployment, let the dashboard verify, then
+   restore the gate. Do **not** leave it open — the privacy policy states nothing loads before
+   consent.
 
-## 6. Rollback
+---
+
+## 7. Rollback
 
 ```bash
-rm scripts/site/static/sw.js website/sw.js      # or revert the commit
-node scripts/build-site.mjs                     # /sw.js is gone from the output
+# ads off, keep the worker
+#   scripts/site/site.config.mjs → ads.enabled = false   (then rebuild)
+# everything off
+rm scripts/site/static/sw.js website/sw.js
+node scripts/build-site.mjs
 ```
 
-Existing visitors keep a registered worker until it is unregistered; if a clean removal is needed,
-ship a tiny `/sw.js` whose only job is `self.registration.unregister()`, wait a release cycle,
-then delete it.
+Visitors who already accepted keep the stored key until they press **Ad settings**; a page without
+the config block simply never injects anything. A registered worker survives until it is
+unregistered — ship a `/sw.js` that only calls `self.registration.unregister()` for one cycle if a
+clean removal is required.
 
-## 7. Security note
+---
 
-A registered service worker can intercept every request on the origin. That power belongs to the
-network's script, not to this repository. Two consequences worth stating plainly:
+## 8. Security note
 
-- Keep the page CSP strict (`script-src 'self'`) so the worker's runtime cannot also be injected
-  into pages.
-- Treat `5gvci.com` as a trusted dependency of the site: if that host serves unexpected code, the
-  browser executes it in an origin-wide scope. Review it before activation and consider
-  self-hosting a pinned copy if the network permits.
+A registered service worker can intercept every request on the origin, and the site tag executes
+third-party code on the landing pages. Guardrails kept in place:
+
+- the tag is only ever injected by our own script, after an explicit click;
+- the strict CSP still governs the privacy pages, `/`, 404 and `/sw.js`;
+- `object-src 'none'`, `form-action 'none'` and `base-uri 'self'` remain everywhere;
+- the tag never replaces, hides or delays the download button — and the download link still points
+  at the latest GitHub release, not at an ad host.

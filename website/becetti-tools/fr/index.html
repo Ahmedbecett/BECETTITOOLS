@@ -40,6 +40,7 @@
   <link rel="manifest" href="../../site.webmanifest">
   <link rel="stylesheet" href="../../assets/css/site.css">
   <script>(function(){try{var s=localStorage.getItem("becetti-theme")||"system";var d=window.matchMedia("(prefers-color-scheme: dark)").matches;document.documentElement.dataset.theme=s==="system"?(d?"dark":"light"):s;document.documentElement.dataset.themePref=s;}catch(e){}})();</script>
+  <script type="application/json" id="becetti-ads">{"src":"https://quge5.com/88/tag.min.js","zone":"306773","consentKey":"becetti-ads-consent"}</script>
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -202,7 +203,7 @@
           "name": "Y aura-t-il de la publicité ?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "En v1.0.0, aucun SDK publicitaire n’est initialisé. Une ligne « Offres sponsorisées » peut apparaître sur l’accueil ; elle n’ouvre une page externe qu’au toucher, jamais automatiquement. L’écran calculatrice n’affiche jamais de publicité."
+            "text": "Dans l’application, la v1.0.0 n’initialise aucun SDK publicitaire : une ligne « Offres sponsorisées » peut apparaître sur l’accueil et ne s’ouvre qu’au toucher. Sur ce site, les messages sponsorisés de Monetag ne se chargent que si vous les acceptez dans la barre de consentement — en refusant, la page reste exactement comme avant. Aucune publicité sur la politique de confidentialité, et le bouton de téléchargement n’est jamais remplacé."
           }
         },
         {
@@ -656,7 +657,7 @@
             </details>
             <details class="faq-item">
               <summary><span>Y aura-t-il de la publicité ?</span></summary>
-              <p>En v1.0.0, aucun SDK publicitaire n’est initialisé. Une ligne « Offres sponsorisées » peut apparaître sur l’accueil ; elle n’ouvre une page externe qu’au toucher, jamais automatiquement. L’écran calculatrice n’affiche jamais de publicité.</p>
+              <p>Dans l’application, la v1.0.0 n’initialise aucun SDK publicitaire : une ligne « Offres sponsorisées » peut apparaître sur l’accueil et ne s’ouvre qu’au toucher. Sur ce site, les messages sponsorisés de Monetag ne se chargent que si vous les acceptez dans la barre de consentement — en refusant, la page reste exactement comme avant. Aucune publicité sur la politique de confidentialité, et le bouton de téléchargement n’est jamais remplacé.</p>
             </details>
             <details class="faq-item">
               <summary><span>Existe-t-il une version iOS ou web ?</span></summary>
@@ -715,6 +716,8 @@
         <p class="footer-note">Développé par Ahmed Becetti · Code publié sous licence MIT</p>
         <p class="footer-note">Version 1.0.0 (versionCode 1) · build debug</p>
         <p class="footer-note subtle">Page mise à jour: <time datetime="2026-11-06">2026-11-06</time></p>
+      <p class="footer-note"><button type="button" class="linkish" data-consent="reset">Réglages des annonces</button></p>
+
       </div>
       <div>
         <h2 class="footer-heading">Site</h2>
@@ -747,6 +750,17 @@
       <p>© 2026 Ahmed Becetti · com.becetti.tools · v1.0.0</p>
     </div>
   </footer>
+  <aside class="consent" id="ads-consent" hidden aria-labelledby="ads-consent-title">
+    <div class="consent-inner">
+      <h2 id="ads-consent-title" class="consent-title">Messages sponsorisés sur cette page</h2>
+      <p class="consent-body">Cette page peut afficher des publicités Monetag pour soutenir le projet. Elles ne se chargent que si vous acceptez — en refusant, rien de tiers n’est chargé. Le téléchargement et l’application restent identiques.</p>
+      <div class="consent-actions">
+        <button type="button" class="btn btn-primary btn-sm" data-consent="accept">Accepter</button>
+        <button type="button" class="btn btn-ghost btn-sm" data-consent="decline">Refuser</button>
+        <a class="consent-link" href="../../privacy/fr/">Lire la politique de confidentialité</a>
+      </div>
+    </div>
+  </aside>
   <script src="../../assets/js/site.js" defer></script>
 </body>
 </html>

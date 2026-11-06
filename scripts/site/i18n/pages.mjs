@@ -130,6 +130,15 @@ const en = {
       { label: "Licence", value: "MIT" },
     ],
   },
+  consent: {
+    title: "Sponsored messages on this page",
+    body:
+      "This page can show ads from Monetag to keep the project going. They load only if you accept — decline and nothing third-party is fetched. The download and the app are identical either way.",
+    accept: "Accept ads",
+    decline: "Decline",
+    settings: "Ad settings",
+    policy: "Read the privacy policy",
+  },
   download: {
     id: "verify",
     title: "Download and verify",
@@ -236,7 +245,7 @@ const en = {
       },
       {
         q: "Will I see ads?",
-        a: "In v1.0.0 no advertising SDK is initialised. A labelled “Sponsored Offers” row can appear on the home screen; it opens an external page only when you tap it, never automatically. The calculator screen never shows ads.",
+        a: "Inside the app, v1.0.0 initialises no advertising SDK: a labelled “Sponsored Offers” row can appear on the home screen and opens only when you tap it. On this website, sponsored messages from Monetag load only if you accept them in the consent bar — decline and the page behaves exactly as it did before ads existed. Ads never appear on the privacy policy page and never replace the download button.",
       },
       {
         q: "Is there an iOS or web version?",
@@ -433,6 +442,15 @@ const fr = {
       { label: "Licence", value: "MIT" },
     ],
   },
+  consent: {
+    title: "Messages sponsorisés sur cette page",
+    body:
+      "Cette page peut afficher des publicités Monetag pour soutenir le projet. Elles ne se chargent que si vous acceptez — en refusant, rien de tiers n’est chargé. Le téléchargement et l’application restent identiques.",
+    accept: "Accepter",
+    decline: "Refuser",
+    settings: "Réglages des annonces",
+    policy: "Lire la politique de confidentialité",
+  },
   download: {
     id: "verify",
     title: "Téléchargement et vérification",
@@ -539,7 +557,7 @@ const fr = {
       },
       {
         q: "Y aura-t-il de la publicité ?",
-        a: "En v1.0.0, aucun SDK publicitaire n’est initialisé. Une ligne « Offres sponsorisées » peut apparaître sur l’accueil ; elle n’ouvre une page externe qu’au toucher, jamais automatiquement. L’écran calculatrice n’affiche jamais de publicité.",
+        a: "Dans l’application, la v1.0.0 n’initialise aucun SDK publicitaire : une ligne « Offres sponsorisées » peut apparaître sur l’accueil et ne s’ouvre qu’au toucher. Sur ce site, les messages sponsorisés de Monetag ne se chargent que si vous les acceptez dans la barre de consentement — en refusant, la page reste exactement comme avant. Aucune publicité sur la politique de confidentialité, et le bouton de téléchargement n’est jamais remplacé.",
       },
       {
         q: "Existe-t-il une version iOS ou web ?",
@@ -734,6 +752,15 @@ const ar = {
       { label: "الرخصة", value: "MIT" },
     ],
   },
+  consent: {
+    title: "رسائل مدعومة في هذه الصفحة",
+    body:
+      "قد تعرض هذه الصفحة إعلانات من Monetag لدعم المشروع. لا تُحمَّل إلا بموافقتك، ورفضك يعني عدم تحميل أي شيء من طرف ثالث. التحميل والتطبيق متطابقان في الحالتين.",
+    accept: "أوافق",
+    decline: "أرفض",
+    settings: "إعدادات الإعلانات",
+    policy: "اقرأ سياسة الخصوصية",
+  },
   download: {
     id: "verify",
     title: "التحميل والتحقق",
@@ -839,7 +866,7 @@ const ar = {
       },
       {
         q: "هل ستظهر إعلانات؟",
-        a: "في الإصدار 1.0.0 لا تُهيَّأ أي حزمة إعلانية. قد يظهر سطر موسوم «عروض برعاية» في الشاشة الرئيسية، ولا يفتح صفحة خارجية إلا بلمسك، وليس تلقائيًا. شاشة الحاسبة لا تعرض إعلانات أبدًا.",
+        a: "داخل التطبيق لا تُهيَّأ أي حزمة إعلانية في الإصدار 1.0.0: قد يظهر سطر موسوم «عروض برعاية» ولا يُفتح إلا بلمسك. أما على هذا الموقع فلا تُحمَّل رسائل Monetag المدعومة إلا بموافقتك في شريط الموافقة — ورفضك يُبقي الصفحة كما كانت قبل وجود الإعلانات. لا إعلانات في صفحة سياسة الخصوصية، وزر التحميل لا يُستبدل أبدًا.",
       },
       {
         q: "هل توجد نسخة iOS أو ويب؟",
