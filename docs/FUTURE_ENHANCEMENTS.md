@@ -41,17 +41,41 @@ work can be approved or dropped item by item instead of as a bundle.
 - **Verify:** photograph the same bilingual document and check FR/AR extraction; confirm no
   regression for Latin text; confirm the app still works with the model unavailable.
 
-### 1.1.4 Additional image processing options
+### 1.1.4 Smaller APK — ABI splits and model trimming (measure, don't guess)
+- **Why:** the v1.0.0 APK is 88,869,105 bytes (88.9 MB decimal / 84.8 MiB binary). That is
+  legitimate — the ML Kit barcode + text-recognition models and native libraries for four CPU
+  architectures are bundled so the app works offline — but it is the single biggest reason people
+  abandon the download on mobile data, and the most common question after "is it free".
+- **Proposal (measure each step before/after, no estimates without a number):**
+  1. **ABI splits** (`splits { abi { isEnable = true; isUniversalApk = true } }`) so each user
+     downloads only their architecture's native libraries. Keep the universal APK as the
+     fallback download link.
+  2. **Per-architecture variants** built by the existing workflow
+     (`build-native-apk.yml` already builds one variant per run) instead of one fat APK.
+  3. **Play App Bundle** if a store release is ever pursued — Play then delivers the split
+     automatically.
+  4. **Model trimming:** ship only the recogniser the user chose (latin by default), or download
+     the optional script models on demand instead of embedding them.
+  5. **R8 + resource shrinking** for the debug build path used for public downloads, after the
+     signing story is fixed (see 2.0 items) — obfuscation on a debug build is not worth it.
+- **Do not** do any of this for v1.0.0: the published 88,869,105-byte file is the frozen
+  baseline and its SHA-256 is quoted in the release, the site and the testing report. A smaller
+  APK is a **new versioned artifact** (v1.1.0) published alongside, never a replacement.
+- **Verify:** `apksigner verify`, install each split/variant on its real architecture, re-run the
+  full `docs/TESTING.md` matrix on the smallest artifact, and confirm OCR/QR still work with the
+  trimmed models. Record the measured sizes in the release notes.
+
+### 1.1.5 Additional image processing options
 - Batch compression with a size target, resize to fixed dimensions, lossless WebP output,
   rotation and crop before export, and a share sheet instead of only "save to Pictures/Becetti".
 
-### 1.1.5 Improved PDF management
+### 1.1.6 Improved PDF management
 - Rotate/delete/reorder pages *after* selection, split a PDF, password-protect the output,
   name the output file before saving, and show a progress indicator for large merges.
 - **Verify:** 1-page, 100-page and malformed PDFs; cancel mid-operation; check that the originals
   are never modified.
 
-### 1.1.6 Signed release build (not a feature, a prerequisite for real distribution)
+### 1.1.7 Signed release build (not a feature, a prerequisite for real distribution)
 - Generate a release keystore (kept out of the repository), enable `minifyEnabled` with the
   existing ProGuard rules, build an AAB for Play, and publish the APK under a `-release` name
   **without** replacing the preserved v1.0.0 debug artifact.
