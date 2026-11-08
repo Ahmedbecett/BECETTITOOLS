@@ -7,7 +7,7 @@ sealed class Route(val route: String) {
     object History : Route("history")
     object Settings : Route("settings")
 
-    // tools
+    // 18 smart tools
     object ScientificCalculator : Route("calc_scientific")
     object UnitConverter : Route("unit_converter")
     object CurrencyConverter : Route("currency")
@@ -23,5 +23,8 @@ sealed class Route(val route: String) {
     object Ocr : Route("ocr")
     object TextToolkit : Route("text_toolkit")
     object Notes : Route("notes")
+    object BmiCalculator : Route("bmi_calculator")
+    object StopwatchTimer : Route("stopwatch_timer")
+    object DeviceInfo : Route("device_info")
     object NoteDetail : Route("note_detail/{id}") { fun create(id: Long) = "note_detail/$id" }
 }

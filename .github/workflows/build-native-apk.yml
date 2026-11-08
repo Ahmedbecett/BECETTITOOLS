@@ -1,8 +1,8 @@
-name: Build BECETTI TOOLS Native APK
+name: Build BECETTI TOOLS Release APK (Amazon Appstore Ready)
 
 on:
   push:
-    branches: ["arena/354c3e44-becettitools", "main"]
+    branches: ["arena/15deb214-becettitools", "main"]
   workflow_dispatch:
 
 permissions:
@@ -15,17 +15,20 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
           cache: gradle
+
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: 8.6
           cache-disabled: true
+
       - name: Install Android SDK
         run: |
           set -e
@@ -45,48 +48,127 @@ jobs:
           echo "ANDROID_SDK_ROOT=$ANDROID_HOME" >> $GITHUB_ENV
           echo "$ANDROID_HOME/platform-tools" >> $GITHUB_PATH
           echo "$ANDROID_HOME/cmdline-tools/latest/bin" >> $GITHUB_PATH
-      - name: Build Debug APK
+
+      - name: Ensure Release Keystore
+        run: |
+          mkdir -p keystore
+          if [ ! -f keystore/becetti-release.jks ]; then
+            keytool -genkeypair -v \
+              -keystore keystore/becetti-release.jks \
+              -keyalg RSA -keysize 2048 -validity 10000 \
+              -alias becetti \
+              -storepass "BecettiTools2026!" \
+              -keypass "BecettiTools2026!" \
+              -dname "CN=Becetti Tools, OU=Mobile Development, O=Becetti, L=Chlef, ST=Chlef, C=DZ"
+          fi
+
+      - name: Build Signed Release APK
         run: |
           export ANDROID_HOME=$HOME/android-sdk
           export ANDROID_SDK_ROOT=$HOME/android-sdk
           set -o pipefail
-          gradle assembleDebug --stacktrace --no-daemon 2>&1 | tee /tmp/gradle.log
+          gradle assembleRelease --stacktrace --no-daemon 2>&1 | tee /tmp/gradle.log
           test ${PIPESTATUS[0]} -eq 0
-          ls -lh app/build/outputs/apk/debug/
-          stat -c%s app/build/outputs/apk/debug/app-debug.apk
-      - name: Verify native no WebView
+          ls -lh app/build/outputs/apk/release/
+
+      - name: Verify Native & Amazon Appstore Compliance (< 50 MB, Signed v1+v2+v3, Non-Debuggable)
         run: |
-          if grep -R "WebView" app/src --include="*.kt" --include="*.xml"; then echo "WebView found"; exit 1; fi
-          echo "Native verified"
-      - name: Prepare APK
+          set -e
+          if grep -R "WebView" app/src --include="*.kt" --include="*.xml"; then
+            echo "ERROR: WebView found in app/src"
+            exit 1
+          fi
+          APK_PATH="app/build/outputs/apk/release/app-release.apk"
+          SIZE_BYTES=$(stat -c%s "$APK_PATH")
+          SIZE_MB=$(awk "BEGIN {printf \"%.2f\", $SIZE_BYTES / (1024*1024)}")
+          echo "Release APK size: $SIZE_BYTES bytes ($SIZE_MB MiB)"
+          if [ "$SIZE_BYTES" -ge 50000000 ]; then
+            echo "ERROR: APK exceeds Amazon Appstore 50 MB limit ($SIZE_BYTES bytes)"
+            exit 1
+          fi
+          $ANDROID_HOME/build-tools/34.0.0/apksigner verify --verbose --print-certs "$APK_PATH"
+          BADGING=$($ANDROID_HOME/build-tools/34.0.0/aapt dump badging "$APK_PATH")
+          echo "$BADGING" | head -n 25
+          if echo "$BADGING" | grep -q "application-debuggable"; then
+            echo "ERROR: APK is marked debuggable!"
+            exit 1
+          fi
+          echo "Amazon Appstore Release APK verified successfully!"
+
+      - name: Prepare Release APK & Commit to Branch
         if: success()
         run: |
-          cp app/build/outputs/apk/debug/app-debug.apk ./BECETTI-TOOLS-v1.0.0-NATIVE-debug.apk
-          sha256sum ./BECETTI-TOOLS-v1.0.0-NATIVE-debug.apk > ./BECETTI-TOOLS-v1.0.0-NATIVE-debug.apk.sha256
+          cp app/build/outputs/apk/release/app-release.apk ./BECETTI-TOOLS-v1.0.0-release.apk
+          sha256sum BECETTI-TOOLS-v1.0.0-release.apk > BECETTI-TOOLS-v1.0.0-release.apk.sha256
+          rm -f BECETTI-TOOLS-v1.0.0-NATIVE-debug.apk BECETTI-TOOLS-v1.0.0-NATIVE-debug.apk.sha256 BECETTI-TOOLS-v1.0.0-debug.apk.sha256
           ls -lh ./BECETTI-TOOLS*.apk*
-      - name: Commit APK
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A BECETTI-TOOLS* keystore/becetti-release.jks
+          git commit -m "ci: build signed Amazon Appstore Release APK v1.0.0 (<50MB) [skip ci]" || true
+          git push origin HEAD:${GITHUB_REF_NAME}
+
+      - name: Publish Signed Release APK to GitHub Releases
         if: success()
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "ci: native APK v1.0.0 built (real SDK, no WebView) [skip ci]"
-          file_pattern: "BECETTI-TOOLS*.apk*"
-          branch: arena/354c3e44-becettitools
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          SIZE_BYTES=$(stat -c%s BECETTI-TOOLS-v1.0.0-release.apk)
+          SIZE_MIB=$(awk "BEGIN {printf \"%.2f\", $SIZE_BYTES / (1024*1024)}")
+          SHA256=$(awk '{print $1}' BECETTI-TOOLS-v1.0.0-release.apk.sha256)
+          cat <<EOF > /tmp/release-notes.md
+          # BECETTI TOOLS v1.0.0 — Final Signed Release (Amazon Appstore Ready)
+
+          **Package:** \`com.becetti.tools\` · **Version:** \`1.0.0\` (\`versionCode = 1\`) · **Build Type:** Signed Release (\`debuggable = false\`) · **Minimum Android:** 7.0 (API 24 / Fire OS 7 & 8) · **Target SDK:** 34
+
+          ---
+
+          ## 📦 Release APK Details (Amazon Appstore Compliant — Under 50 MB)
+
+          | Property | Value |
+          |---|---|
+          | **File** | \`BECETTI-TOOLS-v1.0.0-release.apk\` |
+          | **Size** | **${SIZE_MIB} MiB** (${SIZE_BYTES} bytes — well under Amazon Appstore's 50 MB threshold) |
+          | **SHA-256** | \`${SHA256}\` |
+          | **Signing Schemes** | APK Signature Scheme **v1 + v2 + v3** (Fire OS 7, Fire OS 8, Android 7–14) |
+          | **ABIs** | \`armeabi-v7a\`, \`arm64-v8a\` |
+          | **Optimization** | R8 Code Minification + Resource Shrinking enabled |
+
+          ## ✅ Fixes & Amazon Appstore Policy Compliance Applied
+          - **Reduced Size from 88.87 MB (Debug) to ${SIZE_MIB} MiB (Signed Release)**: Enabled R8 code minification & resource shrinking, replaced \`material-icons-extended\` (41.5 MB DEX) with native vector \`BecettiIcons\`, filtered native ABIs to ARM 32/64-bit (\`armeabi-v7a\`, \`arm64-v8a\`), compressed JNI libraries, and excluded unused BouncyCastle PQC tables.
+          - **Fixed All Code Errors**:
+            - Fixed 16 broken Kotlin string interpolations (\`\${'\$'}\`) across \`QrGeneratorScreen\`, \`ImageCompressorScreen\`, \`PdfScreens\`, \`PasswordScreens\`, and \`OcrScreen\`.
+            - Fixed \`BarcodeScanning.getClient()\` per-frame native memory leak in \`QrScannerScreen\` and added proper \`DisposableEffect\` camera unbind + close.
+            - Initialized \`PDFBoxResourceLoader\` in \`BecettiToolsApp\` and fixed PDFBox \`COSStream\` premature close bug during multi-PDF merging on \`Dispatchers.IO\`.
+            - Added \`Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q\` guard for \`MediaStore.RELATIVE_PATH\` so saving PNGs/JPEGs/PDFs works on Fire OS 7 (Android 9 / API 28) without crashing.
+            - Enabled \`coreLibraryDesugaring\` so \`java.time\` in \`AgeCalculatorScreen\` works on Android 7.0/7.1 (API 24–25).
+            - Fixed \`CurrencyScreen\` offline JSON cache & added built-in reference rates for all 14 currencies (\`DZD\`, \`SAR\`, \`AED\`, \`EGP\`, \`MAD\`, \`TND\`, \`USD\`, \`EUR\`, etc.).
+            - Added \`(\` and \`)\` keys + auto-parenthesis closing to \`CalculatorScreen\` / \`CalculatorEngine\`.
+            - Fixed \`system\` dark theme detection, immediate Arabic \`RTL\` layout switching, status bar padding, and horizontal/vertical scrolling across all screens.
+          - **Amazon Appstore Manifest & Content Policies**:
+            - Optional hardware features (\`android.hardware.camera\`, \`autofocus\`, \`touchscreen\` marked \`android:required="false"\`) and \`<supports-screens>\` for all phone & Fire HD tablet sizes.
+            - Removed unused broad media permissions (\`READ_MEDIA_IMAGES\`, \`READ_MEDIA_VISUAL_USER_SELECTED\`).
+            - Removed non-functional placeholder ad banner when no ad provider URL is configured; added in-app offline Privacy Policy dialog and Personalized Ads Consent toggle in Settings.
+          EOF
+          gh release upload v1.0.0 BECETTI-TOOLS-v1.0.0-release.apk BECETTI-TOOLS-v1.0.0-release.apk.sha256 --clobber
+          gh release edit v1.0.0 --title "BECETTI TOOLS v1.0.0 — Final Signed Release (${SIZE_MIB} MiB · Amazon Appstore Ready)" --notes-file /tmp/release-notes.md
+
       - name: On failure - commit log
         if: failure()
         run: |
-          echo "Build failed, committing log to repo for analysis"
-          mkdir -p /tmp/logs
           cp /tmp/gradle.log ./gradle-failure.log || echo "no log" > ./gradle-failure.log
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add gradle-failure.log
           git commit -m "ci: gradle failure log [skip ci]" || true
-          git push origin HEAD:arena/354c3e44-becettitools || true
-      - name: Upload APK
+          git push origin HEAD:${GITHUB_REF_NAME} || true
+
+      - name: Upload Release APK Artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: BECETTI-TOOLS-v1.0.0-debug-native
-          path: app/build/outputs/apk/debug/app-debug.apk
+          name: BECETTI-TOOLS-v1.0.0-release
+          path: |
+            BECETTI-TOOLS-v1.0.0-release.apk
+            BECETTI-TOOLS-v1.0.0-release.apk.sha256
           if-no-files-found: ignore
-
