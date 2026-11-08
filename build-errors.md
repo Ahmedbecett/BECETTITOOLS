@@ -1,93 +1,36 @@
 # BECETTI CI build errors
 
-Commit: 4475f1729aec366cf3540edb456f9329057e1bcd
+Commit: 5e5de1d59bb74e691db55d5539540e6774589d3d
 
 ## compileDebugKotlin
 ```
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/core/navigation/BecettiNavGraph.kt:74:51 Unresolved reference: navHomeTab
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/core/navigation/BecettiNavGraph.kt:75:57 Unresolved reference: navDevelopers
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/core/navigation/BecettiNavGraph.kt:76:55 Unresolved reference: navProjects
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/core/navigation/BecettiNavGraph.kt:77:55 Unresolved reference: navTools
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/core/navigation/BecettiNavGraph.kt:78:54 Unresolved reference: navProfile
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/core/navigation/BecettiNavGraph.kt:113:5 Unresolved reference: Scaffold
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/core/navigation/BecettiNavGraph.kt:117:17 @Composable invocations can only happen from the context of a @Composable function
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/core/navigation/BecettiNavGraph.kt:120:51 @Composable invocations can only happen from the context of a @Composable function
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/core/navigation/BecettiNavGraph.kt:143:29 None of the following functions can be called with the arguments supplied: 
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/core/navigation/BecettiNavGraph.kt:145:67 Unresolved reference: gFavoriteRemove
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/core/navigation/BecettiNavGraph.kt:145:90 Unresolved reference: gFavoriteAdd
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/core/navigation/BecettiNavGraph.kt:156:17 @Composable invocations can only happen from the context of a @Composable function
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/core/navigation/BecettiNavGraph.kt:169:9 Cannot infer a type for this parameter. Please specify it explicitly.
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/core/navigation/BecettiNavGraph.kt:170:9 @Composable invocations can only happen from the context of a @Composable function
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/core/navigation/BecettiNavGraph.kt:173:33 Overload resolution ambiguity: 
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/core/navigation/ToolHost.kt:68:25 Unresolved reference: gEmpty
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/design/components/BecettiGlyphs.kt:21:13 Const 'val' has type 'PathFillType'. Only primitives and String are allowed
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/design/components/BecettiGlyphs.kt:454:18 The floating-point literal does not conform to the expected type Pair<Float, Float>
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/design/components/BecettiGlyphs.kt:454:24 The floating-point literal does not conform to the expected type Pair<Float, Float>
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/design/components/BecettiGlyphs.kt:454:31 The floating-point literal does not conform to the expected type Pair<Float, Float>
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/design/components/BecettiGlyphs.kt:454:36 The floating-point literal does not conform to the expected type Pair<Float, Float>
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/design/components/BecettiGlyphs.kt:454:43 The floating-point literal does not conform to the expected type Pair<Float, Float>
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/design/components/BecettiGlyphs.kt:454:50 The floating-point literal does not conform to the expected type Pair<Float, Float>
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/design/components/BecettiGlyphs.kt:454:57 The floating-point literal does not conform to the expected type Pair<Float, Float>
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/design/components/BecettiGlyphs.kt:454:62 The floating-point literal does not conform to the expected type Pair<Float, Float>
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/design/components/BecettiGlyphs.kt:454:69 The floating-point literal does not conform to the expected type Pair<Float, Float>
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/design/components/BecettiGlyphs.kt:454:74 The floating-point literal does not conform to the expected type Pair<Float, Float>
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/design/components/BecettiGlyphs.kt:506:18 The floating-point literal does not conform to the expected type Pair<Float, Float>
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/design/components/BecettiGlyphs.kt:506:24 The floating-point literal does not conform to the expected type Pair<Float, Float>
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/design/components/BecettiGlyphs.kt:506:30 The floating-point literal does not conform to the expected type Pair<Float, Float>
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/design/components/BecettiGlyphs.kt:506:37 The floating-point literal does not conform to the expected type Pair<Float, Float>
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/design/components/BecettiGlyphs.kt:506:42 The floating-point literal does not conform to the expected type Pair<Float, Float>
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/design/components/BecettiGlyphs.kt:506:48 The floating-point literal does not conform to the expected type Pair<Float, Float>
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/design/components/BecettiGlyphs.kt:528:18 The floating-point literal does not conform to the expected type Pair<Float, Float>
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/design/components/BecettiGlyphs.kt:528:24 The floating-point literal does not conform to the expected type Pair<Float, Float>
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/design/components/BecettiGlyphs.kt:528:30 The floating-point literal does not conform to the expected type Pair<Float, Float>
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/design/components/BecettiGlyphs.kt:528:37 The floating-point literal does not conform to the expected type Pair<Float, Float>
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/design/components/BecettiGlyphs.kt:528:42 The floating-point literal does not conform to the expected type Pair<Float, Float>
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/design/components/BecettiGlyphs.kt:528:48 The floating-point literal does not conform to the expected type Pair<Float, Float>
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/design/components/BecettiGlyphs.kt:621:18 The floating-point literal does not conform to the expected type Pair<Float, Float>
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/design/components/BecettiGlyphs.kt:621:23 The floating-point literal does not conform to the expected type Pair<Float, Float>
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/design/components/BecettiGlyphs.kt:621:27 The floating-point literal does not conform to the expected type Pair<Float, Float>
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/design/components/BecettiGlyphs.kt:621:34 The floating-point literal does not conform to the expected type Pair<Float, Float>
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/design/components/BecettiGlyphs.kt:621:38 The floating-point literal does not conform to the expected type Pair<Float, Float>
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/design/components/BecettiGlyphs.kt:621:43 The floating-point literal does not conform to the expected type Pair<Float, Float>
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/design/components/BecettiGlyphs.kt:621:48 The floating-point literal does not conform to the expected type Pair<Float, Float>
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/design/components/BecettiGlyphs.kt:621:54 The floating-point literal does not conform to the expected type Pair<Float, Float>
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/design/components/PremiumUI.kt:75:15 @Composable invocations can only happen from the context of a @Composable function
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/design/components/PremiumUI.kt:607:17 Cannot find a parameter with this name: progress
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/design/components/PremiumUI.kt:610:17 Cannot find a parameter with this name: backgroundColor
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/design/components/ToolCards.kt:95:21 None of the following functions can be called with the arguments supplied: 
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/design/components/ToolCards.kt:97:68 Unresolved reference: gFavoriteRemove
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/design/components/ToolCards.kt:97:97 Unresolved reference: gFavoriteAdd
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/design/components/ToolCards.kt:263:29 Unresolved reference: groupDescription
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/home/HomeDashboard.kt:319:37 No value passed for parameter 'onClick'
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/home/HomeDashboard.kt:320:35 Type mismatch: inferred type is () -> Unit but Boolean was expected
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/home/HomeDashboard.kt:404:37 Cannot find a parameter with this name: progress
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/home/HomeDashboard.kt:407:37 Cannot find a parameter with this name: backgroundColor
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/projects/ProjectDetailScreen.kt:184:13 Cannot find a parameter with this name: progress
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/projects/ProjectDetailScreen.kt:187:13 Cannot find a parameter with this name: backgroundColor
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/projects/ProjectDetailScreen.kt:190:60 Type mismatch: inferred type is Color but Modifier was expected
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/projects/ProjectDetailScreen.kt:190:79 Type mismatch: inferred type is Modifier but Color was expected
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/projects/ProjectDetailScreen.kt:191:58 Type mismatch: inferred type is Color but Modifier was expected
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/projects/ProjectDetailScreen.kt:191:80 Type mismatch: inferred type is Modifier but Color was expected
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/projects/ProjectDetailScreen.kt:192:64 Type mismatch: inferred type is Color but Modifier was expected
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/projects/ProjectDetailScreen.kt:192:79 Type mismatch: inferred type is Modifier but Color was expected
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/projects/ProjectDetailScreen.kt:408:70 Type mismatch: inferred type is Color but Modifier was expected
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/projects/ProjectDetailScreen.kt:408:92 Type mismatch: inferred type is Modifier but Color was expected
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/projects/ProjectDetailScreen.kt:409:71 Type mismatch: inferred type is Color but Modifier was expected
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/projects/ProjectDetailScreen.kt:409:86 Type mismatch: inferred type is Modifier but Color was expected
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/projects/ProjectDetailScreen.kt:410:67 Type mismatch: inferred type is Color but Modifier was expected
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/projects/ProjectDetailScreen.kt:410:89 Type mismatch: inferred type is Modifier but Color was expected
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/projects/ProjectsScreen.kt:28:40 Unresolved reference: Project
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/projects/ProjectsScreen.kt:68:62 Type mismatch: inferred type is Color but Modifier was expected
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/projects/ProjectsScreen.kt:68:84 Type mismatch: inferred type is Modifier but Color was expected
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/projects/ProjectsScreen.kt:69:49 Type mismatch: inferred type is Color but Modifier was expected
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/projects/ProjectsScreen.kt:69:68 Type mismatch: inferred type is Modifier but Color was expected
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/projects/ProjectsScreen.kt:70:53 Type mismatch: inferred type is Color but Modifier was expected
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/projects/ProjectsScreen.kt:70:68 Type mismatch: inferred type is Modifier but Color was expected
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/projects/ProjectsScreen.kt:71:63 Type mismatch: inferred type is Color but Modifier was expected
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/projects/ProjectsScreen.kt:71:85 Type mismatch: inferred type is Modifier but Color was expected
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/projects/ProjectsScreen.kt:158:26 Unresolved reference: Project
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/projects/ProjectsScreen.kt:188:13 Cannot find a parameter with this name: progress
-e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/projects/ProjectsScreen.kt:191:13 Cannot find a parameter with this name: backgroundColor
+e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/developer/ApiGithubScreens.kt:311:49 Type mismatch: inferred type is Pair<String, Result<String?>> but Pair<String, String> was expected
+e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/developer/EncodingTools.kt:242:27 Type mismatch: inferred type is List<String> but List<Pair<String, String>> was expected
+e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/files/FileMasterTools.kt:47:15 Unresolved reference: LocalContext
+e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/files/FileMasterTools.kt:229:15 Unresolved reference: LocalContext
+e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/files/FileMasterTools.kt:238:22 Not enough information to infer type variable T
+e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/files/FileMasterTools.kt:238:22 Property delegate must have a 'getValue(Nothing?, KProperty<*>)' method. None of the following functions is suitable: 
+e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/files/FileMasterTools.kt:238:33 Not enough information to infer type variable T
+e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/files/FileMasterTools.kt:247:32 Overload resolution ambiguity: 
+e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/files/FileMasterTools.kt:250:40 Overload resolution ambiguity: 
+e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/files/FileMasterTools.kt:250:50 Cannot infer a type for this parameter. Please specify it explicitly.
+e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/files/FileMasterTools.kt:254:62 Cannot infer a type for this parameter. Please specify it explicitly.
+e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/files/FileMasterTools.kt:262:71 Overload resolution ambiguity: 
+e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/files/FileMasterTools.kt:290:13 Overload resolution ambiguity: 
+e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/files/FileMasterTools.kt:333:15 Unresolved reference: LocalContext
+e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/files/FileMasterTools.kt:345:19 Not enough information to infer type variable T
+e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/files/FileMasterTools.kt:345:19 Property delegate must have a 'getValue(Nothing?, KProperty<*>)' method. None of the following functions is suitable: 
+e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/files/FileMasterTools.kt:345:30 Not enough information to infer type variable T
+e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/files/FileMasterTools.kt:355:32 Overload resolution ambiguity: 
+e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/files/FileMasterTools.kt:357:35 Unresolved reference: it
+e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/files/FileMasterTools.kt:357:48 Unresolved reference: it
+e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/files/FileMasterTools.kt:360:55 Unresolved reference: it
+e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/files/FileMasterTools.kt:360:84 Unresolved reference: it
+e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/files/FileMasterTools.kt:363:35 Overload resolution ambiguity: 
+e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/files/FileMasterTools.kt:363:45 Cannot infer a type for this parameter. Please specify it explicitly.
+e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/files/FileMasterTools.kt:366:64 Unresolved reference: it
+e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/files/FileMasterTools.kt:366:85 Unresolved reference: it
+e: file:///home/runner/work/BECETTITOOLS/BECETTITOOLS/app/src/main/java/com/becetti/tools/features/files/FileMasterTools.kt:392:13 Overload resolution ambiguity: 
 	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.execute(DefaultPlanExecutor.java:463)
 	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.run(DefaultPlanExecutor.java:380)
 	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
@@ -126,7 +69,7 @@ Caused by: org.jetbrains.kotlin.gradle.tasks.CompilationErrorException: Compilat
 	... 2 more
 
 
-BUILD FAILED in 1m 56s
+BUILD FAILED in 1m 57s
 15 actionable tasks: 15 executed
 ```
 
