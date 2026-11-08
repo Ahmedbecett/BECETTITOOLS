@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -37,9 +38,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.becetti.tools.BecettiToolsApp
-import com.becetti.tools.core.localization.LocalAppStrings
-import com.becetti.tools.core.localization.groupName
-import com.becetti.tools.core.localization.toolName
+import com.becetti.tools.core.localization.*
 import com.becetti.tools.design.components.BecettiGlyphs
 import com.becetti.tools.design.components.BecettiIcons
 import com.becetti.tools.design.components.pressScale

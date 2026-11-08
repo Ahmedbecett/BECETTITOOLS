@@ -71,8 +71,9 @@ fun Modifier.pressScale(interactionSource: MutableInteractionSource, pressed: Fl
 @Composable
 fun Modifier.entrance(index: Int = 0): Modifier {
     var visible by remember { mutableStateOf(false) }
+    val startDelay = motionDelay(index.coerceAtMost(12) * Motion.Stagger)
     LaunchedEffect(Unit) {
-        delay(motionDelay(index.coerceAtMost(12) * Motion.Stagger).toLong())
+        delay(startDelay.toLong())
         visible = true
     }
     val alpha by animateFloatAsState(
@@ -448,8 +449,8 @@ fun ResultPanel(
 fun StatTile(
     label: String,
     value: String,
-    modifier: Modifier = Modifier,
     accent: Color = MaterialTheme.colorScheme.primary,
+    modifier: Modifier = Modifier,
     caption: String? = null
 ) {
     val palette = BecettiTheme.palette
@@ -604,10 +605,10 @@ fun LoadingBlock(text: String, progress: Float? = null, accent: Color = Material
         }
         if (progress != null) {
             LinearProgressIndicator(
-                progress = progress.coerceIn(0f, 1f),
+                progress = { progress.coerceIn(0f, 1f) },
                 modifier = Modifier.fillMaxWidth().height(5.dp).clip(RoundedCornerShape(3.dp)),
                 color = accent,
-                backgroundColor = accent.copy(alpha = 0.18f)
+                trackColor = accent.copy(alpha = 0.18f)
             )
         }
     }
@@ -818,6 +819,63 @@ fun AppSearchBar(
                 focusedTextColor = palette.textPrimary,
                 unfocusedTextColor = palette.textPrimary
             )
+        )
+    }
+}
+
+/** Standard result surface: spinner while working, error banner on failure, copy/share/save on success. */
+@Composable
+fun OutputBlock(
+    text: String,
+    accent: Color,
+    modifier: Modifier = Modifier,
+    title: String? = null,
+    error: String? = null,
+    running: Boolean = false,
+    runningLabel: String = "",
+    errorLabel: String = "",
+    onCopy: (() -> Unit)? = null,
+    onSave: (() -> Unit)? = null,
+    onShare: (() -> Unit)? = null,
+    copyLabel: String = "Copy",
+    saveLabel: String = "Save",
+    shareLabel: String = "Share",
+    mono: Boolean = true,
+    maxHeight: Dp = 340.dp
+) {
+    when {
+        running -> LoadingBlock(text = runningLabel, accent = accent)
+        error != null -> Column(modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .clip(InnerShape)
+                    .background(BecettiTheme.palette.error.copy(alpha = 0.10f))
+                    .border(1.dp, BecettiTheme.palette.error.copy(alpha = 0.35f), InnerShape)
+                    .padding(12.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Icon(BecettiGlyphs.Pulse, contentDescription = null, tint = BecettiTheme.palette.error, modifier = Modifier.size(16.dp))
+                Text(
+                    if (errorLabel.isBlank()) error else "$errorLabel: $error",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = BecettiTheme.palette.error
+                )
+            }
+        }
+        text.isNotBlank() -> ResultPanel(
+            text = text,
+            modifier = modifier,
+            title = title,
+            accent = accent,
+            mono = mono,
+            maxHeight = maxHeight,
+            onCopy = onCopy,
+            onSave = onSave,
+            onShare = onShare,
+            copyLabel = copyLabel,
+            saveLabel = saveLabel,
+            shareLabel = shareLabel
         )
     }
 }

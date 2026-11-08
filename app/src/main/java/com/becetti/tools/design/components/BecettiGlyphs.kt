@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 object BecettiGlyphs {
 
     private val ink = SolidColor(Color.Black)
-    private const val ODD = PathFillType.EvenOdd
+    private val ODD = PathFillType.EvenOdd
 
     private fun ico(name: String, block: ImageVector.Builder.() -> Unit): ImageVector =
         ImageVector.Builder(
@@ -112,11 +112,15 @@ object BecettiGlyphs {
         }
     }
 
-    private fun ImageVector.Builder.poly(vararg pts: Pair<Float, Float>) {
-        if (pts.size < 3) return
+    private fun ImageVector.Builder.poly(vararg coords: Float) {
+        if (coords.size < 6 || coords.size % 2 != 0) return
         path(fill = ink) {
-            moveTo(pts[0].first, pts[0].second)
-            for (i in 1 until pts.size) lineTo(pts[i].first, pts[i].second)
+            moveTo(coords[0], coords[1])
+            var i = 2
+            while (i < coords.size) {
+                lineTo(coords[i], coords[i + 1])
+                i += 2
+            }
             close()
         }
     }

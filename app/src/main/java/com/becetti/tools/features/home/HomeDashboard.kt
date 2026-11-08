@@ -401,10 +401,10 @@ fun HomeDashboardScreen(
                                     )
                                 }
                                 LinearProgressIndicator(
-                                    progress = project.progress,
+                                    progress = { project.progress },
                                     modifier = Modifier.fillMaxWidth().height(5.dp).clip(RoundedCornerShape(3.dp)),
                                     color = ToolAccents.Projects,
-                                    backgroundColor = ToolAccents.Projects.copy(alpha = 0.16f)
+                                    trackColor = ToolAccents.Projects.copy(alpha = 0.16f)
                                 )
                                 Row(
                                     Modifier.fillMaxWidth().clickable {

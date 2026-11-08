@@ -24,8 +24,8 @@ import com.becetti.tools.core.utils.DateUtils
 import com.becetti.tools.core.utils.FileExporter
 import com.becetti.tools.design.components.*
 import com.becetti.tools.design.theme.BecettiTheme
+import com.becetti.tools.data.local.store.Project
 import com.becetti.tools.design.theme.ToolAccents
-import com.becetti.tools.domain.models.Project
 import com.becetti.tools.features.tools.FilterPill
 
 /** Project manager landing page: portfolio stats, live project cards and creation flow. */
@@ -185,10 +185,10 @@ fun ProjectCard(project: Project, onClick: () -> Unit) {
             )
         }
         LinearProgressIndicator(
-            progress = project.progress,
+            progress = { project.progress },
             modifier = Modifier.fillMaxWidth().height(6.dp).clip(RoundedCornerShape(3.dp)),
             color = ToolAccents.Projects,
-            backgroundColor = ToolAccents.Projects.copy(alpha = 0.16f)
+            trackColor = ToolAccents.Projects.copy(alpha = 0.16f)
         )
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Text(

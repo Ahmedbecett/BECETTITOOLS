@@ -181,10 +181,10 @@ private fun OverviewTab(
             Text("${(project.progress * 100).toInt()}%", style = MaterialTheme.typography.titleSmall, color = ToolAccents.Projects)
         }
         LinearProgressIndicator(
-            progress = project.progress,
+            progress = { project.progress },
             modifier = Modifier.fillMaxWidth().height(7.dp).clip(RoundedCornerShape(4.dp)),
             color = ToolAccents.Projects,
-            backgroundColor = ToolAccents.Projects.copy(alpha = 0.16f)
+            trackColor = ToolAccents.Projects.copy(alpha = 0.16f)
         )
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             StatTile(s.projTasks, "${project.tasks.size}", ToolAccents.Files, Modifier.weight(1f))

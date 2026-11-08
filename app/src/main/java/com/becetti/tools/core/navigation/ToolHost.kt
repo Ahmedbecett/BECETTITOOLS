@@ -4,8 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavController
 import com.becetti.tools.BecettiToolsApp
-import com.becetti.tools.core.localization.LocalAppStrings
-import com.becetti.tools.core.localization.toolName
+import com.becetti.tools.core.localization.*
 import com.becetti.tools.design.components.EmptyState
 import com.becetti.tools.design.theme.BecettiTheme
 import com.becetti.tools.domain.models.ToolSpec
@@ -14,6 +13,21 @@ import com.becetti.tools.features.calculator.CalculatorScreen
 import com.becetti.tools.features.converter.UnitConverterScreen
 import com.becetti.tools.features.currency.CurrencyScreen
 import com.becetti.tools.features.device.DeviceInfoScreen
+import com.becetti.tools.features.developer.ApiClientScreen
+import com.becetti.tools.features.developer.Base64Screen
+import com.becetti.tools.features.developer.DiffScreen
+import com.becetti.tools.features.developer.GitHubScreen
+import com.becetti.tools.features.developer.HashScreen
+import com.becetti.tools.features.developer.JsonXmlScreen
+import com.becetti.tools.features.developer.RegexTestScreen
+import com.becetti.tools.features.developer.UrlCodecScreen
+import com.becetti.tools.features.developer.UuidScreen
+import com.becetti.tools.features.network.ColorConverterScreen
+import com.becetti.tools.features.network.DiagnosticsScreen
+import com.becetti.tools.features.network.DnsLookupScreen
+import com.becetti.tools.features.network.HttpHeadersScreen
+import com.becetti.tools.features.network.IpInfoScreen
+import com.becetti.tools.features.network.LinkInspectorScreen
 import com.becetti.tools.features.health.BmiCalculatorScreen
 import com.becetti.tools.features.image.ImageCompressorScreen
 import com.becetti.tools.features.notes.NotesScreen
@@ -62,6 +76,25 @@ fun ToolHost(spec: ToolSpec, app: BecettiToolsApp, nav: NavController) {
         "bmi_calculator" -> BmiCalculatorScreen()
         "stopwatch_timer" -> StopwatchTimerScreen()
         "device_info" -> DeviceInfoScreen()
+
+        /* -------------------------------- Developer Studio -------------------------------- */
+        "dev_json" -> JsonXmlScreen()
+        "dev_base64" -> Base64Screen()
+        "dev_hash" -> HashScreen()
+        "dev_uuid" -> UuidScreen()
+        "dev_regex" -> RegexTestScreen()
+        "dev_api" -> ApiClientScreen()
+        "dev_diff" -> DiffScreen()
+        "dev_url" -> UrlCodecScreen()
+        "dev_github" -> GitHubScreen()
+
+        /* --------------------------------- Web & Network ---------------------------------- */
+        "net_dns" -> DnsLookupScreen()
+        "net_ip" -> IpInfoScreen()
+        "net_headers" -> HttpHeadersScreen()
+        "net_diagnostics" -> DiagnosticsScreen()
+        "net_link" -> LinkInspectorScreen()
+        "net_color" -> ColorConverterScreen()
 
         else -> EmptyState(
             title = s.toolName(spec.id),

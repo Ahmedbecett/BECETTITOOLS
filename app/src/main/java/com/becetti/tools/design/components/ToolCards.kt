@@ -11,7 +11,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -24,10 +23,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.becetti.tools.core.localization.AppStrings
-import com.becetti.tools.core.localization.groupName
-import com.becetti.tools.core.localization.toolDescription
-import com.becetti.tools.core.localization.toolName
+import com.becetti.tools.core.localization.*
 import com.becetti.tools.design.theme.BecettiTheme
 import com.becetti.tools.domain.models.ToolGroup
 import com.becetti.tools.domain.models.ToolSpec
@@ -91,12 +87,18 @@ fun ToolCard(
                 )
             }
             if (showFavorite) {
-                IconButton(onClick = onToggleFavorite, modifier = Modifier.size(28.dp)) {
+                Box(
+                    modifier = Modifier
+                        .size(28.dp)
+                        .clip(CircleShape)
+                        .clickable(onClick = onToggleFavorite),
+                    contentAlignment = Alignment.Center
+                ) {
                     Icon(
                         Icons.Filled.Star,
                         contentDescription = if (favorite) strings.gFavoriteRemove else strings.gFavoriteAdd,
                         tint = if (favorite) accent else palette.textSecondary.copy(alpha = 0.55f),
-                        modifier = Modifier.size(17.dp)
+                        modifier = Modifier.size(16.dp)
                     )
                 }
             }
@@ -204,9 +206,9 @@ fun CategoryCard(
     group: ToolGroup,
     strings: AppStrings,
     count: Int,
-    onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    compact: Boolean = false
+    compact: Boolean = false,
+    onClick: () -> Unit
 ) {
     val palette = BecettiTheme.palette
     val accent = group.accent
