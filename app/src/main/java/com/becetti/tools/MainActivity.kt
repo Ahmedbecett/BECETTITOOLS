@@ -36,6 +36,7 @@ class MainActivity : ComponentActivity() {
             )
             val theme by settingsVm.theme.collectAsState()
             val lang by settingsVm.language.collectAsState()
+            val reduceMotion by settingsVm.reduceMotion.collectAsState()
             val strings = remember(lang) { appStringsFor(lang) }
 
             LaunchedEffect(lang) {
@@ -61,7 +62,7 @@ class MainActivity : ComponentActivity() {
                 LocalLayoutDirection provides layoutDirection,
                 LocalAppStrings provides strings
             ) {
-                BecettiToolsTheme(darkTheme = isDark, dynamicColor = false) {
+                BecettiToolsTheme(darkTheme = isDark, dynamicColor = false, reduceMotion = reduceMotion) {
                     Surface(
                         modifier = Modifier.fillMaxSize().systemBarsPadding(),
                         color = MaterialTheme.colorScheme.background

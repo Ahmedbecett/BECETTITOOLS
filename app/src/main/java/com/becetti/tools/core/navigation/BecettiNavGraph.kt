@@ -1,156 +1,281 @@
 package com.becetti.tools.core.navigation
 
-import androidx.compose.foundation.layout.padding
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.becetti.tools.BecettiToolsApp
 import com.becetti.tools.core.localization.LocalAppStrings
+import com.becetti.tools.core.localization.groupName
+import com.becetti.tools.core.localization.toolName
+import com.becetti.tools.design.components.BecettiGlyphs
 import com.becetti.tools.design.components.BecettiIcons
-import com.becetti.tools.design.theme.PrimaryOrange
-import com.becetti.tools.domain.models.ToolCatalog
-import com.becetti.tools.features.age.AgeCalculatorScreen
-import com.becetti.tools.features.calculator.CalculatorScreen
-import com.becetti.tools.features.converter.UnitConverterScreen
-import com.becetti.tools.features.currency.CurrencyScreen
-import com.becetti.tools.features.device.DeviceInfoScreen
+import com.becetti.tools.design.components.pressScale
+import com.becetti.tools.design.theme.BecettiTheme
+import com.becetti.tools.design.theme.Motion
+import com.becetti.tools.design.theme.motionDuration
+import com.becetti.tools.domain.models.ToolGroup
+import com.becetti.tools.domain.models.ToolRegistry
+import com.becetti.tools.features.category.CategoryScreen
 import com.becetti.tools.features.favorites.FavoritesScreen
-import com.becetti.tools.features.health.BmiCalculatorScreen
 import com.becetti.tools.features.history.HistoryScreen
-import com.becetti.tools.features.home.CategoriesScreen
-import com.becetti.tools.features.home.HomeScreen
-import com.becetti.tools.features.image.ImageCompressorScreen
-import com.becetti.tools.features.notes.NotesScreen
-import com.becetti.tools.features.ocr.OcrScreen
-import com.becetti.tools.features.password.PasswordGenScreen
-import com.becetti.tools.features.password.PasswordStrengthScreen
-import com.becetti.tools.features.pdf.ImageToPdfScreen
-import com.becetti.tools.features.pdf.PdfMergerScreen
-import com.becetti.tools.features.percentage.PercentageScreen
-import com.becetti.tools.features.qr.QrGeneratorScreen
-import com.becetti.tools.features.qr.QrScannerScreen
+import com.becetti.tools.features.home.HomeDashboardScreen
+import com.becetti.tools.features.profile.ProfileScreen
+import com.becetti.tools.features.projects.ProjectDetailScreen
+import com.becetti.tools.features.projects.ProjectsScreen
 import com.becetti.tools.features.settings.SettingsScreen
 import com.becetti.tools.features.settings.SettingsViewModel
-import com.becetti.tools.features.text.TextToolkitScreen
-import com.becetti.tools.features.timer.StopwatchTimerScreen
+import com.becetti.tools.features.tools.ToolsHubScreen
+import kotlinx.coroutines.launch
 
-data class BottomItem(val route: String, val label: String, val icon: ImageVector)
+data class BottomDestination(val route: String, val label: String, val icon: ImageVector)
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BecettiNavGraph(app: BecettiToolsApp, settingsViewModel: SettingsViewModel) {
     val nav = rememberNavController()
     val s = LocalAppStrings.current
+    val palette = BecettiTheme.palette
+    val scope = rememberCoroutineScope()
 
-    val bottomItems = listOf(
-        BottomItem(Route.Home.route, s.navHome, Icons.Filled.Home),
-        BottomItem(Route.Categories.route, s.navCategories, BecettiIcons.Category),
-        BottomItem(Route.Favorites.route, s.navFavorites, Icons.Filled.Star),
-        BottomItem(Route.History.route, s.navHistory, BecettiIcons.History),
-        BottomItem(Route.Settings.route, s.navSettings, Icons.Filled.Settings)
-    )
-    val bottomRoutes = remember {
-        setOf(
-            Route.Home.route,
-            Route.Categories.route,
-            Route.Favorites.route,
-            Route.History.route,
-            Route.Settings.route
+    val tabs = remember(s) {
+        listOf(
+            BottomDestination(Route.Home.route, s.navHomeTab, Icons.Filled.Home),
+            BottomDestination(Route.Developers.route, s.navDevelopers, BecettiGlyphs.CodeBrackets),
+            BottomDestination(Route.Projects.route, s.navProjects, BecettiGlyphs.Kanban),
+            BottomDestination(Route.ToolsTab.route, s.navTools, BecettiGlyphs.Grid4),
+            BottomDestination(Route.Profile.route, s.navProfile, Icons.Filled.Person)
         )
     }
-    val current = nav.currentBackStackEntryFlow
-        .collectAsState(initial = nav.currentBackStackEntry)
-        .value?.destination?.route
+    val tabRoutes = remember(tabs) { tabs.map { it.route }.toSet() }
 
-    val activeTool = remember(current) { ToolCatalog.all.find { it.route == current } }
+    val currentEntry: NavBackStackEntry? by nav.currentBackStackEntryFlow
+        .collectAsState(initial = nav.currentBackStackEntry)
+    val currentRoute = currentEntry?.destination?.route
+    val showChrome = currentRoute == null || currentRoute in tabRoutes
+
+    val activeSpec = remember(currentRoute) { ToolRegistry.byRoute(currentRoute) }
+    val accent = activeSpec?.group?.accent ?: MaterialTheme.colorScheme.primary
+    val title = when {
+        activeSpec != null -> s.toolName(activeSpec.id)
+        currentRoute?.startsWith("category/") == true -> {
+            val id = currentRoute.substringAfter("category/").substringBefore("/")
+            s.groupName(id)
+        }
+        currentRoute?.startsWith("project/") == true -> s.toolName("projects")
+        currentRoute == Route.Settings.route -> s.navSettings
+        currentRoute == Route.Favorites.route -> s.navFavorites
+        currentRoute == Route.History.route -> s.navHistory
+        else -> s.appName
+    }
+
+    val favorites by app.toolRepository.favorites().collectAsState(initial = emptyList())
+    val favoriteIds = remember(favorites) { favorites.map { it.toolId }.toSet() }
+
+    val enter = fadeIn(tween(motionDuration(Motion.Fast))) +
+        slideInHorizontally(tween(motionDuration(Motion.Base))) { it / 14 }
+    val exit = fadeOut(tween(motionDuration(120)))
+    val popEnter = fadeIn(tween(motionDuration(Motion.Fast)))
+    val popExit = fadeOut(tween(motionDuration(120))) +
+        slideOutHorizontally(tween(motionDuration(Motion.Base))) { it / 14 }
 
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
-            if (current != null && current !in bottomRoutes) {
-                val accent = activeTool?.let { BecettiIcons.colorForTool(it.id) } ?: PrimaryOrange
-                TopAppBar(
-                    title = {
-                        Text(
-                            text = activeTool?.localizedName(s) ?: s.appName,
-                            fontWeight = FontWeight.Bold,
-                            color = accent
-                        )
-                    },
-                    navigationIcon = {
-                        IconButton(onClick = { nav.popBackStack() }) {
+            if (!showChrome) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.background)
+                        .statusBarsPaddingIfNeeded()
+                        .padding(horizontal = 6.dp, vertical = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    IconButton(onClick = {
+                        if (!nav.popBackStack()) {
+                            nav.navigate(Route.Home.route) { launchSingleTop = true }
+                        }
+                    }) {
+                        Icon(Icons.Filled.ArrowBack, contentDescription = s.back, tint = accent)
+                    }
+                    Text(
+                        title,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = palette.textPrimary,
+                        modifier = Modifier.weight(1f)
+                    )
+                    if (activeSpec != null) {
+                        val isFav = activeSpec.id in favoriteIds
+                        IconButton(onClick = {
+                            scope.launch { app.toolRepository.toggleFavorite(activeSpec.id, isFav) }
+                        }) {
                             Icon(
-                                Icons.Filled.ArrowBack,
-                                contentDescription = s.back,
-                                tint = accent
+                                Icons.Filled.Star,
+                                contentDescription = if (isFav) s.gFavoriteRemove else s.gFavoriteAdd,
+                                tint = if (isFav) accent else palette.textSecondary,
+                                modifier = Modifier.size(19.dp)
                             )
                         }
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.surface
-                    )
-                )
+                    }
+                }
             }
         },
         bottomBar = {
-            NavigationBar {
-                bottomItems.forEach { item ->
-                    NavigationBarItem(
-                        selected = current == item.route,
-                        onClick = {
-                            nav.navigate(item.route) {
-                                launchSingleTop = true
-                                popUpTo(Route.Home.route) { inclusive = false }
-                            }
-                        },
-                        icon = { Icon(item.icon, contentDescription = item.label) },
-                        label = { Text(item.label, maxLines = 1) },
-                        colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor = PrimaryOrange,
-                            selectedTextColor = PrimaryOrange
-                        )
-                    )
-                }
+            if (showChrome) {
+                BecettiBottomBar(
+                    tabs = tabs,
+                    currentRoute = currentRoute,
+                    onSelect = { route ->
+                        nav.navigate(route) {
+                            popUpTo(Route.Home.route) { saveState = true }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }
+                )
             }
         }
     ) { pad ->
         NavHost(
             navController = nav,
             startDestination = Route.Home.route,
-            modifier = Modifier.padding(pad)
+            modifier = Modifier.padding(pad),
+            enterTransition = { enter },
+            exitTransition = { exit },
+            popEnterTransition = { popEnter },
+            popExitTransition = { popExit }
         ) {
-            composable(Route.Home.route) { HomeScreen(app, nav, settingsViewModel) }
-            composable(Route.Categories.route) { CategoriesScreen(nav) }
+            composable(Route.Home.route) { HomeDashboardScreen(app, nav, settingsViewModel) }
+            composable(Route.Developers.route) { CategoryScreen(ToolGroup.DEVELOPER, app, nav) }
+            composable(Route.Projects.route) { ProjectsScreen(app, nav) }
+            composable(Route.ToolsTab.route) { ToolsHubScreen(app, nav) }
+            composable(Route.Profile.route) { ProfileScreen(app, nav, settingsViewModel) }
+
+            composable(
+                route = Route.Category.route,
+                arguments = listOf(navArgument("groupId") { type = NavType.StringType })
+            ) { entry ->
+                val gid = entry.arguments?.getString("groupId").orEmpty()
+                val group = ToolGroup.values().firstOrNull { it.id == gid } ?: ToolGroup.EVERYDAY
+                CategoryScreen(group, app, nav)
+            }
+            composable(
+                route = Route.ProjectDetail.route,
+                arguments = listOf(navArgument("projectId") { type = NavType.StringType })
+            ) { entry ->
+                val projectId = entry.arguments?.getString("projectId").orEmpty()
+                ProjectDetailScreen(app, nav, projectId)
+            }
+
+            composable(Route.Settings.route) { SettingsScreen(settingsViewModel) }
             composable(Route.Favorites.route) { FavoritesScreen(app, nav) }
             composable(Route.History.route) { HistoryScreen(app, nav) }
-            composable(Route.Settings.route) { SettingsScreen(settingsViewModel) }
-            composable(Route.ScientificCalculator.route) { CalculatorScreen(app) }
-            composable(Route.UnitConverter.route) { UnitConverterScreen() }
-            composable(Route.CurrencyConverter.route) { CurrencyScreen(app) }
-            composable(Route.PercentageCalculator.route) { PercentageScreen() }
-            composable(Route.AgeCalculator.route) { AgeCalculatorScreen() }
-            composable(Route.QrGenerator.route) { QrGeneratorScreen() }
-            composable(Route.QrScanner.route) { QrScannerScreen() }
-            composable(Route.PasswordGen.route) { PasswordGenScreen() }
-            composable(Route.PasswordStrength.route) { PasswordStrengthScreen() }
-            composable(Route.ImageToPdf.route) { ImageToPdfScreen() }
-            composable(Route.PdfMerger.route) { PdfMergerScreen() }
-            composable(Route.ImageCompressor.route) { ImageCompressorScreen() }
-            composable(Route.Ocr.route) { OcrScreen(app) }
-            composable(Route.TextToolkit.route) { TextToolkitScreen() }
-            composable(Route.Notes.route) { NotesScreen(app, nav) }
-            composable(Route.BmiCalculator.route) { BmiCalculatorScreen() }
-            composable(Route.StopwatchTimer.route) { StopwatchTimerScreen() }
-            composable(Route.DeviceInfo.route) { DeviceInfoScreen() }
+            composable(Route.Notes.route) { com.becetti.tools.features.notes.NotesScreen(app, nav) }
+
+            // Every registered tool gets exactly one destination, dispatched by ToolHost.
+            ToolRegistry.all.forEach { spec ->
+                composable(spec.route) { ToolHost(spec = spec, app = app, nav = nav) }
+            }
         }
     }
 }
+
+/** Custom bottom bar: animated pill indicator, colour + scale transitions, RTL safe. */
+@Composable
+private fun BecettiBottomBar(
+    tabs: List<BottomDestination>,
+    currentRoute: String?,
+    onSelect: (String) -> Unit
+) {
+    val palette = BecettiTheme.palette
+    Surface(
+        color = palette.navSurface,
+        border = BorderStroke(1.dp, palette.border.copy(alpha = 0.6f))
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 6.dp, vertical = 7.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            tabs.forEach { tab ->
+                val selected = currentRoute == tab.route
+                val accent = MaterialTheme.colorScheme.primary
+                val interaction = remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
+                val scale by animateFloatAsState(
+                    targetValue = if (selected) 1f else 0.94f,
+                    animationSpec = tween(motionDuration(Motion.Fast)),
+                    label = "tabScale"
+                )
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .pressScale(interaction, 0.94f)
+                        .clip(RoundedCornerShape(14.dp))
+                        .clickable(interactionSource = interaction, indication = null) { onSelect(tab.route) }
+                        .padding(vertical = 5.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(3.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .height(26.dp)
+                            .width(40.dp)
+                            .clip(RoundedCornerShape(9.dp))
+                            .background(if (selected) accent.copy(alpha = 0.16f) else Color.Transparent),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = tab.icon,
+                            contentDescription = tab.label,
+                            tint = if (selected) accent else palette.textSecondary,
+                            modifier = Modifier
+                                .size(20.dp)
+                                .graphicsLayer { scaleX = scale; scaleY = scale }
+                        )
+                    }
+                    Text(
+                        text = tab.label,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = if (selected) accent else palette.textSecondary,
+                        maxLines = 1
+                    )
+                }
+            }
+        }
+    }
+}
+
+/** MainActivity already applies system bar padding to the root surface. */
+private fun Modifier.statusBarsPaddingIfNeeded(): Modifier = this

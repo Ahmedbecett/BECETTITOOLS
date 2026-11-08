@@ -13,6 +13,7 @@ class SettingsViewModel(private val app: BecettiToolsApp, private val ds: DataSt
     private val LANG = stringPreferencesKey("language")
     private val THEME = stringPreferencesKey("theme")
     private val ADS_CONSENT = booleanPreferencesKey("ads_consent_granted")
+    private val REDUCE_MOTION = booleanPreferencesKey("reduce_motion")
 
     val language: StateFlow<String> = ds.data
         .map { it[LANG] ?: "en" }
@@ -25,6 +26,14 @@ class SettingsViewModel(private val app: BecettiToolsApp, private val ds: DataSt
     val adsConsent: StateFlow<Boolean> = ds.data
         .map { it[ADS_CONSENT] ?: false }
         .stateIn(viewModelScope, SharingStarted.Eagerly, false)
+
+    val reduceMotion: StateFlow<Boolean> = ds.data
+        .map { it[REDUCE_MOTION] ?: false }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, false)
+
+    fun setReduceMotion(enabled: Boolean) {
+        viewModelScope.launch { ds.edit { it[REDUCE_MOTION] = enabled } }
+    }
 
     fun setLanguage(l: String) {
         viewModelScope.launch { ds.edit { it[LANG] = l } }

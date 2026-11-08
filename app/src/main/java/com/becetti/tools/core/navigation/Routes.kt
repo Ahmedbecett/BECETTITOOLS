@@ -2,6 +2,18 @@ package com.becetti.tools.core.navigation
 
 sealed class Route(val route: String) {
     object Home : Route("home")
+
+    /* ---- v2 bottom navigation destinations ---- */
+    object Developers : Route("tab_developers")
+    object Projects : Route("tab_projects")
+    object ToolsTab : Route("tab_tools")
+    object Profile : Route("tab_profile")
+    object Category : Route("category/{groupId}") {
+        fun create(groupId: String) = "category/$groupId"
+    }
+    object ProjectDetail : Route("project/{projectId}") {
+        fun create(projectId: String) = "project/$projectId"
+    }
     object Categories : Route("categories")
     object Favorites : Route("favorites")
     object History : Route("history")

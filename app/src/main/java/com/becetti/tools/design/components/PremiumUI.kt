@@ -19,6 +19,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -758,5 +761,63 @@ fun HeroBanner(
             }
             content()
         }
+    }
+}
+
+/* ------------------------------------------------------------------------------------------------
+ * Search — animated focus ring, clear affordance, RTL-safe
+ * ---------------------------------------------------------------------------------------------- */
+
+@Composable
+fun AppSearchBar(
+    value: String,
+    onValueChange: (String) -> Unit,
+    placeholder: String,
+    modifier: Modifier = Modifier,
+    accent: Color = MaterialTheme.colorScheme.primary
+) {
+    val palette = BecettiTheme.palette
+    var focused by remember { mutableStateOf(false) }
+    val borderColor by animateColorAsState(
+        targetValue = if (focused) accent else palette.border,
+        animationSpec = tween(motionDuration(Motion.Fast)),
+        label = "searchBorder"
+    )
+    val elevation by animateFloatAsState(
+        targetValue = if (focused) 1f else 0f,
+        animationSpec = tween(motionDuration(Motion.Fast)),
+        label = "searchElevation"
+    )
+    Column(modifier.fillMaxWidth()) {
+        OutlinedTextField(
+            value = value,
+            onValueChange = onValueChange,
+            modifier = Modifier
+                .fillMaxWidth()
+                .graphicsLayer { alpha = 0.94f + 0.06f * elevation },
+            placeholder = {
+                Text(placeholder, style = MaterialTheme.typography.bodyMedium, color = palette.textSecondary.copy(alpha = 0.8f))
+            },
+            leadingIcon = {
+                Icon(Icons.Filled.Search, contentDescription = null, tint = borderColor, modifier = Modifier.size(18.dp))
+            },
+            trailingIcon = {
+                if (value.isNotEmpty()) {
+                    IconButton(onClick = { onValueChange("") }, modifier = Modifier.size(34.dp)) {
+                        Icon(Icons.Filled.Clear, contentDescription = "clear", tint = palette.textSecondary, modifier = Modifier.size(15.dp))
+                    }
+                }
+            },
+            singleLine = true,
+            textStyle = MaterialTheme.typography.bodyMedium,
+            shape = RoundedCornerShape(14.dp),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = borderColor,
+                unfocusedBorderColor = borderColor,
+                cursorColor = accent,
+                focusedTextColor = palette.textPrimary,
+                unfocusedTextColor = palette.textPrimary
+            )
+        )
     }
 }
