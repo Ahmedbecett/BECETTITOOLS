@@ -6,7 +6,7 @@ on:
     branches: ["arena/2bcd79c2-becettitools"]
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
@@ -77,10 +77,28 @@ jobs:
             /tmp/release.log
           if-no-files-found: ignore
 
-      - name: Print errors on failure
+      - name: Publish compiler errors back to the branch
         if: failure()
         run: |
-          echo "=== COMPILE ERRORS ==="
-          grep -n "^e: " /tmp/compile.log | head -150 || true
-          echo "=== RELEASE ERRORS ==="
-          grep -n "^e: \|FAILURE:\|What went wrong" -A3 /tmp/release.log | head -150 || true
+          set +e
+          {
+            echo "# BECETTI CI build errors"
+            echo ""
+            echo "Commit: $GITHUB_SHA"
+            echo ""
+            echo "## compileDebugKotlin"
+            echo '```'
+            grep -E "^e: |^w: .*deprecat" /tmp/compile.log | head -200
+            tail -40 /tmp/compile.log
+            echo '```'
+            echo ""
+            echo "## assembleRelease / bundleRelease"
+            echo '```'
+            grep -E "^e: |FAILURE:|What went wrong|Caused by|> Task" /tmp/release.log | head -200
+            echo '```'
+          } > build-errors.md
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add build-errors.md
+          git commit -m "ci: compiler errors [skip ci]"
+          git push origin HEAD:${GITHUB_REF_NAME}
