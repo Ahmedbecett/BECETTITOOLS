@@ -129,7 +129,7 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.6.0")
 
     // CameraX (ListenableFuture is a public CameraX API type)
-    implementation("com.google.guava:listenablefuture:1.0")
+    implementation("com.google.guava:guava:33.4.0-android")
     implementation("androidx.camera:camera-camera2:1.3.1")
     implementation("androidx.camera:camera-lifecycle:1.3.1")
     implementation("androidx.camera:camera-view:1.3.1")
