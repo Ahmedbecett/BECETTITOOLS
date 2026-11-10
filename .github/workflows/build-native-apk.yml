@@ -109,7 +109,11 @@ jobs:
 
       - name: Save Gradle failure log
         if: failure()
-        run: cp /tmp/gradle.log ./gradle-build-failure.log || printf 'Gradle log unavailable\n' > ./gradle-build-failure.log
+        run: |
+          cp /tmp/gradle.log ./gradle-build-failure.log || printf 'Gradle log unavailable\n' > ./gradle-build-failure.log
+          grep -E '(^e: |^FAILURE:|^What went wrong:|Execution failed for task|Could not resolve|^Caused by:|^\* What went wrong:)' ./gradle-build-failure.log | tail -n 30 | while IFS= read -r line; do
+            printf '::error title=Gradle build failure::%s\n' "$line"
+          done
 
       - name: Upload Gradle failure log
         if: failure()
