@@ -148,6 +148,19 @@ jobs:
           sha256sum BECETTI-TOOLS-v1.1.0-release.aab > BECETTI-TOOLS-v1.1.0-release.aab.sha256
           ls -lh BECETTI-TOOLS-v1.1.0-release.*
 
+      # Deliverables are committed to the SAME session working branch (never main,
+      # never a GitHub Release, never a store) so they can be delivered as files.
+      - name: Deliver Release Files to Session Branch
+        if: success()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add BECETTI-TOOLS-v1.1.0-release.apk BECETTI-TOOLS-v1.1.0-release.apk.sha256 \
+                  BECETTI-TOOLS-v1.1.0-release.aab BECETTI-TOOLS-v1.1.0-release.aab.sha256 \
+                  RELEASE-VERIFICATION-v1.1.0.txt
+          git commit -m "release: BECETTI TOOLS v1.1.0 (versionCode 2) signed APK + AAB + verification report [skip ci]"
+          git push origin HEAD:${GITHUB_REF_NAME}
+
       - name: Upload Release Artifacts
         if: always()
         uses: actions/upload-artifact@v4
