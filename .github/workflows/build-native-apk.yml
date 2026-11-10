@@ -8,7 +8,15 @@ name: Build BECETTI TOOLS v1.1.0 Release (Signed APK + AAB)
 on:
   push:
     branches: ["arena/9a6aa17e-becettitools"]
+    paths:
+      - "app/**"
+      - "*.gradle.kts"
+      - "gradle/**"
+      - ".github/workflows/build-native-apk.yml"
   workflow_dispatch:
+    # Dispatching this workflow explicitly ALSO delivers the built APK/AAB to the
+    # session branch (commit below). Push-triggered builds verify only.
+
 
 permissions:
   contents: write
@@ -149,9 +157,10 @@ jobs:
           ls -lh BECETTI-TOOLS-v1.1.0-release.*
 
       # Deliverables are committed to the SAME session working branch (never main,
-      # never a GitHub Release, never a store) so they can be delivered as files.
+      # never a GitHub Release, never a store) ONLY on explicit workflow_dispatch,
+      # so ordinary verification builds never overwrite the committed binaries.
       - name: Deliver Release Files to Session Branch
-        if: success()
+        if: success() && github.event_name == 'workflow_dispatch'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
