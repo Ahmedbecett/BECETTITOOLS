@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 set -e
-GRADLE_VERSION="8.7"
+GRADLE_VERSION="8.13"
 GRADLE_URL="https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip"
 GRADLE_HOME="$HOME/.gradle/wrapper/dists/gradle-${GRADLE_VERSION}"
 if [ ! -f "$GRADLE_HOME/gradle-${GRADLE_VERSION}/bin/gradle" ]; then
