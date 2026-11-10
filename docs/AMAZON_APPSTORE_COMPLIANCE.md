@@ -1,8 +1,8 @@
 # دليل التوافق مع شروط وسياسات متجر أمازون (Amazon Appstore Compliance Guide)
 
 **التطبيق:** BECETTI TOOLS (`com.becetti.tools`)  
-**الإصدار النهائي:** `1.0.0` (`versionCode = 1`) — **Signed Release APK**  
-**ملف الرفع لأمازون:** `BECETTI-TOOLS-v1.0.0-release.apk`
+**الإصدار النهائي:** `1.1.0` (`versionCode = 2`) — **Signed Release APK + AAB**  
+**ملف الرفع لأمازون:** `BECETTI-TOOLS-v1.1.0-release.apk` (أو `BECETTI-TOOLS-v1.1.0-release.aab` لنظام Google Play)
 
 ---
 

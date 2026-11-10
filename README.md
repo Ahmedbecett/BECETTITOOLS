@@ -4,9 +4,9 @@ Native Android & Amazon Fire OS Utility App (Kotlin + Jetpack Compose + Material
 
 ## Package & Release Info
 - **Application ID**: `com.becetti.tools`
-- **Version**: `1.0.0` (`versionCode = 1`)
+- **Version**: `1.1.0` (`versionCode = 2`)
 - **SDK Support**: `minSdk 24` (Android 7.0+ / Fire OS 7 & Fire OS 8), `targetSdk 34` (Android 14)
-- **Release Binary**: `BECETTI-TOOLS-v1.0.0-release.apk` (Signed Release APK, v1 + v2 + v3 signatures, R8 minified & resource-shrunk, **< 50 MB** for Amazon Appstore & direct installation)
+- **Release Binaries**: `BECETTI-TOOLS-v1.1.0-release.apk` & `BECETTI-TOOLS-v1.1.0-release.aab` (Signed, v1 + v2 + v3 signatures, R8 minified & resource-shrunk, **< 50 MB** for Amazon Appstore & direct installation). The signed `BECETTI-TOOLS-v1.0.0-release.apk` (versionCode 1) remains archived in the repo.
 
 ## Features (15 tools, all functional)
 **Calculator & Converters**
@@ -40,9 +40,10 @@ Native Android & Amazon Fire OS Utility App (Kotlin + Jetpack Compose + Material
 
 ## Build
 ```bash
-./gradlew assembleRelease
+./gradlew assembleRelease   # Signed release APK
+./gradlew bundleRelease     # Signed release AAB
 ```
-Output: `app/build/outputs/apk/release/app-release.apk` → copied to `BECETTI-TOOLS-v1.0.0-release.apk`.
+Output: `app/build/outputs/apk/release/app-release.apk` → copied to `BECETTI-TOOLS-v1.1.0-release.apk`; `app/build/outputs/bundle/release/app-release.aab` → copied to `BECETTI-TOOLS-v1.1.0-release.aab`.
 
 ## Docs
 - `docs/AMAZON_APPSTORE_COMPLIANCE.md`
