@@ -1,4 +1,4 @@
-name: Build BECETTI TOOLS Candidate APK
+name: Build BECETTI TOOLS v1.1.0 APK
 
 on:
   push:
@@ -49,18 +49,8 @@ jobs:
           echo "$ANDROID_HOME/platform-tools" >> $GITHUB_PATH
           echo "$ANDROID_HOME/cmdline-tools/latest/bin" >> $GITHUB_PATH
 
-      - name: Ensure Release Keystore
-        run: |
-          mkdir -p keystore
-          if [ ! -f keystore/becetti-release.jks ]; then
-            keytool -genkeypair -v \
-              -keystore keystore/becetti-release.jks \
-              -keyalg RSA -keysize 2048 -validity 10000 \
-              -alias becetti \
-              -storepass "BecettiTools2026!" \
-              -keypass "BecettiTools2026!" \
-              -dname "CN=Becetti Tools, OU=Mobile Development, O=Becetti, L=Chlef, ST=Chlef, C=DZ"
-          fi
+      - name: Verify existing release keystore
+        run: test -s keystore/becetti-release.jks
 
       - name: Build Signed Release APK
         run: |
@@ -89,25 +79,41 @@ jobs:
           $ANDROID_HOME/build-tools/34.0.0/apksigner verify --verbose --print-certs "$APK_PATH"
           BADGING=$($ANDROID_HOME/build-tools/34.0.0/aapt dump badging "$APK_PATH")
           echo "$BADGING" | head -n 25
+          echo "$BADGING" | grep -F "package: name='com.becetti.tools' versionCode='2' versionName='1.1.0'"
           if echo "$BADGING" | grep -q "application-debuggable"; then
             echo "ERROR: APK is marked debuggable!"
             exit 1
           fi
-          echo "Amazon Appstore Release APK verified successfully!"
+          OLD_CERT=$("$ANDROID_HOME/build-tools/34.0.0/apksigner" verify --print-certs BECETTI-TOOLS-v1.0.0-release.apk | awk -F': ' '/Signer #1 certificate SHA-256 digest:/ {print $2}')
+          NEW_CERT=$("$ANDROID_HOME/build-tools/34.0.0/apksigner" verify --print-certs "$APK_PATH" | awk -F': ' '/Signer #1 certificate SHA-256 digest:/ {print $2}')
+          test -n "$OLD_CERT" && test "$OLD_CERT" = "$NEW_CERT"
+          echo "Signing certificate matches the existing v1.0.0 APK."
+          echo "APK package/version/signature/size checks passed."
 
-      - name: Stage Validation APK
+      - name: Stage v1.1.0 APK
         if: success()
         run: |
-          cp app/build/outputs/apk/release/app-release.apk ./BECETTI-TOOLS-validation.apk
-          sha256sum BECETTI-TOOLS-validation.apk > BECETTI-TOOLS-validation.apk.sha256
-          ls -lh ./BECETTI-TOOLS-validation.apk*
+          cp app/build/outputs/apk/release/app-release.apk ./BECETTI-TOOLS-v1.1.0-release.apk
+          sha256sum BECETTI-TOOLS-v1.1.0-release.apk > BECETTI-TOOLS-v1.1.0-release.apk.sha256
+          ls -lh ./BECETTI-TOOLS-v1.1.0-release.apk*
 
-      - name: Upload Validation APK Artifact
-        if: always()
+      - name: Upload v1.1.0 APK artifact
+        if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: BECETTI-TOOLS-validation
+          name: BECETTI-TOOLS-v1.1.0-APK
           path: |
-            BECETTI-TOOLS-validation.apk
-            BECETTI-TOOLS-validation.apk.sha256
-          if-no-files-found: ignore
+            BECETTI-TOOLS-v1.1.0-release.apk
+            BECETTI-TOOLS-v1.1.0-release.apk.sha256
+          if-no-files-found: error
+
+      - name: Save Gradle failure log
+        if: failure()
+        run: cp /tmp/gradle.log ./gradle-build-failure.log || printf 'Gradle log unavailable\n' > ./gradle-build-failure.log
+
+      - name: Upload Gradle failure log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: BECETTI-TOOLS-gradle-failure-log
+          path: gradle-build-failure.log

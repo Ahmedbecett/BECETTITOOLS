@@ -4,7 +4,7 @@ Native Android & Amazon Fire OS Utility App (Kotlin + Jetpack Compose + Material
 
 ## Package & Release Info
 - **Application ID**: `com.becetti.tools`
-- **Next release target**: `1.1.0` (`versionCode = 2`) is planned but not set in Gradle until the candidate changes have built and passed verification; the app remains at the published `1.0.0` metadata meanwhile.
+- **Release candidate**: source metadata is set to `1.1.0` (`versionCode = 2`, the next code after published `1`). The APK build and device-level verification are still pending; this is not yet a verified or published release.
 - **SDK Support**: `minSdk 24` (Android 7.0+ / Fire OS 7 & Fire OS 8), `compileSdk 35`, `targetSdk 34` (unchanged)
 - **Release Binary**: The checked-in `BECETTI-TOOLS-v1.0.0-release.apk` is the current published release. No validation APK containing these source changes has yet been built.
 
@@ -43,7 +43,7 @@ Native Android & Amazon Fire OS Utility App (Kotlin + Jetpack Compose + Material
 ```bash
 ./gradlew assembleRelease
 ```
-Output: `app/build/outputs/apk/release/app-release.apk` → the CI workflow stages a validation artifact only; it does not create a GitHub release or submit to Amazon. Version metadata remains at `1.0.0` until the changes are verified.
+Output: `app/build/outputs/apk/release/app-release.apk` → the CI workflow stages a v1.1.0 APK artifact only; it does not create a GitHub release or submit to Amazon. Build and device verification remain required.
 
 ## Docs
 - `docs/AMAZON_APPSTORE_COMPLIANCE.md`
