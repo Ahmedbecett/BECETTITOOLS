@@ -1,8 +1,9 @@
 # دليل التوافق مع شروط وسياسات متجر أمازون (Amazon Appstore Compliance Guide)
 
 **التطبيق:** BECETTI TOOLS (`com.becetti.tools`)  
-**الإصدار النهائي:** `1.0.0` (`versionCode = 1`) — **Signed Release APK**  
-**ملف الرفع لأمازون:** `BECETTI-TOOLS-v1.0.0-release.apk`
+**الإصدار المنشور حاليًا:** `1.0.0` (`versionCode = 1`) — لا يزال هو إصدار Amazon الحالي.
+
+**الإصدار المستهدف التالي:** `1.1.0` (`versionCode = 2`) — مخطط فقط؛ لم يُبنَ APK للتحقق أو يُرسل إلى Amazon بعد. تبقى بيانات Gradle عند الإصدار المنشور `1.0.0` (`versionCode = 1`) حتى ينجح البناء والاختبار.
 
 ---
 
@@ -25,7 +26,7 @@
 - **ما تم تطبيقه:**
   - `isDebuggable = false` ومعرّف الحزمة الرسمي `com.becetti.tools` (بدون اللاحقة `.debug`).
   - توقيع رسمي بمفتاح إصدار (`keystore/becetti-release.jks`) مع تفعيل `enableV1Signing = true` و`enableV2Signing = true` و`enableV3Signing = true`.
-  - دعم كامل لأجهزة Fire OS (المبنية على Android 9 API 28 وAndroid 11 API 30) بدون الاعتماد على خدمات Google Play (`com.google.android.gms`)، مع دعم `CoreLibraryDesugaring` لـ `java.time` ومعالجة مسارات الحفظ `MediaStore` على الأنظمة الأقدم من Android 10.
+  - تظل الأدوات الأساسية متاحة على Fire OS؛ أما إعلانات Google فتحتاج اختبارًا على أجهزة Fire OS التي قد لا تتضمن Google Play services، ولا نضمن عرض الإعلانات عليها. أضيف نقل الملفات المحلي عبر Wi-Fi مع بقاء ملفات المستخدم ضمن اختيارات SAF فقط، مع دعم `CoreLibraryDesugaring` ومعالجة مسارات الحفظ القديمة.
 
 ### ج) فلاتر الـ Manifest والأذونات (Manifest Filters & Permissions Hygiene)
 - **شرط أمازون الرسمي ([Manifest Filters Supported by the Amazon Appstore](https://developer.amazon.com/docs/app-submission/supported-filters-on-the-amazon-appstore.html)):**
@@ -43,15 +44,15 @@
   - توفير سياسة خصوصية واضحة داخل التطبيق وفي صفحة المتجر، مع آلية موافقة المستخدم وحذف البيانات المحلية.
 - **ما تم تطبيقه:**
   - إخفاء لافتة `AdPlaceholder` تلقائياً طالما لم يتم تفعيل رابط إعلاني فعلي (`adsterra.isAvailable() == false`) لضمان عدم وجود أي عنصر غير فعال أثناء فحص أمازون.
-  - إضافة مفتاح تحكم فعلي في الإعدادات (`Personalized Ads Consent`) مرتبط بـ `ConsentManager`.
+  - دمج Google UMP لتحديث حالة الموافقة عند بدء التطبيق، وعرض مدخل خيارات الخصوصية في الإعدادات فقط عندما يطلبه UMP. يتطلب ظهور رسائل الموافقة إعداد الرسائل المناسبة في حساب AdMob؛ ولا يُعد الدمج وحده إثباتاً للامتثال القانوني.
   - إضافة عارض **سياسة الخصوصية داخل التطبيق (In-App Privacy Policy Dialog)** في شاشة الإعدادات يعمل بدون إنترنت وعلى أجهزة Fire OS التي قد لا تحتوي على متصفح خارجي.
 
 ---
 
 ## 2. الأصول الجاهزة للرفع في لوحة مطوري أمازون (Store Assets)
 
-1. **ملف التطبيق النهائي (Release APK):**
-   - `BECETTI-TOOLS-v1.0.0-release.apk` (موقّع، مضغوط، أقل من 50 MB).
+1. **ملف التطبيق المنشور حاليًا:**
+   - `BECETTI-TOOLS-v1.0.0-release.apk` هو ملف الإصدار السابق فقط. لم يُنتج APK للإصدار المرشح `v1.1.0`؛ يجب إعادة قياس الحجم والتحقق من التوقيع والتوافق قبل التقديم.
 2. **الأيقونات الرسمية المطلوبة في متجر أمازون:**
    - `docs/amazon/icon-512x512.png` (أيقونة 512×512 PNG بخلفية شفافة للحواف).
    - `docs/amazon/icon-114x114.png` (أيقونة 114×114 PNG).

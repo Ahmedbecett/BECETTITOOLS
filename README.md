@@ -4,11 +4,11 @@ Native Android & Amazon Fire OS Utility App (Kotlin + Jetpack Compose + Material
 
 ## Package & Release Info
 - **Application ID**: `com.becetti.tools`
-- **Version**: `1.0.0` (`versionCode = 1`)
-- **SDK Support**: `minSdk 24` (Android 7.0+ / Fire OS 7 & Fire OS 8), `targetSdk 34` (Android 14)
-- **Release Binary**: `BECETTI-TOOLS-v1.0.0-release.apk` (Signed Release APK, v1 + v2 + v3 signatures, R8 minified & resource-shrunk, **< 50 MB** for Amazon Appstore & direct installation)
+- **Next release target**: `1.1.0` (`versionCode = 2`) is planned but not set in Gradle until the candidate changes have built and passed verification; the app remains at the published `1.0.0` metadata meanwhile.
+- **SDK Support**: `minSdk 24` (Android 7.0+ / Fire OS 7 & Fire OS 8), `compileSdk 35`, `targetSdk 34` (unchanged)
+- **Release Binary**: The checked-in `BECETTI-TOOLS-v1.0.0-release.apk` is the current published release. No validation APK containing these source changes has yet been built.
 
-## Features (15 tools, all functional)
+## Features (19 tools, including local Wi-Fi file transfer)
 **Calculator & Converters**
 - Scientific Calculator (add/sub/mul/div, %, sqrt, pow, parentheses `(` `)`, trig sin/cos/tan/log/ln, history via Room)
 - Unit Converter (Length, Weight, Temperature, Area, Volume, Speed)
@@ -27,6 +27,7 @@ Native Android & Amazon Fire OS Utility App (Kotlin + Jetpack Compose + Material
 - PDF Merger (multiple PDFs via SAF, PDFBox-Android, merge & save on background thread)
 - Image Compressor (quality slider 10–100, preview, accurate KB size comparison, save JPEG to Pictures/Becetti)
 - OCR Text Extractor (ML Kit Text Recognition, on-device processing, copy)
+- Wi-Fi File Transfer (QR-paired, same local Wi-Fi, authenticated AES-GCM, SAF-selected files, user-controlled export/delete, 512 MiB per-file cap; received APKs are not installed automatically)
 
 **Text Utilities**
 - Text Toolkit (word/char count, remove duplicate spaces, upper/lower, remove empty lines, reverse)
@@ -35,14 +36,14 @@ Native Android & Amazon Fire OS Utility App (Kotlin + Jetpack Compose + Material
 ## Amazon Appstore Compliance (`docs/AMAZON_APPSTORE_COMPLIANCE.md`)
 - **Binary Size < 50 MB**: R8 code minification + resource shrinking (`isMinifyEnabled = true`, `isShrinkResources = true`), custom vector `BecettiIcons` (eliminating 41.5 MB `material-icons-extended` DEX), ARM 32-bit/64-bit native ABI filtering (`armeabi-v7a`, `arm64-v8a`), compressed JNI packaging, and exclusion of unused BouncyCastle PQC tables.
 - **Fire OS 7 & 8 Ready**: Signed with APK Signature Scheme v1 + v2 + v3; optional hardware features (`android.hardware.camera`, `autofocus`, `touchscreen` all marked `android:required="false"`); `<supports-screens>` for all phone and Fire HD tablet sizes; API 24–28 MediaStore fallback.
-- **Privacy & Advertising Policies**: No dead placeholder banners; in-app offline Privacy Policy dialog + user consent toggle (`Personalized Ads Consent`) in Settings; HTTPS-only network traffic (`usesCleartextTraffic="false"`).
+- **Advertising Integration**: Google Mobile Ads with UMP consent flow; Settings exposes UMP privacy choices only when required. See `docs/ADS_INTEGRATION.md` and `docs/PRIVACY_POLICY.md`; integration alone is not a legal-compliance claim.
 - **Store Assets**: 512×512 & 114×114 PNG icons in `docs/amazon/`.
 
 ## Build
 ```bash
 ./gradlew assembleRelease
 ```
-Output: `app/build/outputs/apk/release/app-release.apk` → copied to `BECETTI-TOOLS-v1.0.0-release.apk`.
+Output: `app/build/outputs/apk/release/app-release.apk` → the CI workflow stages a validation artifact only; it does not create a GitHub release or submit to Amazon. Version metadata remains at `1.0.0` until the changes are verified.
 
 ## Docs
 - `docs/AMAZON_APPSTORE_COMPLIANCE.md`

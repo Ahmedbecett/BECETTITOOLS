@@ -10,7 +10,6 @@ val Context.becettiDataStore by preferencesDataStore(name = "becetti_settings")
 object PrefKeys {
     val LANGUAGE = stringPreferencesKey("language")
     val THEME = stringPreferencesKey("theme")
-    val ADS_CONSENT = booleanPreferencesKey("ads_consent")
     val CACHED_DATE = stringPreferencesKey("cached_date")
     fun cachedRatesKey(base: String) = stringPreferencesKey("cached_rates_${base.lowercase()}")
 }

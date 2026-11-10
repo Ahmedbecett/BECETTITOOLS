@@ -6,7 +6,8 @@ plugins {
 
 android {
     namespace = "com.becetti.tools"
-    compileSdk = 34
+    // Google Mobile Ads SDK 25.5.0 requires compileSdk 35; targetSdk remains unchanged.
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.becetti.tools"
@@ -107,6 +108,10 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.datastore:datastore-preferences:1.0.0")
+
+    // Google Mobile Ads + UMP consent management
+    implementation("com.google.android.gms:play-services-ads:25.5.0")
+    implementation("com.google.android.ump:user-messaging-platform:4.0.0")
 
     // Room
     implementation("androidx.room:room-runtime:2.6.1")

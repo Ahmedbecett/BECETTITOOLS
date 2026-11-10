@@ -19,6 +19,5 @@ class BecettiToolsApp : Application() {
             .build()
         runCatching { PDFBoxResourceLoader.init(applicationContext) }
         adsManager = AdsManager(this)
-        adsManager.initialize()
     }
 }

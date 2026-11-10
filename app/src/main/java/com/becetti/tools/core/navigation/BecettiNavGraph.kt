@@ -43,6 +43,8 @@ import com.becetti.tools.features.settings.SettingsScreen
 import com.becetti.tools.features.settings.SettingsViewModel
 import com.becetti.tools.features.text.TextToolkitScreen
 import com.becetti.tools.features.timer.StopwatchTimerScreen
+import com.becetti.tools.features.files.WifiTransferScreen
+import com.becetti.tools.features.files.WIFI_PAIRING_RESULT_KEY
 
 data class BottomItem(val route: String, val label: String, val icon: ImageVector)
 
@@ -132,7 +134,7 @@ fun BecettiNavGraph(app: BecettiToolsApp, settingsViewModel: SettingsViewModel) 
             composable(Route.Categories.route) { CategoriesScreen(nav) }
             composable(Route.Favorites.route) { FavoritesScreen(app, nav) }
             composable(Route.History.route) { HistoryScreen(app, nav) }
-            composable(Route.Settings.route) { SettingsScreen(settingsViewModel) }
+            composable(Route.Settings.route) { SettingsScreen(settingsViewModel, app.adsManager) }
             composable(Route.ScientificCalculator.route) { CalculatorScreen(app) }
             composable(Route.UnitConverter.route) { UnitConverterScreen() }
             composable(Route.CurrencyConverter.route) { CurrencyScreen(app) }
@@ -151,6 +153,13 @@ fun BecettiNavGraph(app: BecettiToolsApp, settingsViewModel: SettingsViewModel) 
             composable(Route.BmiCalculator.route) { BmiCalculatorScreen() }
             composable(Route.StopwatchTimer.route) { StopwatchTimerScreen() }
             composable(Route.DeviceInfo.route) { DeviceInfoScreen() }
+            composable(Route.WifiTransfer.route) { WifiTransferScreen(nav) }
+            composable(Route.WifiTransferScan.route) {
+                QrScannerScreen(onCodeScanned = { code ->
+                    nav.previousBackStackEntry?.savedStateHandle?.set(WIFI_PAIRING_RESULT_KEY, code)
+                    nav.popBackStack()
+                })
+            }
         }
     }
 }
