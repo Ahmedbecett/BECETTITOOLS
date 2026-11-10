@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
@@ -106,6 +106,31 @@ jobs:
             BECETTI-TOOLS-v1.1.0-release.apk
             BECETTI-TOOLS-v1.1.0-release.apk.sha256
           if-no-files-found: error
+
+      - name: Publish v1.1.0 APK on GitHub Releases
+        if: success() && github.event_name == 'push' && github.ref == 'refs/heads/arena/ba5cdcee-becettitools' && contains(github.event.head_commit.message, 'publish APK v1.1.0')
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if gh release view v1.1.0 >/dev/null 2>&1; then
+            echo "Release v1.1.0 already exists; refusing to overwrite it."
+            exit 1
+          fi
+          cat > /tmp/v1.1.0-release-notes.md <<'EOF'
+          # BECETTI TOOLS v1.1.0
+
+          Android APK for package `com.becetti.tools` (versionCode 2, targetSdk 34).
+
+          This APK includes the current AdMob/UMP integration and local Wi-Fi QR-paired file transfer. CI verified the release build, APK package/version, signature validity, signing-certificate continuity with the v1.0.0 APK, non-debuggable status, and the APK size threshold.
+
+          Device installation, two-device Wi-Fi transfer, Fire OS behavior, and Amazon Appstore submission are not certified by this CI build. `app-ads.txt` is hosted separately and remains pending a verified AdMob publisher ID and website configuration.
+          EOF
+          gh release create v1.1.0 \
+            BECETTI-TOOLS-v1.1.0-release.apk \
+            BECETTI-TOOLS-v1.1.0-release.apk.sha256 \
+            --target "$GITHUB_SHA" \
+            --title "BECETTI TOOLS v1.1.0 — Android APK" \
+            --notes-file /tmp/v1.1.0-release-notes.md
 
       - name: Save Gradle failure log
         if: failure()
