@@ -2,7 +2,7 @@ name: Build BECETTI TOOLS v1.1.0 APK
 
 on:
   push:
-    branches: ["arena/ba5cdcee-becettitools", "main"]
+    branches: ["arena/2fbe45fe-becettitools"]
   workflow_dispatch:
 
 permissions:
@@ -97,6 +97,15 @@ jobs:
           sha256sum BECETTI-TOOLS-v1.1.0-release.apk > BECETTI-TOOLS-v1.1.0-release.apk.sha256
           ls -lh ./BECETTI-TOOLS-v1.1.0-release.apk*
 
+      - name: Commit staged APK to branch
+        if: success()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -f BECETTI-TOOLS-v1.1.0-release.apk BECETTI-TOOLS-v1.1.0-release.apk.sha256
+          git commit -m "ci: build signed release APK v1.1.0 (Softonic resubmission) [skip ci]" || true
+          git push origin HEAD:${GITHUB_REF_NAME}
+
       - name: Upload v1.1.0 APK artifact
         if: success()
         uses: actions/upload-artifact@v4
@@ -107,30 +116,36 @@ jobs:
             BECETTI-TOOLS-v1.1.0-release.apk.sha256
           if-no-files-found: error
 
-      - name: Publish v1.1.0 APK on GitHub Releases
-        if: success() && github.event_name == 'push' && github.ref == 'refs/heads/arena/ba5cdcee-becettitools' && contains(github.event.head_commit.message, 'publish APK v1.1.0')
+      - name: Publish v1.1.0 APK on GitHub Release
+        if: success()
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if gh release view v1.1.0 >/dev/null 2>&1; then
-            echo "Release v1.1.0 already exists; refusing to overwrite it."
-            exit 1
-          fi
-          cat > /tmp/v1.1.0-release-notes.md <<'EOF'
+          SHA256=$(awk '{print $1}' BECETTI-TOOLS-v1.1.0-release.apk.sha256)
+          SIZE_BYTES=$(stat -c%s BECETTI-TOOLS-v1.1.0-release.apk)
+          cat > /tmp/v1.1.0-release-notes.md <<EOF
           # BECETTI TOOLS v1.1.0
 
-          Android APK for package `com.becetti.tools` (versionCode 2, targetSdk 34).
+          Android APK for package \`com.becetti.tools\` (versionCode 2, versionName 1.1.0, targetSdk 34).
 
-          This APK includes the current AdMob/UMP integration and local Wi-Fi QR-paired file transfer. CI verified the release build, APK package/version, signature validity, signing-certificate continuity with the v1.0.0 APK, non-debuggable status, and the APK size threshold.
+          CI verified: release build, package/version, APK signature schemes v1+v2+v3 (\`apksigner verify --verbose\`), signing-certificate continuity with v1.0.0 (same certificate), non-debuggable, size < 50 MB.
 
-          Device installation, two-device Wi-Fi transfer, Fire OS behavior, and Amazon Appstore submission are not certified by this CI build. `app-ads.txt` is hosted separately and remains pending a verified AdMob publisher ID and website configuration.
+          **SHA-256:** \`${SHA256}\`
+          **Size:** ${SIZE_BYTES} bytes
+
+          After downloading, confirm the file size and SHA-256 match before uploading to any store — a truncated download invalidates the APK signature.
           EOF
-          gh release create v1.1.0 \
-            BECETTI-TOOLS-v1.1.0-release.apk \
-            BECETTI-TOOLS-v1.1.0-release.apk.sha256 \
-            --target "$GITHUB_SHA" \
-            --title "BECETTI TOOLS v1.1.0 — Android APK" \
-            --notes-file /tmp/v1.1.0-release-notes.md
+          if gh release view v1.1.0 >/dev/null 2>&1; then
+            gh release upload v1.1.0 BECETTI-TOOLS-v1.1.0-release.apk BECETTI-TOOLS-v1.1.0-release.apk.sha256 --clobber
+            gh release edit v1.1.0 --notes-file /tmp/v1.1.0-release-notes.md
+          else
+            gh release create v1.1.0 \
+              BECETTI-TOOLS-v1.1.0-release.apk \
+              BECETTI-TOOLS-v1.1.0-release.apk.sha256 \
+              --target "$GITHUB_SHA" \
+              --title "BECETTI TOOLS v1.1.0 — Android APK" \
+              --notes-file /tmp/v1.1.0-release-notes.md
+          fi
 
       - name: Save Gradle failure log
         if: failure()

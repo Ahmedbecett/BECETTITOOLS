@@ -28,18 +28,19 @@ android {
     signingConfigs {
         create("release") {
             val ksFile = rootProject.file(System.getenv("KEYSTORE_PATH") ?: "keystore/becetti-release.jks")
-            if (ksFile.exists()) {
-                storeFile = ksFile
-                storePassword = System.getenv("KEYSTORE_PASSWORD") ?: "BecettiTools2026!"
-                keyAlias = System.getenv("KEY_ALIAS") ?: "becetti"
-                keyPassword = System.getenv("KEY_PASSWORD") ?: "BecettiTools2026!"
-            } else {
-                val debugKs = signingConfigs.getByName("debug")
-                storeFile = debugKs.storeFile
-                storePassword = debugKs.storePassword
-                keyAlias = debugKs.keyAlias
-                keyPassword = debugKs.keyPassword
+            if (!ksFile.exists()) {
+                // Never fall back to the debug keystore: a debug-signed "release" APK is
+                // rejected by stores ("not correctly signed") and breaks update continuity.
+                throw GradleException(
+                    "Release keystore not found at ${ksFile}. " +
+                    "Store submissions must be signed with keystore/becetti-release.jks."
+                )
             }
+            storeType = "pkcs12"
+            storeFile = ksFile
+            storePassword = System.getenv("KEYSTORE_PASSWORD") ?: "BecettiTools2026!"
+            keyAlias = System.getenv("KEY_ALIAS") ?: "becetti"
+            keyPassword = System.getenv("KEY_PASSWORD") ?: "BecettiTools2026!"
             enableV1Signing = true
             enableV2Signing = true
             enableV3Signing = true
