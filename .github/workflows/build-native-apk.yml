@@ -2,7 +2,7 @@ name: Build BECETTI TOOLS v1.1.0 APK
 
 on:
   push:
-    branches: ["arena/2fbe45fe-becettitools"]
+    branches: ["arena/dc418d07-becettitools"]
   workflow_dispatch:
 
 permissions:
@@ -49,8 +49,25 @@ jobs:
           echo "$ANDROID_HOME/platform-tools" >> $GITHUB_PATH
           echo "$ANDROID_HOME/cmdline-tools/latest/bin" >> $GITHUB_PATH
 
-      - name: Verify existing release keystore
-        run: test -s keystore/becetti-release.jks
+      - name: Validate Arabic/French store metadata and localization resources
+        run: |
+          set -e
+          python3 tools/check_store_metadata.py
+          python3 tools/check_localization.py
+
+      - name: Verify existing release keystore and signing identity
+        run: |
+          set -e
+          test -s keystore/becetti-release.jks
+          # The release keystore must exist and contain the established signing identity.
+          # A debug keystore here would produce an APK stores reject as "not correctly signed".
+          FINGERPRINT=$("$JAVA_HOME/bin/keytool" -list -v \
+            -keystore keystore/becetti-release.jks \
+            -storepass "${KEYSTORE_PASSWORD:-BecettiTools2026!}" \
+            -alias "${KEY_ALIAS:-becetti}" | awk -F': ' '/SHA256:/ {print $2}' | tr -d ' ')
+          echo "Release keystore certificate SHA-256: $FINGERPRINT"
+          test "$FINGERPRINT" = "C40C4BA81A8C28465A126B11FD8FAD84CEBCF2BE163D30AE5C51BBEFF75B03B6"
+          echo "Keystore holds the established release identity (same certificate as v1.0.0)."
 
       - name: Build Signed Release APK
         run: |
@@ -77,6 +94,9 @@ jobs:
             exit 1
           fi
           $ANDROID_HOME/build-tools/34.0.0/apksigner verify --verbose --print-certs "$APK_PATH"
+          # Independent second opinion: JAR/v1 + v2 + v3 verification without Android tooling.
+          python3 -m pip install --quiet cryptography asn1crypto
+          python3 tools/verify_apk_signature.py "$APK_PATH"
           BADGING=$($ANDROID_HOME/build-tools/34.0.0/aapt dump badging "$APK_PATH")
           echo "$BADGING" | head -n 25
           echo "$BADGING" | grep -F "package: name='com.becetti.tools' versionCode='2' versionName='1.1.0'"

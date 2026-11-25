@@ -16,3 +16,7 @@ keystore.properties
 !BECETTI-TOOLS*.apk
 !BECETTI-TOOLS*.apk.sha256
 !keystore/becetti-release.jks
+
+# Python tooling caches
+__pycache__/
+*.pyc

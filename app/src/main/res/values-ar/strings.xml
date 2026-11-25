@@ -1,6 +1,9 @@
 <resources>
+    <!-- Arabic launcher label — must match the Arabic store title exactly (Softonic language consistency) -->
     <string name="app_name">أدوات بيسيتي</string>
-    <string name="tagline">كل ما تحتاجه. صندوق أدوات ذكي واحد.</string>
-    <string name="search_hint">ابحث عن الأدوات…</string>
+    <string name="tagline">كل ما تحتاجه في صندوق أدوات ذكي واحد.</string>
+    <string name="search_hint">ابحث في 20 أداة ذكية…</string>
     <string name="sponsored_offers">عروض برعاية</string>
+    <string name="camera_perm_rationale">يُطلب الوصول إلى الكاميرا لمسح رموز QR فقط، ولا يُطلب إلا عند فتح الماسح.</string>
+    <string name="file_perm_rationale">يُطلب الوصول إلى الملفات لاختيار الصور ومستندات PDF لمعالجتها. تتم المعالجة على جهازك بالكامل.</string>
 </resources>

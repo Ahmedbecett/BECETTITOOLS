@@ -1,6 +1,9 @@
 <resources>
+    <!-- Libellé français — doit correspondre exactement au titre français de la fiche Softonic -->
     <string name="app_name">BECETTI OUTILS</string>
-    <string name="tagline">Tout ce dont vous avez besoin. Une boîte à outils intelligente.</string>
-    <string name="search_hint">Rechercher des outils…</string>
+    <string name="tagline">Tout ce dont vous avez besoin dans une seule boîte à outils intelligente.</string>
+    <string name="search_hint">Rechercher parmi 20 outils…</string>
     <string name="sponsored_offers">Offres sponsorisées</string>
+    <string name="camera_perm_rationale">L\'accès à la caméra sert uniquement à scanner les codes QR et n\'est demandé qu\'à l\'ouverture du scanner.</string>
+    <string name="file_perm_rationale">L\'accès aux fichiers permet de sélectionner des images et des PDF à traiter. Le traitement se fait entièrement sur votre appareil.</string>
 </resources>
