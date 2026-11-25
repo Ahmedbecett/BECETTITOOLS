@@ -12,8 +12,8 @@ Two rejection reasons, two fixes. Both are verifiable by anyone with the reposit
 | Property | Value |
 |---|---|
 | File | `BECETTI-TOOLS-v1.1.0-softonic.apk` |
-| Size | **19,753,917 bytes** (18.84 MiB) |
-| SHA-256 | `dda0a1a7de98d215795191cd959570ea5bf0b3738017135b8fd44659cb8f6285` |
+| Size | **19,753,918 bytes** (18.84 MiB) |
+| SHA-256 | `80417b761cdafa9c11e765cf9df8e5d53ae2ef041917b7bc528e6041413c0c2c` |
 | Package | `com.becetti.tools` (unchanged) |
 | Version | `versionName 1.1.0` / `versionCode 2` |
 | minSdk / targetSdk | 24 (Android 7.0) / 34 |
@@ -23,7 +23,7 @@ Two rejection reasons, two fixes. Both are verifiable by anyone with the reposit
 | Debuggable | no |
 
 The equivalent pristine CI build `BECETTI-TOOLS-v1.1.0-release.apk`
-(SHA-256 `eed8dd8e7e7bb9db97500199fadc5971e0380f1f6ab0ba5b4b904bf25ae2ed65`, 19,767,101 bytes)
+(SHA-256 `b16282dbe460cb9892da990595b5eeec03250d28e1b83796e721bbfdfc581eda`, 19,767,102 bytes)
 is also valid.
 
 ### What the `-softonic.apk` variant is
@@ -52,11 +52,11 @@ signature, because the signatures cover the whole file.
 
 ```bash
 sha256sum BECETTI-TOOLS-v1.1.0-softonic.apk
-# dda0a1a7de98d215795191cd959570ea5bf0b3738017135b8fd44659cb8f6285
+# 80417b761cdafa9c11e765cf9df8e5d53ae2ef041917b7bc528e6041413c0c2c
 ```
 
 Windows: `certutil -hashfile BECETTI-TOOLS-v1.1.0-softonic.apk SHA256`, and the file size must
-be exactly `19,753,917` bytes. Upload the file directly — do not re-zip, rename the extension,
+be exactly `19,753,918` bytes. Upload the file directly — do not re-zip, rename the extension,
 or send it through apps that compress attachments.
 
 ## 3. Verify the signature yourself
@@ -157,7 +157,7 @@ Reply with:
 
 > The APK is signed with APK Signature Scheme v1 + v2 + v3 and passes both `apksigner verify
 > --verbose` and an independent from-scratch verifier. The uploaded file is byte-exact: size
-> 19,753,917 bytes, SHA-256 dda0a1a7de98d215795191cd959570ea5bf0b3738017135b8fd44659cb8f6285,
+> 19,753,918 bytes, SHA-256 80417b761cdafa9c11e765cf9df8e5d53ae2ef041917b7bc528e6041413c0c2c,
 > signer certificate SHA-256 c40c4ba81a8c28465a126b11fd8fad84cebcf2be163d30ae5c51bbeff75b03b6
 > (unchanged from v1.0.0). Please confirm the SHA-256 of the file you received and re-run the
 > signature check.
