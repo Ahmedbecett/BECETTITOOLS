@@ -7,8 +7,8 @@ this repository; each row names the tool that produced the result.
 
 | File | Size (bytes) | SHA-256 |
 |---|---|---|
-| `BECETTI-TOOLS-v1.1.0-softonic.apk` (upload this one) | 19,753,921 | `6f778119e80c746eab6957318057242d86a1ce8314570ac2fb1b03f272a25c80` |
-| `BECETTI-TOOLS-v1.1.0-release.apk` (pristine CI build) | 19,767,105 | `c3accd021de3e537dd67ee497cab233facb7eddb6455b2c5286934ef439fba20` |
+| `BECETTI-TOOLS-v1.1.0-softonic.apk` (upload this one) | 19,753,917 | `dda0a1a7de98d215795191cd959570ea5bf0b3738017135b8fd44659cb8f6285` |
+| `BECETTI-TOOLS-v1.1.0-release.apk` (pristine CI build) | 19,767,101 | `eed8dd8e7e7bb9db97500199fadc5971e0380f1f6ab0ba5b4b904bf25ae2ed65` |
 | `BECETTI-TOOLS-v1.1.0-softonic.apk.sha256` | checksum file | — |
 | `BECETTI-TOOLS-v1.1.0-release.apk.sha256` | checksum file | — |
 

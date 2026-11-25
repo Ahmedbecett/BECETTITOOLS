@@ -3,6 +3,12 @@ name: Build BECETTI TOOLS v1.1.0 APK
 on:
   push:
     branches: ["arena/dc418d07-becettitools"]
+    # Documentation-only changes must not trigger a rebuild: a new build produces new
+    # (non-reproducible) APK bytes, which would invalidate the SHA-256 values documented
+    # in docs/ and README.md.
+    paths-ignore:
+      - "*.md"
+      - "docs/**"
   workflow_dispatch:
 
 permissions:
@@ -140,7 +146,15 @@ jobs:
           git add -f BECETTI-TOOLS-v1.1.0-release.apk BECETTI-TOOLS-v1.1.0-release.apk.sha256 \
                      BECETTI-TOOLS-v1.1.0-softonic.apk BECETTI-TOOLS-v1.1.0-softonic.apk.sha256
           git commit -m "ci: build signed release APK v1.1.0 (Softonic resubmission) [skip ci]" || true
-          git push origin HEAD:${GITHUB_REF_NAME}
+          # Another push may have landed while the build was running; rebase and retry.
+          for attempt in 1 2 3; do
+            git pull --rebase --autostash origin "${GITHUB_REF_NAME}" || true
+            if git push origin HEAD:"${GITHUB_REF_NAME}"; then
+              echo "artifacts pushed on attempt $attempt"
+              break
+            fi
+            sleep 5
+          done
 
       - name: Upload v1.1.0 APK artifact
         if: success()
