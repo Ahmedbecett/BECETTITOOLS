@@ -10,8 +10,8 @@ No `WebView`, no `android.webkit` usage (CI fails the build if either appears un
 ## v1.1.0 (Softonic resubmission)
 - Version: `versionName 1.1.0`, `versionCode 2`.
 - Binaries:
-  - `BECETTI-TOOLS-v1.1.0-softonic.apk` — SHA-256 `3767f6f9ef8763f0ab1db827bf52077444c793aa470b4ab27ecfb8df979cfe9b`
-  - `BECETTI-TOOLS-v1.1.0-release.apk` — SHA-256 `e8ca93a74acdfefaab172d233264db25a1b816764ca17a11b2174a33148ff786`
+  - `BECETTI-TOOLS-v1.1.0-softonic.apk` — SHA-256 `6f778119e80c746eab6957318057242d86a1ce8314570ac2fb1b03f272a25c80`
+  - `BECETTI-TOOLS-v1.1.0-release.apk` — SHA-256 `c3accd021de3e537dd67ee497cab233facb7eddb6455b2c5286934ef439fba20`
 - Both are signed with the established release certificate
   (`c40c4ba81a8c28465a126b11fd8fad84cebcf2be163d30ae5c51bbeff75b03b6`, identical to v1.0.0),
   APK Signature Scheme v1 + v2 + v3, `debuggable = false`, ~18.8 MiB (well under the 50 MB limit).

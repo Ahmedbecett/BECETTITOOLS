@@ -11,9 +11,9 @@ MVVM + Clean Architecture), fully localized in **Arabic**, **French** and Englis
   and complete `values-ar` / `values-fr` string sets
 - **Signed release binaries** (same release certificate as v1.0.0, APK Signature Scheme v1 + v2 + v3):
   - `BECETTI-TOOLS-v1.1.0-softonic.apk` — Softonic submission
-    (SHA-256 `3767f6f9ef8763f0ab1db827bf52077444c793aa470b4ab27ecfb8df979cfe9b`)
+    (SHA-256 `6f778119e80c746eab6957318057242d86a1ce8314570ac2fb1b03f272a25c80`)
   - `BECETTI-TOOLS-v1.1.0-release.apk` — CI build
-    (SHA-256 `e8ca93a74acdfefaab172d233264db25a1b816764ca17a11b2174a33148ff786`)
+    (SHA-256 `c3accd021de3e537dd67ee497cab233facb7eddb6455b2c5286934ef439fba20`)
 - **Signer certificate SHA-256**: `c40c4ba81a8c28465a126b11fd8fad84cebcf2be163d30ae5c51bbeff75b03b6`
   (`CN=Becetti Tools, O=Becetti, L=Chlef, ST=Chlef, C=DZ`), release keystore in `keystore/becetti-release.jks`
 
