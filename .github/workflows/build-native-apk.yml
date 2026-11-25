@@ -111,19 +111,27 @@ jobs:
           echo "Signing certificate matches the existing v1.0.0 APK."
           echo "APK package/version/signature/size checks passed."
 
-      - name: Stage v1.1.0 APK
+      - name: Stage v1.1.0 APK (release + Softonic variant)
         if: success()
         run: |
+          set -e
           cp app/build/outputs/apk/release/app-release.apk ./BECETTI-TOOLS-v1.1.0-release.apk
           sha256sum BECETTI-TOOLS-v1.1.0-release.apk > BECETTI-TOOLS-v1.1.0-release.apk.sha256
-          ls -lh ./BECETTI-TOOLS-v1.1.0-release.apk*
+          # Submission APK: strips the optional dependency-info and verity-padding pairs from the
+          # APK Signing Block (some strict third-party checkers trip over them) and re-verifies.
+          python3 tools/make_softonic_apk.py \
+            BECETTI-TOOLS-v1.1.0-release.apk \
+            BECETTI-TOOLS-v1.1.0-softonic.apk
+          sha256sum BECETTI-TOOLS-v1.1.0-softonic.apk > BECETTI-TOOLS-v1.1.0-softonic.apk.sha256
+          ls -lh ./BECETTI-TOOLS-v1.1.0-*
 
       - name: Commit staged APK to branch
         if: success()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add -f BECETTI-TOOLS-v1.1.0-release.apk BECETTI-TOOLS-v1.1.0-release.apk.sha256
+          git add -f BECETTI-TOOLS-v1.1.0-release.apk BECETTI-TOOLS-v1.1.0-release.apk.sha256 \
+                     BECETTI-TOOLS-v1.1.0-softonic.apk BECETTI-TOOLS-v1.1.0-softonic.apk.sha256
           git commit -m "ci: build signed release APK v1.1.0 (Softonic resubmission) [skip ci]" || true
           git push origin HEAD:${GITHUB_REF_NAME}
 
@@ -135,6 +143,8 @@ jobs:
           path: |
             BECETTI-TOOLS-v1.1.0-release.apk
             BECETTI-TOOLS-v1.1.0-release.apk.sha256
+            BECETTI-TOOLS-v1.1.0-softonic.apk
+            BECETTI-TOOLS-v1.1.0-softonic.apk.sha256
           if-no-files-found: error
 
       - name: Publish v1.1.0 APK on GitHub Release
@@ -157,12 +167,15 @@ jobs:
           After downloading, confirm the file size and SHA-256 match before uploading to any store — a truncated download invalidates the APK signature.
           EOF
           if gh release view v1.1.0 >/dev/null 2>&1; then
-            gh release upload v1.1.0 BECETTI-TOOLS-v1.1.0-release.apk BECETTI-TOOLS-v1.1.0-release.apk.sha256 --clobber
+            gh release upload v1.1.0 BECETTI-TOOLS-v1.1.0-release.apk BECETTI-TOOLS-v1.1.0-release.apk.sha256 \
+              BECETTI-TOOLS-v1.1.0-softonic.apk BECETTI-TOOLS-v1.1.0-softonic.apk.sha256 --clobber
             gh release edit v1.1.0 --notes-file /tmp/v1.1.0-release-notes.md
           else
             gh release create v1.1.0 \
               BECETTI-TOOLS-v1.1.0-release.apk \
               BECETTI-TOOLS-v1.1.0-release.apk.sha256 \
+              BECETTI-TOOLS-v1.1.0-softonic.apk \
+              BECETTI-TOOLS-v1.1.0-softonic.apk.sha256 \
               --target "$GITHUB_SHA" \
               --title "BECETTI TOOLS v1.1.0 — Android APK" \
               --notes-file /tmp/v1.1.0-release-notes.md

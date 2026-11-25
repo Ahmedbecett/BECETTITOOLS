@@ -12,8 +12,8 @@ Two rejection reasons, two fixes. Both are verifiable by anyone with the reposit
 | Property | Value |
 |---|---|
 | File | `BECETTI-TOOLS-v1.1.0-softonic.apk` |
-| Size | **19,753,238 bytes** (18.84 MiB) |
-| SHA-256 | `96a8f30452378e23e386d1d49dcc2ded45cbe5dd8a8ca37e04a824698b60f349` |
+| Size | **19,753,923 bytes** (18.84 MiB) |
+| SHA-256 | `3767f6f9ef8763f0ab1db827bf52077444c793aa470b4ab27ecfb8df979cfe9b` |
 | Package | `com.becetti.tools` (unchanged) |
 | Version | `versionName 1.1.0` / `versionCode 2` |
 | minSdk / targetSdk | 24 (Android 7.0) / 34 |
@@ -23,10 +23,26 @@ Two rejection reasons, two fixes. Both are verifiable by anyone with the reposit
 | Debuggable | no |
 
 The equivalent pristine CI build `BECETTI-TOOLS-v1.1.0-release.apk`
-(SHA-256 `6d8f3d4c23bbd001f43a89b48df4b0770f1114abb3f0dd486829871c95e2e224`) is also valid.
-The `-softonic.apk` variant differs only by dropping the two non-signature optional blocks
-(dependency-info + verity padding) from the APK Signing Block, so strict third-party
-checkers see exactly the v2 and v3 signature blocks. All signatures stay valid.
+(SHA-256 `e8ca93a74acdfefaab172d233264db25a1b816764ca17a11b2174a33148ff786`, 19,767,107 bytes)
+is also valid.
+
+### What the `-softonic.apk` variant is
+
+AGP writes two optional ID-value pairs into the APK Signing Block next to the real signature
+blocks: `0x504b4453` (dependency-info) and `0x42726577` (verity padding). They are irrelevant to
+APK verification, but some strict third-party checkers reject a signing block they do not
+expect. `tools/make_softonic_apk.py` rebuilds the signing block with **only** the v2
+(`0x7109871a`) and v3 (`0xf05368c0`) blocks, adjusts the size fields and the EOCD central
+directory offset, keeps every signature byte-identical, and refuses to write the file unless
+`tools/verify_apk_signature.py` passes on the result.
+
+```
+APK Signing Block, release APK:  v2, v3, dependency-info, verity padding
+APK Signing Block, softonic APK: v2, v3
+```
+
+Both files install and update identically; the difference is 13,184 bytes of signing-block
+padding only.
 
 ## 2. Check the file before uploading
 
@@ -36,11 +52,11 @@ signature, because the signatures cover the whole file.
 
 ```bash
 sha256sum BECETTI-TOOLS-v1.1.0-softonic.apk
-# 96a8f30452378e23e386d1d49dcc2ded45cbe5dd8a8ca37e04a824698b60f349
+# 3767f6f9ef8763f0ab1db827bf52077444c793aa470b4ab27ecfb8df979cfe9b
 ```
 
 Windows: `certutil -hashfile BECETTI-TOOLS-v1.1.0-softonic.apk SHA256`, and the file size must
-be exactly `19,753,238` bytes. Upload the file directly — do not re-zip, rename the extension,
+be exactly `19,753,923` bytes. Upload the file directly — do not re-zip, rename the extension,
 or send it through apps that compress attachments.
 
 ## 3. Verify the signature yourself
@@ -141,7 +157,7 @@ Reply with:
 
 > The APK is signed with APK Signature Scheme v1 + v2 + v3 and passes both `apksigner verify
 > --verbose` and an independent from-scratch verifier. The uploaded file is byte-exact: size
-> 19,753,238 bytes, SHA-256 96a8f30452378e23e386d1d49dcc2ded45cbe5dd8a8ca37e04a824698b60f349,
+> 19,753,923 bytes, SHA-256 3767f6f9ef8763f0ab1db827bf52077444c793aa470b4ab27ecfb8df979cfe9b,
 > signer certificate SHA-256 c40c4ba81a8c28465a126b11fd8fad84cebcf2be163d30ae5c51bbeff75b03b6
 > (unchanged from v1.0.0). Please confirm the SHA-256 of the file you received and re-run the
 > signature check.
