@@ -64,7 +64,7 @@ jobs:
           FINGERPRINT=$("$JAVA_HOME/bin/keytool" -list -v \
             -keystore keystore/becetti-release.jks \
             -storepass "${KEYSTORE_PASSWORD:-BecettiTools2026!}" \
-            -alias "${KEY_ALIAS:-becetti}" | awk -F': ' '/SHA256:/ {print $2}' | tr -d ' ')
+            -alias "${KEY_ALIAS:-becetti}" | awk -F': ' '/SHA256:/ {print $2}' | tr -d ': ')
           echo "Release keystore certificate SHA-256: $FINGERPRINT"
           test "$FINGERPRINT" = "C40C4BA81A8C28465A126B11FD8FAD84CEBCF2BE163D30AE5C51BBEFF75B03B6"
           echo "Keystore holds the established release identity (same certificate as v1.0.0)."
@@ -74,7 +74,7 @@ jobs:
           export ANDROID_HOME=$HOME/android-sdk
           export ANDROID_SDK_ROOT=$HOME/android-sdk
           set -o pipefail
-          gradle assembleRelease --stacktrace --no-daemon 2>&1 | tee /tmp/gradle.log
+          gradle verifyReleaseApk --stacktrace --no-daemon 2>&1 | tee /tmp/gradle.log
           test ${PIPESTATUS[0]} -eq 0
           ls -lh app/build/outputs/apk/release/
 
@@ -95,8 +95,9 @@ jobs:
           fi
           $ANDROID_HOME/build-tools/34.0.0/apksigner verify --verbose --print-certs "$APK_PATH"
           # Independent second opinion: JAR/v1 + v2 + v3 verification without Android tooling.
-          python3 -m pip install --quiet cryptography asn1crypto
-          python3 tools/verify_apk_signature.py "$APK_PATH"
+          python3 -m venv /tmp/apkverify
+          /tmp/apkverify/bin/pip install --quiet cryptography asn1crypto
+          /tmp/apkverify/bin/python tools/verify_apk_signature.py "$APK_PATH"
           BADGING=$($ANDROID_HOME/build-tools/34.0.0/aapt dump badging "$APK_PATH")
           echo "$BADGING" | head -n 25
           echo "$BADGING" | grep -F "package: name='com.becetti.tools' versionCode='2' versionName='1.1.0'"

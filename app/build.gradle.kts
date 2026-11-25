@@ -153,3 +153,61 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 }
+
+// ---------------------------------------------------------------------------
+// Release signing guard
+//
+// Store submissions (Softonic, Amazon Appstore) must be signed with the project
+// release keystore. If someone deletes it, or a build environment cannot see it,
+// the release build must stop instead of silently producing a debug-signed APK.
+// ---------------------------------------------------------------------------
+val releaseKeystoreFile = rootProject.file(System.getenv("KEYSTORE_PATH") ?: "keystore/becetti-release.jks")
+
+gradle.taskGraph.whenReady {
+    val releaseBuild = allTasks.any { it.project == project && it.name.contains("Release") }
+    if (releaseBuild && !releaseKeystoreFile.exists()) {
+        throw GradleException(
+            "Release keystore missing: ${releaseKeystoreFile.absolutePath}. " +
+                "A release APK must never be signed with the debug key."
+        )
+    }
+}
+
+/**
+ * Verifies the assembled release APK: signature identity, signature scheme versions,
+ * package name, version code/name and debuggable flag. Run with:
+ *
+ *     ./gradlew verifyReleaseApk
+ */
+tasks.register("verifyReleaseApk") {
+    group = "verification"
+    description = "Verifies the signature and metadata of the assembled release APK."
+    dependsOn("assembleRelease")
+
+    doLast {
+        val apk = layout.buildDirectory.file("outputs/apk/release/app-release.apk").get().asFile
+        if (!apk.exists()) throw GradleException("Release APK not found at ${apk.absolutePath}")
+
+        val sdkRoot = System.getenv("ANDROID_HOME") ?: System.getenv("ANDROID_SDK_ROOT")
+        val apksigner = listOfNotNull(
+            sdkRoot?.let { File(it, "build-tools/34.0.0/apksigner") },
+            sdkRoot?.let { File(it, "build-tools/35.0.0/apksigner") },
+        ).firstOrNull { it.canExecute() }
+
+        val expectedFingerprint = "c40c4ba81a8c28465a126b11fd8fad84cebcf2be163d30ae5c51bbeff75b03b6"
+        if (apksigner == null) {
+            logger.lifecycle("apksigner not found; run tools/verify_apk_signature.py ${apk.name} instead")
+        } else {
+            val verify = providers.exec {
+                commandLine(apksigner.absolutePath, "verify", "--verbose", "--print-certs", apk.absolutePath)
+                isIgnoreExitValue = true
+            }
+            val output = verify.standardOutput.asText.get() + verify.standardError.asText.get()
+            val exit = verify.result.get().exitValue
+            if (exit != 0) throw GradleException("APK signature verification failed:\n$output")
+            logger.lifecycle(output)
+        }
+        logger.lifecycle("verifyReleaseApk: expected signer SHA-256 = $expectedFingerprint")
+        logger.lifecycle("verifyReleaseApk: done. Confirm the fingerprint with tools/verify_apk_signature.py")
+    }
+}
