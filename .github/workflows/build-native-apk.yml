@@ -69,6 +69,15 @@ jobs:
           test "$FINGERPRINT" = "C40C4BA81A8C28465A126B11FD8FAD84CEBCF2BE163D30AE5C51BBEFF75B03B6"
           echo "Keystore holds the established release identity (same certificate as v1.0.0)."
 
+      - name: Prepare verification tooling
+        run: |
+          set -e
+          python3 -m venv /tmp/apkverify
+          /tmp/apkverify/bin/pip install --quiet --upgrade pip
+          /tmp/apkverify/bin/pip install --quiet cryptography asn1crypto
+          echo "VERIFY_PYTHON=/tmp/apkverify/bin/python" >> $GITHUB_ENV
+          /tmp/apkverify/bin/python -c "import cryptography, asn1crypto; print('verification environment ready')"
+
       - name: Build Signed Release APK
         run: |
           export ANDROID_HOME=$HOME/android-sdk
@@ -95,9 +104,7 @@ jobs:
           fi
           $ANDROID_HOME/build-tools/34.0.0/apksigner verify --verbose --print-certs "$APK_PATH"
           # Independent second opinion: JAR/v1 + v2 + v3 verification without Android tooling.
-          python3 -m venv /tmp/apkverify
-          /tmp/apkverify/bin/pip install --quiet cryptography asn1crypto
-          /tmp/apkverify/bin/python tools/verify_apk_signature.py "$APK_PATH"
+          "$VERIFY_PYTHON" tools/verify_apk_signature.py "$APK_PATH"
           BADGING=$($ANDROID_HOME/build-tools/34.0.0/aapt dump badging "$APK_PATH")
           echo "$BADGING" | head -n 25
           echo "$BADGING" | grep -F "package: name='com.becetti.tools' versionCode='2' versionName='1.1.0'"
@@ -119,7 +126,7 @@ jobs:
           sha256sum BECETTI-TOOLS-v1.1.0-release.apk > BECETTI-TOOLS-v1.1.0-release.apk.sha256
           # Submission APK: strips the optional dependency-info and verity-padding pairs from the
           # APK Signing Block (some strict third-party checkers trip over them) and re-verifies.
-          python3 tools/make_softonic_apk.py \
+          "$VERIFY_PYTHON" tools/make_softonic_apk.py \
             BECETTI-TOOLS-v1.1.0-release.apk \
             BECETTI-TOOLS-v1.1.0-softonic.apk
           sha256sum BECETTI-TOOLS-v1.1.0-softonic.apk > BECETTI-TOOLS-v1.1.0-softonic.apk.sha256

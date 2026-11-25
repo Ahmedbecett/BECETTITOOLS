@@ -18,7 +18,7 @@ Usage:
 from __future__ import annotations
 
 import hashlib
-import shutil
+import os
 import struct
 import subprocess
 import sys
@@ -102,7 +102,9 @@ def main(src: Path, dst: Path) -> int:
 
     # Independent verification of the produced file.
     verifier = Path(__file__).resolve().parent / "verify_apk_signature.py"
-    result = subprocess.run([sys.executable, str(verifier), str(dst)])
+    # Run the verifier with the same interpreter that has `cryptography` available.
+    interpreter = os.getenv("VERIFY_PYTHON", sys.executable)
+    result = subprocess.run([interpreter, str(verifier), str(dst)])
     if result.returncode != 0:
         dst.unlink(missing_ok=True)
         raise SystemExit("verification of the produced APK failed; output removed")
