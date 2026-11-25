@@ -191,16 +191,18 @@ def parse_scheme_signers(block_value: bytes, v3: bool) -> list[dict]:
         certs = [x509.load_der_x509_certificate(blob)
                  for blob in length_prefixed_sequence(signed_reader.bytes())]
         declared_sdk = (signed_reader.uint32(), signed_reader.uint32()) if v3 else (None, None)
+        # Additional attributes (always present, possibly empty): e.g. v3 stripping protection.
         attributes = length_prefixed_sequence(signed_reader.bytes()) if not signed_reader.eof() else []
-        # (the attributes field is always present as a length prefix, even when empty)
         if v3 and declared_sdk != signed_sdk:
             raise ValueError("v3 SDK range differs between signer and signed data")
         if not certs:
             raise ValueError("signer does not embed a certificate")
+        # Some tools append extra length-prefixed fields after the attributes; they are part of
+        # the signed bytes, so they are reported rather than treated as corruption.
         signers.append(dict(signed_data=signed_data, signatures=signatures, digests=digests,
                             public_key=public_key, certs=certs, sdk_range=signed_sdk,
                             attributes=attributes,
-                            unparsed=signed_data[signed_reader.pos:]))
+                            extra_fields=signed_data[signed_reader.pos:]))
     return signers
 
 
@@ -264,9 +266,9 @@ def verify_scheme(data: bytes, signature_block, block_id: int, v3: bool, label: 
         print(f"  signer #{index} certificate SHA-256: {public_key_sha256(cert)}")
         if v3:
             print(f"  signer #{index} SDK range: {signer['sdk_range'][0]}..{signer['sdk_range'][1]}")
-        if signer["unparsed"]:
-            print(f"  signer #{index} note: {len(signer['unparsed'])} trailing byte(s) in signed data "
-                  f"(covered by the signature, ignored)")
+        if signer["extra_fields"]:
+            print(f"  signer #{index} note: {len(signer['extra_fields'])} trailing byte(s) in signed data "
+                  f"(covered by the signature; not part of the v2/v3 layout, ignored)")
 
         ok = ok and signature_ok and digest_ok and same_key and valid
 
