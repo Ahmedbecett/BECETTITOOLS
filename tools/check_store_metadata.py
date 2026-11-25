@@ -107,6 +107,19 @@ def main() -> int:
         print(f"  language/placeholder/tool-count checks: "
               f"{'PASS' if not any(p.startswith(lang) for p in problems) else 'FAIL'}")
 
+    # The human-readable document must carry exactly the same texts as the JSON source.
+    markdown = (ROOT / "docs/STORE_METADATA_AR_FR.md")
+    if markdown.exists():
+        md_text = markdown.read_text(encoding="utf-8")
+        for lang in data["supported_languages"]:
+            listing = data["listings"][lang]
+            for field in ("title", "short_description", "description"):
+                if listing[field] not in md_text:
+                    problems.append(f"{lang}.{field} in the JSON is not present in docs/STORE_METADATA_AR_FR.md")
+        print("\n--- markdown/JSON consistency ---")
+        print(f"  all listing fields mirrored in docs/STORE_METADATA_AR_FR.md: "
+              f"{'PASS' if not problems else 'FAIL'}")
+
     print("\n=== RESULT ===")
     for note in notes:
         print(f"  note: {note}")
