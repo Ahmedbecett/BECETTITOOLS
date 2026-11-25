@@ -5,7 +5,7 @@
 
 ## Checklist (spec §12)
 1. **Build APK**: `./gradlew assembleDebug` → verify `app-debug.apk` installs.
-2. **19 tools**: exercise each tool's happy and error paths, including same-Wi-Fi file transfer, export, and cache cleanup.
+2. **20 tools**: exercise each tool's happy and error paths, including same-Wi-Fi file transfer, export, and cache cleanup.
 3. **AR RTL**: set language AR, verify RTL mirroring, strings `values-ar`.
 4. **FR**: set FR, verify strings.
 5. **EN**: default.

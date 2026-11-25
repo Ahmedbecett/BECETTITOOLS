@@ -16,8 +16,8 @@ verification steps for the APK.
 | Signing identity | `CN=Becetti Tools, O=Becetti, L=Chlef, ST=Chlef, C=DZ` (unchanged since v1.0.0) |
 | Certificate SHA-256 | `c40c4ba81a8c28465a126b11fd8fad84cebcf2be163d30ae5c51bbeff75b03b6` |
 | APK to upload | `BECETTI-TOOLS-v1.1.0-softonic.apk` |
-| SHA-256 | `96a8f30452378e23e386d1d49dcc2ded45cbe5dd8a8ca37e04a824698b60f349` |
-| Size | `19,753,238` bytes (18.84 MiB) |
+| SHA-256 | `6f778119e80c746eab6957318057242d86a1ce8314570ac2fb1b03f272a25c80` |
+| Size | `19,753,921` bytes (18.84 MiB) |
 | Signatures | APK Signature Scheme v1 + v2 + v3 — all valid |
 | Languages | Arabic (`ar`), French (`fr`), English fallback (`en`) |
 
@@ -206,7 +206,7 @@ the SHA-256 before uploading:
 
 ```bash
 sha256sum BECETTI-TOOLS-v1.1.0-softonic.apk
-# 96a8f30452378e23e386d1d49dcc2ded45cbe5dd8a8ca37e04a824698b60f349
+# 6f778119e80c746eab6957318057242d86a1ce8314570ac2fb1b03f272a25c80
 ```
 
 The build itself can no longer produce a debug-signed "release" APK: `app/build.gradle.kts`
