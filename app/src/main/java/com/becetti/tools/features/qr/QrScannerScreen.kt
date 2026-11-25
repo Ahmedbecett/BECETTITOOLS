@@ -33,10 +33,11 @@ import com.becetti.tools.design.components.GlowingToolHeader
 import com.becetti.tools.design.theme.*
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.common.InputImage
+import java.util.concurrent.atomic.AtomicBoolean
 
 @androidx.annotation.OptIn(ExperimentalGetImage::class)
 @Composable
-fun QrScannerScreen() {
+fun QrScannerScreen(onCodeScanned: ((String) -> Unit)? = null) {
     val ctx = LocalContext.current
     val s = LocalAppStrings.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -50,6 +51,16 @@ fun QrScannerScreen() {
     var result by remember { mutableStateOf<String?>(null) }
     var torchOn by remember { mutableStateOf(false) }
     var copied by remember { mutableStateOf(false) }
+    val codeReported = remember { AtomicBoolean(false) }
+
+    fun reportCode(value: String) {
+        if (onCodeScanned != null) {
+            if (codeReported.compareAndSet(false, true)) onCodeScanned(value)
+        } else {
+            result = value
+            copied = false
+        }
+    }
 
     val scanner = remember { runCatching { BarcodeScanning.getClient() }.getOrNull() }
     var cameraProviderRef by remember { mutableStateOf<ProcessCameraProvider?>(null) }
@@ -64,10 +75,7 @@ fun QrScannerScreen() {
                         val img = InputImage.fromBitmap(bmp, 0)
                         scanner.process(img).addOnSuccessListener { codes ->
                             if (codes.isNotEmpty()) {
-                                codes.first().rawValue?.let { raw ->
-                                    result = raw
-                                    copied = false
-                                }
+                                codes.first().rawValue?.let(::reportCode)
                             }
                         }
                     }
@@ -160,10 +168,7 @@ fun QrScannerScreen() {
                                                     activeScanner.process(input)
                                                         .addOnSuccessListener { barcodes ->
                                                             if (barcodes.isNotEmpty()) {
-                                                                barcodes.first().rawValue?.let { raw ->
-                                                                    result = raw
-                                                                    copied = false
-                                                                }
+                                                                barcodes.first().rawValue?.let(::reportCode)
                                                             }
                                                         }
                                                         .addOnCompleteListener { imageProxy.close() }

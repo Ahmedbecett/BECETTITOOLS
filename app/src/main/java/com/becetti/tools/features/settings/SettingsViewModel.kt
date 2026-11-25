@@ -12,7 +12,6 @@ import kotlinx.coroutines.launch
 class SettingsViewModel(private val app: BecettiToolsApp, private val ds: DataStore<Preferences>) : ViewModel() {
     private val LANG = stringPreferencesKey("language")
     private val THEME = stringPreferencesKey("theme")
-    private val ADS_CONSENT = booleanPreferencesKey("ads_consent_granted")
 
     val language: StateFlow<String> = ds.data
         .map { it[LANG] ?: "en" }
@@ -22,20 +21,12 @@ class SettingsViewModel(private val app: BecettiToolsApp, private val ds: DataSt
         .map { it[THEME] ?: "system" }
         .stateIn(viewModelScope, SharingStarted.Eagerly, "system")
 
-    val adsConsent: StateFlow<Boolean> = ds.data
-        .map { it[ADS_CONSENT] ?: false }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, false)
-
     fun setLanguage(l: String) {
         viewModelScope.launch { ds.edit { it[LANG] = l } }
     }
 
     fun setTheme(t: String) {
         viewModelScope.launch { ds.edit { it[THEME] = t } }
-    }
-
-    fun setAdsConsent(granted: Boolean) {
-        viewModelScope.launch { ds.edit { it[ADS_CONSENT] = granted } }
     }
 
     fun clearHistory() {

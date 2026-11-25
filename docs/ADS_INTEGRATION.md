@@ -1,26 +1,21 @@
-# Ads Integration — Monetag + Adsterra
+# Google AdMob Integration
 
-## Abstraction
-- `monetization/AdsManager.kt` — centralize: `MonetagManager`, `AdsterraManager`, `ConsentManager`, `AdPolicy`
-- Providers independently enable/disable; no ads if SDK unavailable.
+## SDK and identifiers
+- Google Mobile Ads Android SDK: `com.google.android.gms:play-services-ads:25.5.0`.
+- Google User Messaging Platform SDK: `com.google.android.ump:user-messaging-platform:4.0.0`.
+- AdMob App ID: `ca-app-pub-6858364141205978~1142706527` (Android manifest metadata).
+- Adaptive banner unit: `ca-app-pub-6858364141205978/8031316998` (Home screen list footer).
+- Native Advanced unit: `ca-app-pub-6858364141205978/5268994651` (one distinctly labeled ad card on Home; only shown after a successful load).
 
-## Monetag (official SDK)
-1. Obtain SDK + App ID from Monetag publisher account.
-2. Add dependency per Monetag docs (e.g., `implementation("com.monetag:android-sdk:…")`).
-3. In `MonetagManager.initialize(appId)`: replace placeholder with `MonetagSdk.init(ctx, appId)`.
-4. Set `isAvailable() = true` when SDK present; implement `showInterstitial()` per docs (check ad availability, error handling, test mode).
-5. Init in `BecettiToolsApp.onCreate()` via `AdsManager.initialize()`.
+## Consent and lifecycle
+- UMP updates consent information at app launch, presents forms when required, gates SDK initialization/ad requests with `canRequestAds()`, and exposes the privacy options entry point in Settings only when UMP reports it is required.
+- Banner size adapts to available list width; it pauses/resumes with the Activity lifecycle and is destroyed when removed. Native ad objects are destroyed when the Home ad leaves composition.
+- Ad load failures are non-blocking; no empty native placeholder is displayed. Ads are not overlaid on controls and no Google ads are requested from tool screens.
 
-## Adsterra SmartLink
-- Set `AdsterraManager.smartLinkUrl` from remote config / publisher account.
-- UI: use `AdPlaceholder` (labeled “Sponsored Offers — Tap to explore”) in `HomeScreen` etc.; on tap call `adsterra.openSponsoredOffers()` → `ACTION_VIEW` intent.
-- Never auto-launch; never inject web ad scripts into native activities.
+## Required account configuration and verification
+- Create the applicable consent messages in AdMob Privacy & messaging. Until configured, UMP may not show a consent form.
+- Verify the publisher ID in the AdMob account before publishing an `app-ads.txt`; an AdMob App ID or ad unit ID is not a substitute. The repository's GitHub Pages site is currently not configured, and no unverified `app-ads.txt` is included.
+- Use Google-provided test ad methods/device configuration during development. Do not click live production ads for testing; production unit IDs are retained in the release configuration.
+- Check Fire OS devices without Google Play services. Ad requests are optional and failures must not block app functionality.
 
-## Policy Rules (AdPolicy.kt)
-- `NO_AD_ROUTES = calc_scientific`; min interval 90s; max 3/session; no forced pre-tool interstitial; no overlay on controls; respect provider policies.
-
-## Consent
-- `ConsentManager` (DataStore `ads_consent_granted`); gate personalized ads on consent; provide opt-out in Settings.
-
-## Testing
-- Test ad failure (no SDK / no network / no fill) — app must remain functional; verify frequency caps and no-ad routes.
+This SDK integration does not, by itself, certify GDPR, regional privacy-law, store-policy, or AdMob account compliance. Review account messages, disclosures, and applicable policies before release.

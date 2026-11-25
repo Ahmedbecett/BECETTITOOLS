@@ -347,6 +347,24 @@ object BecettiIcons {
         }
     }
 
+    val WifiTransfer: ImageVector by lazy {
+        buildIcon("WifiTransfer") {
+            moveTo(1f, 9f)
+            curveTo(7.08f, 3.08f, 16.92f, 3.08f, 23f, 9f)
+            lineToRelative(-1.41f, 1.41f)
+            curveToRelative(-5.3f, -5.3f, -13.88f, -5.3f, -19.18f, 0f)
+            lineTo(1f, 9f); close()
+            moveTo(5f, 13f)
+            curveToRelative(3.87f, -3.87f, 10.13f, -3.87f, 14f, 0f)
+            lineToRelative(-1.41f, 1.41f)
+            curveToRelative(-3.09f, -3.09f, -8.09f, -3.09f, -11.18f, 0f)
+            lineTo(5f, 13f); close()
+            moveTo(9f, 17f)
+            curveToRelative(1.66f, -1.66f, 4.34f, -1.66f, 6f, 0f)
+            lineToRelative(-3f, 3f); lineTo(9f, 17f); close()
+        }
+    }
+
     fun iconForTool(toolId: String): ImageVector = when (toolId) {
         "calc_scientific" -> Calculator
         "unit_converter" -> UnitConverter
@@ -366,6 +384,7 @@ object BecettiIcons {
         "bmi_calculator" -> BmiHealth
         "stopwatch_timer" -> StopwatchTimer
         "device_info" -> DeviceInfo
+        "wifi_transfer" -> WifiTransfer
         else -> SparklePalette
     }
 
@@ -388,6 +407,7 @@ object BecettiIcons {
         "bmi_calculator" -> GlowRose
         "stopwatch_timer" -> GlowViolet
         "device_info" -> GlowTeal
+        "wifi_transfer" -> GlowCyan
         else -> GlowOrange
     }
 }

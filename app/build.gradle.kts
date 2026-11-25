@@ -1,19 +1,21 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.plugin.compose")
     id("com.google.devtools.ksp")
 }
 
 android {
     namespace = "com.becetti.tools"
-    compileSdk = 34
+    // Google Mobile Ads SDK 25.5.0 requires compileSdk 35; targetSdk remains unchanged.
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.becetti.tools"
         minSdk = 24
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = 2
+        versionName = "1.1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables { useSupportLibrary = true }
         resourceConfigurations += listOf("en", "ar", "fr")
@@ -26,18 +28,19 @@ android {
     signingConfigs {
         create("release") {
             val ksFile = rootProject.file(System.getenv("KEYSTORE_PATH") ?: "keystore/becetti-release.jks")
-            if (ksFile.exists()) {
-                storeFile = ksFile
-                storePassword = System.getenv("KEYSTORE_PASSWORD") ?: "BecettiTools2026!"
-                keyAlias = System.getenv("KEY_ALIAS") ?: "becetti"
-                keyPassword = System.getenv("KEY_PASSWORD") ?: "BecettiTools2026!"
-            } else {
-                val debugKs = signingConfigs.getByName("debug")
-                storeFile = debugKs.storeFile
-                storePassword = debugKs.storePassword
-                keyAlias = debugKs.keyAlias
-                keyPassword = debugKs.keyPassword
+            if (!ksFile.exists()) {
+                // Never fall back to the debug keystore: a debug-signed "release" APK is
+                // rejected by stores ("not correctly signed") and breaks update continuity.
+                throw GradleException(
+                    "Release keystore not found at ${ksFile}. " +
+                    "Store submissions must be signed with keystore/becetti-release.jks."
+                )
             }
+            storeType = "pkcs12"
+            storeFile = ksFile
+            storePassword = System.getenv("KEYSTORE_PASSWORD") ?: "BecettiTools2026!"
+            keyAlias = System.getenv("KEY_ALIAS") ?: "becetti"
+            keyPassword = System.getenv("KEY_PASSWORD") ?: "BecettiTools2026!"
             enableV1Signing = true
             enableV2Signing = true
             enableV3Signing = true
@@ -70,9 +73,12 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    kotlinOptions { jvmTarget = "17" }
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+        }
+    }
     buildFeatures { compose = true }
-    composeOptions { kotlinCompilerExtensionVersion = "1.5.8" }
 
     packaging {
         jniLibs {
@@ -108,10 +114,14 @@ dependencies {
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 
+    // Google Mobile Ads + UMP consent management
+    implementation("com.google.android.gms:play-services-ads:25.5.0")
+    implementation("com.google.android.ump:user-messaging-platform:4.0.0")
+
     // Room
-    implementation("androidx.room:room-runtime:2.6.1")
-    implementation("androidx.room:room-ktx:2.6.1")
-    ksp("androidx.room:room-compiler:2.6.1")
+    implementation("androidx.room:room-runtime:2.7.2")
+    implementation("androidx.room:room-ktx:2.7.2")
+    ksp("androidx.room:room-compiler:2.7.2")
 
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
@@ -119,7 +129,8 @@ dependencies {
     // Coil
     implementation("io.coil-kt:coil-compose:2.6.0")
 
-    // CameraX
+    // CameraX (ListenableFuture is a public CameraX API type)
+    implementation("com.google.guava:guava:33.4.0-android")
     implementation("androidx.camera:camera-camera2:1.3.1")
     implementation("androidx.camera:camera-lifecycle:1.3.1")
     implementation("androidx.camera:camera-view:1.3.1")

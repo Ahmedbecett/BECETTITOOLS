@@ -30,6 +30,8 @@ import com.becetti.tools.design.theme.*
 import com.becetti.tools.domain.models.ToolCatalog
 import com.becetti.tools.domain.models.ToolCategory
 import com.becetti.tools.features.settings.SettingsViewModel
+import com.becetti.tools.monetization.AdMobBanner
+import com.becetti.tools.monetization.AdMobNativeAd
 import kotlinx.coroutines.launch
 
 @Composable
@@ -210,6 +212,13 @@ fun HomeScreen(
             }
         }
 
+        // Clearly attributed native ad, separated from the app's tool cards.
+        if (query.isBlank()) {
+            item(key = "admob_native_ad") {
+                AdMobNativeAd(app.adsManager)
+            }
+        }
+
         // Favorites & Quick Access Strip
         if (query.isBlank()) {
             item {
@@ -384,6 +393,10 @@ fun HomeScreen(
             }
         }
 
+        item(key = "admob_banner_ad") {
+            AdMobBanner(app.adsManager)
+        }
+
         if (app.adsManager.adsterra.isAvailable()) {
             item {
                 AdPlaceholder(
@@ -400,7 +413,7 @@ fun CategoriesScreen(nav: NavController) {
     val categoryGroups = listOf(
         Triple(s.catCalcConverters, GlowOrange, listOf("calc_scientific", "unit_converter", "currency", "percentage")),
         Triple(s.catQrSecurity, GlowViolet, listOf("qr_generator", "qr_scanner", "password_gen", "password_strength")),
-        Triple(s.catDocumentsFiles, GlowRose, listOf("image_to_pdf", "pdf_merger", "ocr")),
+        Triple(s.catDocumentsFiles, GlowRose, listOf("image_to_pdf", "pdf_merger", "ocr", "wifi_transfer")),
         Triple(s.catTextUtilities, GlowBlue, listOf("text_toolkit", "notes")),
         Triple(s.catImageUtilities, GlowAmber, listOf("image_compressor")),
         Triple(s.catDateTimeHealth, GlowTeal, listOf("age", "bmi_calculator", "stopwatch_timer", "device_info"))

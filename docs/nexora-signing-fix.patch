@@ -1,0 +1,89 @@
+From 535f963036319185b05823e38451b116c262a847 Mon Sep 17 00:00:00 2001
+From: BECETTI TOOLS <dev@becetti.tools>
+Date: Tue, 24 Nov 2026 17:37:46 +0000
+Subject: [PATCH] fix(android): fail release build without production keystore
+ [skip ci]
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+لا يوقّع release بمفتاح التصحيح تلقائيًا بعد الآن — المتاجر (Softonic/Amazon)
+ترفض هذه الحزم برسالة 'not correctly signed'. يفشل البناء برسالة واضحة، مع
+مخرج اصطناعي للبناء المحلي التجريبي فقط: NEXORA_ALLOW_DEBUG_SIGNING=1.
+
+- android/app/build.gradle: throw GradleException إذا غاب NEXORA_KEYSTORE
+- android-release.yml: إخفاء السر يوقف بناءات النشر (push) مبكرًا؛ بناءات
+  PR وحدها تسمح بالتوقيع التجريبي
+---
+ .github/workflows/android-release.yml |  8 ++++++--
+ android/app/build.gradle              | 16 ++++++++++++----
+ 2 files changed, 18 insertions(+), 6 deletions(-)
+
+diff --git a/.github/workflows/android-release.yml b/.github/workflows/android-release.yml
+index ecb282a..5520418 100644
+--- a/.github/workflows/android-release.yml
++++ b/.github/workflows/android-release.yml
+@@ -72,15 +72,19 @@ jobs:
+       - name: Verify login bindings in the Android project
+         run: node scripts/check-login-config.mjs
+ 
+-      - name: Restore signing key (optional)
++      - name: Restore signing key (required for publish builds)
+         env:
+           KEYSTORE_B64: ${{ secrets.NEXORA_KEYSTORE_BASE64 }}
+         run: |
+           if [ -n "$KEYSTORE_B64" ]; then
+             echo "$KEYSTORE_B64" | base64 -d > $RUNNER_TEMP/nexora.jks
+             echo "NEXORA_KEYSTORE=$RUNNER_TEMP/nexora.jks" >> $GITHUB_ENV
++          elif [ "${{ github.event_name }}" = "pull_request" ]; then
++            echo "::warning::لا يوجد NEXORA_KEYSTORE_BASE64 — بناء PR تجريبي فقط بمفتاح التصحيح (غير قابل للنشر)."
++            echo "NEXORA_ALLOW_DEBUG_SIGNING=1" >> $GITHUB_ENV
+           else
+-            echo "::warning::لا يوجد NEXORA_KEYSTORE_BASE64 — سيُوقَّع APK بمفتاح التصحيح. لا ترفعه إلى Amazon Appstore."
++            echo "::error::لا يوجد NEXORA_KEYSTORE_BASE64 — نرفض بناء/نشر APK بمفتاح التصحيح: المتاجر (Softonic/Amazon) ترفضه برسالة 'not correctly signed'. أضف السر NEXORA_KEYSTORE_BASE64 ثم أعد التشغيل."
++            exit 1
+           fi
+ 
+       - name: Build release APK
+diff --git a/android/app/build.gradle b/android/app/build.gradle
+index e85bfac..6c2183c 100644
+--- a/android/app/build.gradle
++++ b/android/app/build.gradle
+@@ -18,12 +18,14 @@ android {
+         }
+     }
+     // توقيع نسخة الإصدار: إن وُفّرت متغيرات البيئة (NEXORA_KEYSTORE / NEXORA_KEYSTORE_PASSWORD)
+-    // يُوقَّع بمفتاح الإنتاج (كما في GitHub Actions)؛ وإلا يُوقَّع بمفتاح التصحيح حتى تُبنى
+-    // حزمة تثبيت تلقائيًا على كل الأجهزة دون أسرار.
++    // يُوقَّع بمفتاح الإنتاج (كما في GitHub Actions). وإلا يفشل البناء بوضوح — لأن التوقيع
++    // بمفتاح التصحيح يرفضه Softonic/Amazon/Play برسالة "not correctly signed"، ويربك
++    // استمرارية التوقيع بين التحديثات. للبناء المحلي التجريبي فقط: NEXORA_ALLOW_DEBUG_SIGNING=1
+     def releaseStore = System.getenv("NEXORA_KEYSTORE")
+     def releasePass = System.getenv("NEXORA_KEYSTORE_PASSWORD")
+     def releaseAlias = System.getenv("NEXORA_KEY_ALIAS") ?: "nexora"
+     def useReleaseKeystore = (releaseStore && releasePass)
++    def allowDebugSigning = (System.getenv("NEXORA_ALLOW_DEBUG_SIGNING") == "1")
+     signingConfigs {
+         release {
+             if (useReleaseKeystore) {
+@@ -40,9 +42,15 @@ android {
+             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+             if (useReleaseKeystore) {
+                 signingConfig signingConfigs.release
+-            } else {
+-                // لا مفتاح إنتاج مضبوط على هذه البيئة → توقيع تصحيح حتى تُبنى حزمة تثبيت تلقائيًا
++            } else if (allowDebugSigning) {
++                // نسخة اختبارية محلية بمفتاح التصحيح — لا ترفعها إلى أي متجر إطلاقًا
+                 signingConfig signingConfigs.debug
++            } else {
++                throw new GradleException(
++                    "لا يوجد مفتاح إنتاج (NEXORA_KEYSTORE / NEXORA_KEYSTORE_PASSWORD). " +
++                    "رفض التوقيع بمفتاح التصحيح: المتاجر (Softonic/Amazon/Play) ترفضه برسالة " +
++                    "'not correctly signed'. للبناء المحلي التجريبي فقط: NEXORA_ALLOW_DEBUG_SIGNING=1"
++                )
+             }
+         }
+     }
+-- 
+2.39.5
+

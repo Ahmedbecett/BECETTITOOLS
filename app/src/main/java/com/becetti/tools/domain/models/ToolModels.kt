@@ -42,7 +42,8 @@ object ToolCatalog {
         ToolItem("notes", "Notes Manager", "Local notes with search", ToolCategory.TEXT_UTILITIES, "note", "notes"),
         ToolItem("bmi_calculator", "BMI & Health Calculator", "Body Mass Index, ideal weight & water", ToolCategory.DATE_TIME, "health", "bmi_calculator"),
         ToolItem("stopwatch_timer", "Stopwatch & Timer", "Millisecond lap stopwatch & countdown", ToolCategory.DATE_TIME, "timer", "stopwatch_timer"),
-        ToolItem("device_info", "Device & System Inspector", "RAM, storage, CPU, battery & screen", ToolCategory.DATE_TIME, "device", "device_info")
+        ToolItem("device_info", "Device & System Inspector", "RAM, storage, CPU, battery & screen", ToolCategory.DATE_TIME, "device", "device_info"),
+        ToolItem("wifi_transfer", "Wi-Fi File Transfer", "Send and receive selected files on your local Wi-Fi", ToolCategory.DOCUMENTS_FILES, "wifi", "wifi_transfer")
     )
 
     fun byCategory(c: ToolCategory) = all.filter { it.category == c }

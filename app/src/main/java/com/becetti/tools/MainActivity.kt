@@ -28,6 +28,7 @@ import java.util.Locale
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        (application as BecettiToolsApp).adsManager.initialize(this)
         WindowCompat.setDecorFitsSystemWindows(window, true)
         setContent {
             val app = application as BecettiToolsApp

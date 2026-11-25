@@ -1,5 +1,6 @@
 package com.becetti.tools.features.settings
 
+import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.BorderStroke
@@ -28,14 +29,16 @@ import com.becetti.tools.design.components.BecettiIcons
 import com.becetti.tools.design.components.GlowingCard
 import com.becetti.tools.design.components.GlowingToolIconBadge
 import com.becetti.tools.design.theme.*
+import com.becetti.tools.monetization.AdsManager
 
 @Composable
-fun SettingsScreen(vm: SettingsViewModel) {
+fun SettingsScreen(vm: SettingsViewModel, adsManager: AdsManager) {
     val ctx = LocalContext.current
+    val activity = ctx as? Activity
     val s = LocalAppStrings.current
     val lang by vm.language.collectAsState()
     val theme by vm.theme.collectAsState()
-    val adsConsent by vm.adsConsent.collectAsState()
+    val privacyOptionsRequired by adsManager.consent.privacyOptionsRequired.collectAsState()
     var showPrivacyDialog by remember { mutableStateOf(false) }
     var historyCleared by remember { mutableStateOf(false) }
 
@@ -257,11 +260,11 @@ fun SettingsScreen(vm: SettingsViewModel) {
                     Text(s.settingsAdsConsentTitle, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold)
                     Text(s.settingsAdsConsentDesc, style = MaterialTheme.typography.bodySmall)
                 }
-                Switch(
-                    checked = adsConsent,
-                    onCheckedChange = { vm.setAdsConsent(it) },
-                    colors = SwitchDefaults.colors(checkedThumbColor = GlowEmerald, checkedTrackColor = GlowEmerald.copy(alpha = 0.35f))
-                )
+                if (privacyOptionsRequired && activity != null) {
+                    TextButton(onClick = { adsManager.showPrivacyOptions(activity) }) {
+                        Text(s.settingsAdPrivacyOptionsBtn)
+                    }
+                }
             }
             Spacer(Modifier.height(10.dp))
             Button(

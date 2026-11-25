@@ -7,7 +7,7 @@ sealed class Route(val route: String) {
     object History : Route("history")
     object Settings : Route("settings")
 
-    // 18 smart tools
+    // Existing tools plus Wi-Fi file transfer
     object ScientificCalculator : Route("calc_scientific")
     object UnitConverter : Route("unit_converter")
     object CurrencyConverter : Route("currency")
@@ -26,5 +26,7 @@ sealed class Route(val route: String) {
     object BmiCalculator : Route("bmi_calculator")
     object StopwatchTimer : Route("stopwatch_timer")
     object DeviceInfo : Route("device_info")
+    object WifiTransfer : Route("wifi_transfer")
+    object WifiTransferScan : Route("wifi_transfer_scan")
     object NoteDetail : Route("note_detail/{id}") { fun create(id: Long) = "note_detail/$id" }
 }
